@@ -1,0 +1,13 @@
+<resources>
+    <string name="appname">FoodCode</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="username">Nombre de Usuario</string>
+    <string name="next">Siguiente</string>
+    <string name="description">Usuario estás usando la versión 1 de FoodCode</string>
+    <string name="contact">Contactar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about">Sobre la app</string>
+    <string name="credits">Créditos</string>
+    <string name="valor_energetico">sdsdfsdfsdf</string>
+</resources>
