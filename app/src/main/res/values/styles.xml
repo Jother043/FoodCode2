@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="title_food_text">Colacao</style>
+    <style name="title_food_text">Food</style>
 
-    <style name="important_text">asdfsfdasfdsf</style>
+    <style name="important_text"></style>
 </resources>

@@ -1,4 +1,7 @@
 <resources>
+    <string name="app_name">FoodCode2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="appname">FoodCode</string>
     <string name="welcome">Bienvenido</string>
     <string name="username">Nombre de Usuario</string>
@@ -6,8 +9,18 @@
     <string name="description">Usuario estás usando la versión 1 de FoodCode</string>
     <string name="contact">Contactar</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="about">Sobre la app</string>
     <string name="credits">Créditos</string>
     <string name="valor_energetico">sdsdfsdfsdf</string>
+    <string name="food_image">Logo</string>
+    <string name="seasons">Calorias</string>
+    <string name="caps">Valor energético</string>
+    <string name="FoodTitle">Manzana</string>
+    <string name="cafeTitle">Descafeinado Clasico Nestlé</string>
+    <string name="calorias">Cálorias</string>
+    <string name="proteinas">Proteínas</string>
+    <string name="bienvenido">Bienvenido a mi APP</string>
+    <string name="list">Lista de alimentos</string>
+    <string name="favouriteList">Lista de alimentos favoritos</string>
+    <string name="exit">Salir</string>
 </resources>

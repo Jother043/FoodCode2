@@ -2,26 +2,39 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment2">
+
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.FoodCode.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        android:id="@+id/menuFragment"
+        android:name="com.example.foodcode2.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menuFragment_to_listFragment"
+            app:destination="@id/listFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_creditFragment"
+            app:destination="@id/creditFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/cameraFragment"
-        android:name="com.example.FoodCode.CameraFragment"
-        android:label="fragment_camera"
-        tools:layout="@layout/fragment_camera" />
+        android:id="@+id/listFragment"
+        android:name="com.example.foodcode2.ListFragment"
+        android:label="fragment_list"
+        tools:layout="@layout/fragment_list" />
     <fragment
         android:id="@+id/creditFragment"
-        android:name="com.example.FoodCode.CreditFragment"
+        android:name="com.example.foodcode2.CreditFragment"
         android:label="fragment_credit"
         tools:layout="@layout/fragment_credit" />
     <fragment
-        android:id="@+id/codeFoodFragment"
-        android:name="com.example.FoodCode.CodeFoodFragment"
-        android:label="fragment_code_food"
-        tools:layout="@layout/fragment_code_food" />
+        android:id="@+id/loginFragment2"
+        android:name="com.example.foodcode2.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment2_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
 </navigation>
