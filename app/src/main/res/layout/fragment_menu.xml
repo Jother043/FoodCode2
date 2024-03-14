@@ -23,22 +23,24 @@
 
     <TextView
         android:id="@+id/etUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="275dp"
+        android:layout_height="55dp"
         android:ems="10"
+        android:fontFamily="@font/alata"
         android:hint="@string/bienvenido"
         android:inputType="textPersonName"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/ivPortrait"
-        app:layout_constraintHorizontal_bias="0.594"
         app:layout_constraintStart_toStartOf="@+id/ivPortrait"
         app:layout_constraintTop_toBottomOf="@+id/ivPortrait"
-        app:layout_constraintVertical_bias="0.096" />
+        app:layout_constraintVertical_bias="0.088" />
 
     <Button
         android:id="@+id/btnList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="casual"
         android:text="@string/list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,6 +53,7 @@
         android:id="@+id/btnFavList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="casual"
         android:text="@string/favouriteList"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btnList"
@@ -64,11 +67,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:fontFamily="casual"
         android:text="@string/exit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btnFavList"
+        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="@+id/btnFavList"
-        app:layout_constraintTop_toBottomOf="@+id/btnFavList" />
+        app:layout_constraintTop_toBottomOf="@+id/btnFavList"
+        app:layout_constraintVertical_bias="0.291" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

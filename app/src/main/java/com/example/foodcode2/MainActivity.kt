@@ -1,8 +1,9 @@
 package com.example.foodcode2
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.foodcode2.databinding.ActivityMainBinding
+import com.example.foodcode2.ui.herolist.ListFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,5 +15,27 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.listFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.NavHostFragment, ListFragment())
+                        .commitNow()
+                }
+
+                R.id.fragmentFoodFav -> {
+
+                }
+
+                R.id.infoUserFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.NavHostFragment, InfoUserFragment.newInstance())
+                        .commitNow()
+                }
+            }
+            true
+        }
     }
+
 }

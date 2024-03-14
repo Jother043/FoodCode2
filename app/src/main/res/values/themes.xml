@@ -4,9 +4,18 @@
         <!-- Customize your light theme here. -->
         <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/foodlogo</item>
         <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="s">1000</item>
-        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/white</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/naranja</item>
+        <!-- Colores para los botones -->
+        <item name="colorPrimary">@color/my_primary</item>
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- colores para el fondo de app -->
+        <item name="colorPrimaryVariant">@color/my_primary_variant</item>
     </style>
 
     <style name="Theme.FoodCode" parent="Base.Theme.FoodCode" />
+
+    <color name="my_primary">#774E30</color>
+
+    <color name="my_primary_variant">#A2755D</color>
+    <color name="naranja">#A2755D</color>
 </resources>
