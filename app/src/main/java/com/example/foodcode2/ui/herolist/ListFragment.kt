@@ -3,7 +3,6 @@ package com.example.foodcode2.ui.herolist
 import Food
 import FoodAdapter
 import FoodListVM
-import FoodRepository
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,21 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.foodcode2.NavigationCallback
-import com.example.foodcode2.R
-
-import com.example.foodcode2.api.ApiService
 import com.example.foodcode2.databinding.FragmentListBinding
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class ListFragment : Fragment(), NavigationCallback {
+class ListFragment : Fragment(){
 
     private var _binding: FragmentListBinding? = null
     val binding
@@ -48,9 +40,16 @@ class ListFragment : Fragment(), NavigationCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentListBinding.inflate(inflater, container, false)
         binding.textView.text = "Food List"
         return binding.root
+    }
+
+    private fun selectFood(foodId: Int) {
+        //Como paso esta comida a la pantalla de detalles?
+        val action = ListFragmentDirections.actionListFragmentToDetailsFragment2(foodId)
+        findNavController().navigate(action)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,10 +62,9 @@ class ListFragment : Fragment(), NavigationCallback {
 
     private fun initRecView() {
         foodAdapter = FoodAdapter(
-            listFood = mutableListOf(),
-            onClickItem = { selectFood(it) },
-            onClickToFavorites = { addToFavorites(it) },
-            callback = this
+            _listFood = mutableListOf(),
+            onClickItem = { foodId -> selectFood(foodId) },
+            onClickToFavorites = {  }
         )
         binding.rvFoods.adapter = foodAdapter
         if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -95,26 +93,7 @@ class ListFragment : Fragment(), NavigationCallback {
         }
     }
 
-    /**
-     * Esta función se encarga de añadir un alimento a la lista de favoritos
-     */
-    private fun addToFavorites(it: Int) {
-        //Añade el elemento a la lista de favoritos
-        foodListState[it].isFavorite = true
-        //Actualiza el adapter
-        foodAdapter.notifyDataSetChanged()
-    }
 
-    private fun selectFood(foodIndex: Int) {
-        val food = foodAdapter.listFood[foodIndex]
-        navigateToDetails(food)
-    }
 
-    override fun navigateToDetails(food: Food) {
-        if (isAdded) {
-            val action = ListFragmentDirections.actionListFragmentToFoodDetailsFragment(food)
-            view?.findNavController()?.navigate(action)
-        }
-    }
 
 }

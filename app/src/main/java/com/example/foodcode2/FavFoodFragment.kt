@@ -68,7 +68,7 @@ class FavFoodFragment : Fragment(), NavigationCallback {
             }
     }
 
-    override fun navigateToDetails(food: Food) {
+     fun navigateToDetails(food: Food) {
         findNavController().navigate(R.id.action_listFragment_to_foodDetailsFragment)
     }
 

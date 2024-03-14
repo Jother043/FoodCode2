@@ -4,11 +4,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.foodcode2.api.ApiService
 import com.example.foodcode2.dependencies.FoodCode
+import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class FoodListUiState(
     val foodList: List<Food> = emptyList(),
@@ -24,11 +26,12 @@ class FoodListVM(
     val uiState: StateFlow<FoodListUiState> = _uiState.asStateFlow()
 
     init {
-        val ids = listOf(52771, 52772, 52773, 52774, 52775, 52776) // Reemplaza esto con los IDs que quieras obtener
+        val ids = listOf(52771, 52772, 52773, 52774, 52775, 52776, 52777) // Reemplaza esto con los IDs que quieras obtener
         fetchFoodsByIds(ids)
     }
 
     fun fetchFoodsByIds(ids: List<Int>) {
+
         _uiState.value = FoodListUiState(isLoading = true)
         viewModelScope.launch {
             val response = foodRepository.getFoodsByIds(ids)
@@ -37,13 +40,29 @@ class FoodListVM(
                     _uiState.value = FoodListUiState(foodList = foods)
                 }
             } else {
-                _uiState.value = FoodListUiState(error = "Error fetching foods")
+                _uiState.value = FoodListUiState(error = "Error obteniendo comidas por ids")
             }
         }
     }
 
+
+    /*fun addFoodToFavorites(food: Food) {
+        viewModelScope.launch {
+            val isFavorite = isFavorite(food)
+            foodRepository.addFoodToFavorites(food)
+        }
+    }
+
+    suspend fun isFavorite(food: Food): Boolean {
+        return withContext(Dispatchers.IO) {
+            return@withContext foodRepository.isFavorite(food)
+        }
+    }
+
+     */
+
+    // Este companion object es necesario para poder crear una instancia de este ViewModel
     companion object {
-         const val NUM_FOODS = 10
 
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

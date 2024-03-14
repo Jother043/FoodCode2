@@ -1,0 +1,1889 @@
+Index: app/src/main/java/com/example/foodcode2/adapter/FoodAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\nimport Food\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.navigation.fragment.findNavController\r\nimport androidx.recyclerview.widget.RecyclerView\r\nimport coil.load\r\nimport com.example.foodcode2.NavigationCallback\r\nimport com.example.foodcode2.R\r\nimport com.example.foodcode2.databinding.FoodItemBinding\r\nimport com.example.foodcode2.ui.herolist.ListFragmentDirections\r\nimport com.google.android.material.snackbar.Snackbar\r\n\r\nclass FoodAdapter(\r\n    var listFood: MutableList<Food>,\r\n    private val onClickItem: (Int) -> Unit,\r\n    private val onClickToFavorites: (Int) -> Unit,\r\n    private val callback: NavigationCallback\r\n) : RecyclerView.Adapter<FoodAdapter.ListViewHolder>() {\r\n    class ListViewHolder(view: View, private val callback: NavigationCallback) :\r\n        RecyclerView.ViewHolder(view) {\r\n        companion object {\r\n            const val DRAWABLE = \"drawable\"\r\n        }\r\n\r\n        private val binding = FoodItemBinding.bind(view)\r\n\r\n        fun bind(food: Food, onClickToFavorites: (Int) -> Unit) {\r\n            binding.tvName.text = food.title\r\n            binding.tvCalories.text = food.strArea\r\n            binding.tvProteins.text = food.strCategory\r\n            binding.ivPhoto.load(food.strMealThumb)\r\n\r\n            binding.root.setOnClickListener {\r\n                callback.navigateToDetails(food)\r\n            }\r\n\r\n            binding.ivFavFood.setOnClickListener {\r\n                Snackbar.make(\r\n                    it,\r\n                    \"Has añadido a favoritos el alimento: ${food.title}\",\r\n                    Snackbar.LENGTH_SHORT\r\n                ).show()\r\n                onClickToFavorites(adapterPosition)\r\n            }\r\n        }\r\n    }\r\n\r\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {\r\n        val layoutInflater = LayoutInflater.from(parent.context)\r\n        return ListViewHolder(\r\n            layoutInflater.inflate(R.layout.food_item, parent, false),\r\n            this.callback\r\n        )\r\n    }\r\n\r\n    override fun getItemCount(): Int {\r\n        return listFood.size\r\n    }\r\n\r\n    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {\r\n        holder.bind(listFood[position], onClickToFavorites)\r\n        holder.itemView.setOnClickListener {\r\n            onClickItem(position)\r\n        }\r\n    }\r\n\r\n    fun setFoodList(foodList: List<Food>) {\r\n        listFood = foodList.toMutableList()\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/adapter/FoodAdapter.kt b/app/src/main/java/com/example/foodcode2/adapter/FoodAdapter.kt
+--- a/app/src/main/java/com/example/foodcode2/adapter/FoodAdapter.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/adapter/FoodAdapter.kt	(date 1710439807066)
+@@ -9,6 +9,7 @@
+ import com.example.foodcode2.NavigationCallback
+ import com.example.foodcode2.R
+ import com.example.foodcode2.databinding.FoodItemBinding
++
+ import com.example.foodcode2.ui.herolist.ListFragmentDirections
+ import com.google.android.material.snackbar.Snackbar
+ 
+Index: app/src/main/java/com/example/foodcode2/repositories/FoodRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import android.util.Log\r\nimport com.example.foodcode2.api.ApiService\r\nimport com.example.foodcode2.data.FoodsListResponse\r\nimport kotlinx.coroutines.withTimeout\r\nimport retrofit2.Response\r\nimport kotlin.random.Random\r\n\r\nclass FoodRepository(\r\n    val foodApiService: ApiService\r\n) {\r\n    companion object {\r\n        const val FOOD_HEROES = 52772\r\n    }\r\n\r\n    suspend fun getFullFood(id: Int): Response<FoodsListResponse> {\r\n        return foodApiService.getFoodDetails(id)\r\n    }\r\n\r\n    private val usedRandomNumbers = mutableSetOf<Int>()\r\n\r\n    suspend fun getRandFullFood(): Response<FoodsListResponse> {\r\n        return withTimeout(5000) { // Timeout after 5000 milliseconds (5 seconds)\r\n            var x: Int\r\n            do {\r\n                x = (52771..FOOD_HEROES).random()\r\n                Log.d(\"FoodRepository\", \"Generated random number: $x\")\r\n            } while (!usedRandomNumbers.add(x))\r\n            Log.d(\"FoodRepository\", \"Getting food details for id: $x\")\r\n            getFullFood(x)\r\n        }\r\n    }\r\n\r\n    suspend fun getFood(letter: String): Response<FoodsListResponse> {\r\n        var foodResp = foodApiService.getFoodList(letter)\r\n        if (foodResp.isSuccessful) {\r\n            return foodResp\r\n        } else\r\n            return Response.error(null, null)\r\n    }\r\n\r\n    suspend fun getRandFood(): Response<FoodsListResponse> {\r\n        return withTimeout(5000) { // Timeout after 5000 milliseconds (5 seconds)\r\n            val seed = System.currentTimeMillis()\r\n            Log.d(\"FoodRepository\", \"Generated seed: $seed\")\r\n            var x = (52771..FOOD_HEROES).random(Random(seed))\r\n            Log.d(\"FoodRepository\", \"Generated random number: $x\")\r\n            getFullFood(x)\r\n        }\r\n    }\r\n\r\n    suspend fun getSomeRandFoods(num: Int): Response<List<FoodsListResponse>> {\r\n        var foodList: MutableList<FoodsListResponse> = mutableListOf()\r\n        for (i in 52771..num) {\r\n            val foodResp = getRandFullFood() // use the current instance\r\n            if (foodResp.isSuccessful) {\r\n                foodResp.body()?.let { foodList.add(it) }\r\n            } else {\r\n                val errorBody = foodResp.errorBody()?.string()\r\n            }\r\n        }\r\n        return Response.success(foodList)\r\n    }\r\n\r\n    suspend fun getFoodsByIds(ids: List<Int>): Response<List<Food>> {\r\n        // Se crea una lista mutable de comidas.\r\n        var foodList: MutableList<Food> = mutableListOf()\r\n        // Para cada id en la lista de ids, se obtienen los detalles de la comida.\r\n        for (id in ids) {\r\n            //Se obtiene la comida por id.\r\n            Log.d(\"FoodRepository\", \"Getting food details for id: $id\")\r\n            val foodResp = getFullFood(id)\r\n            if (foodResp.isSuccessful) {\r\n                foodResp.body()?.let {\r\n                    foodList.add(it.toFood())\r\n                    Log.d(\"FoodRepository\", \"Added food to list: ${it.toFood()}\")\r\n                }\r\n                Log.d(\"FoodRepository\", \"Current food list: $foodList\")\r\n            } else {\r\n                val errorBody = foodResp.errorBody()?.string()\r\n                Log.d(\"FoodRepository\", \"Error getting food details: $errorBody\")\r\n            }\r\n        }\r\n        return Response.success(foodList)\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/repositories/FoodRepository.kt b/app/src/main/java/com/example/foodcode2/repositories/FoodRepository.kt
+--- a/app/src/main/java/com/example/foodcode2/repositories/FoodRepository.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/repositories/FoodRepository.kt	(date 1710439807075)
+@@ -1,6 +1,8 @@
+ import android.util.Log
+ import com.example.foodcode2.api.ApiService
+ import com.example.foodcode2.data.FoodsListResponse
++import com.example.foodcode2.db.FoodDao
++import com.example.foodcode2.db.FoodDatabase
+ import kotlinx.coroutines.withTimeout
+ import retrofit2.Response
+ import kotlin.random.Random
+@@ -82,4 +84,13 @@
+         }
+         return Response.success(foodList)
+     }
++
++    /*
++    fun getDbFoodList(): List<FoodEntity>? {
++        //val foodDao = FoodDatabase.getDatabase().foodDao()
++        //Obtiene la lista de comidas de la base de datos.
++        //return foodDao.getAllFoods()
++    }
++
++     */
+ }
+Index: app/src/main/java/com/example/foodcode2/InfoUserFragment.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/InfoUserFragment.kt b/app/src/main/java/com/example/foodcode2/InfoUserFragment.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/foodcode2/InfoUserFragment.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ /dev/null	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
+@@ -1,61 +0,0 @@
+-package com.example.foodcode2
+-
+-import android.os.Bundle
+-import androidx.fragment.app.Fragment
+-import android.view.LayoutInflater
+-import android.view.View
+-import android.view.ViewGroup
+-import androidx.navigation.fragment.findNavController
+-import com.example.foodcode2.databinding.FragmentTab2NoticeBinding
+-
+-// TODO: Rename parameter arguments, choose names that match
+-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+-private const val ARG_PARAM1 = "param1"
+-private const val ARG_PARAM2 = "param2"
+-
+-/**
+- * A simple [Fragment] subclass.
+- * Use the [InfoUserFragment.newInstance] factory method to
+- * create an instance of this fragment.
+- */
+-class InfoUserFragment : Fragment() {
+-    // TODO: Rename and change types of parameters
+-    private var param1: String? = null
+-    private var param2: String? = null
+-    private var _binding : InfoUserFragment? = null
+-    private val binding
+-        get() = _binding!!
+-    override fun onCreate(savedInstanceState: Bundle?) {
+-        super.onCreate(savedInstanceState)
+-        arguments?.let {
+-            param1 = it.getString(ARG_PARAM1)
+-            param2 = it.getString(ARG_PARAM2)
+-        }
+-    }
+-
+-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+-                              savedInstanceState: Bundle?): View? {
+-
+-
+-        // Inflate the layout for this fragment
+-        return inflater.inflate(R.layout.fragment_info_user, container, false)
+-
+-    }
+-
+-    companion object {
+-        /**
+-         * Use this factory method to create a new instance of
+-         * this fragment using the provided parameters.
+-         *
+-         * @param param1 Parameter 1.
+-         * @param param2 Parameter 2.
+-         * @return A new instance of fragment InfoUserFragment.
+-         */
+-        // TODO: Rename and change types and number of parameters
+-        @JvmStatic fun newInstance() =
+-                InfoUserFragment().apply {
+-                    arguments = Bundle().apply {
+-                    }
+-                }
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/LoginFragment.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/LoginFragment.kt b/app/src/main/java/com/example/foodcode2/LoginFragment.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/foodcode2/LoginFragment.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ /dev/null	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
+@@ -1,76 +0,0 @@
+-package com.example.foodcode2
+-
+-import android.os.Bundle
+-import androidx.fragment.app.Fragment
+-import android.view.LayoutInflater
+-import android.view.View
+-import android.view.ViewGroup
+-import android.widget.Button
+-import android.widget.EditText
+-import androidx.navigation.fragment.findNavController
+-import com.example.foodcode2.databinding.FragmentLoginBinding
+-import com.google.android.material.bottomnavigation.BottomNavigationView
+-import com.google.android.material.snackbar.Snackbar
+-
+-class LoginFragment : Fragment() {
+-
+-    //Create a binding object so that we can access views in the fragment_login.xml layout.
+-    private lateinit var binding: FragmentLoginBinding
+-    private lateinit var etName: EditText
+-
+-    /**
+-     * Llamamos a la función onCreateView() y le pasamos los parámetros habituales.
+-     * En el cuerpo de la función, creamos una variable binding que hace referencia a la clase
+-     * FragmentLoginBinding y la inicializamos con el método inflate() que se genera a partir del
+-     * nombre del layout fragment_login.xml.
+-     */
+-    override fun onCreateView(
+-        inflater: LayoutInflater, container: ViewGroup?,
+-        savedInstanceState: Bundle?,
+-    ): View? {
+-        binding = FragmentLoginBinding.inflate(layoutInflater)
+-
+-        binding.btnSignup.setOnClickListener {
+-            if (etName.text.toString().isNotEmpty()) {
+-                //findNavController().navigate(R.id.action_loginFragment2_to_menuFragment)
+-                findNavController().navigate(R.id.action_loginFragment2_to_noticeFragment)
+-            } else {
+-                Snackbar.make(
+-                    binding.root,
+-                    "El nombre no puede estar vacío",
+-                    Snackbar.LENGTH_SHORT
+-                ).show()
+-            }
+-        }
+-
+-        //Hacemos invisible la barra de navegación.
+-        view?.let { super.onViewCreated(it, savedInstanceState) }
+-        val navBar: BottomNavigationView? = activity?.findViewById(R.id.bottom_navigation)
+-        navBar?.visibility = View.GONE
+-
+-
+-        etName = binding.editTextName
+-        val name = etName.text.toString()
+-        goToElection()
+-
+-        return binding.root
+-    }
+-
+-    private fun goToElection() {
+-        if (etName.text.toString().isNotEmpty()) {
+-            findNavController().navigate(R.id.action_loginFragment2_to_menuFragment)
+-        } else {
+-            if (etName.text.toString().isEmpty() && binding.btnSignup.isPressed)
+-                Snackbar.make(
+-                    binding.root,
+-                    "El nombre no puede estar vacío",
+-                    Snackbar.LENGTH_SHORT
+-                ).show()
+-        }
+-    }
+-
+-    companion object {
+-        const val NAME = "name"
+-    }
+-
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/FragmentFoodFav.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/FragmentFoodFav.kt b/app/src/main/java/com/example/foodcode2/FragmentFoodFav.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/foodcode2/FragmentFoodFav.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ /dev/null	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
+@@ -1,112 +0,0 @@
+-package com.example.foodcode2
+-
+-import Food
+-import android.os.Bundle
+-import androidx.fragment.app.Fragment
+-import android.view.LayoutInflater
+-import android.view.View
+-import android.view.ViewGroup
+-import androidx.navigation.fragment.findNavController
+-import androidx.recyclerview.widget.LinearLayoutManager
+-
+-import com.example.foodcode2.databinding.FragmentFavFoodBinding
+-import com.google.android.material.snackbar.Snackbar
+-
+-class FragmentFoodFav : Fragment(), NavigationCallback {
+-    //Este fragmento muestra la lista de series favoritas que se han añadido en la lista de series
+-    //Se ha creado un nuevo fragmento para que se muestre en una pestaña diferente
+-
+-    private var _binding: FragmentFavFoodBinding? = null
+-    private val binding
+-        get() = _binding!!
+-
+-   //  val foods = Datasource.getFavFoodList()
+-
+-    override fun onCreate(savedInstanceState: Bundle?) {
+-        super.onCreate(savedInstanceState)
+-        arguments?.let {
+-        }
+-    }
+-
+-    override fun onCreateView(
+-        inflater: LayoutInflater, container: ViewGroup?,
+-        savedInstanceState: Bundle?
+-    ): View? {
+-
+-        _binding = FragmentFavFoodBinding.inflate(inflater, container, false)
+-        //initRecyclerView()
+-        return binding.root
+-
+-    }
+-
+-    //Funcion que muestra la lista que se va a ir actualizando con las series favoritas
+-    /*private fun initRecyclerView() {
+-        val foodAdapter = FoodAdapter(foods, ::favFood,this)
+-        binding.rvFavFood.adapter = foodAdapter
+-        val layaoutManager = LinearLayoutManager(context)
+-        binding.rvFavFood.layoutManager = layaoutManager
+-    }
+-
+-     */
+-
+-    //Se elimina de la lista de series y se añade a la lista de favoritos
+-    fun favFood(position: Int) {
+-        /*si el numero de elementos es distinto a la posicion del ultimo elemento de la lista
+-        se elimina el elemento de la lista de series y se notifica al adaptador que se ha eliminado
+-        un elemento de la lista, se cambia el valor de fav a true y se notifica al adaptador que
+-        se ha cambiado el valor de fav a true, si no se añade un mensaje emergente de que no se
+-        puede eliminar el ultimo elemento
+-
+-         */
+-        /*if (foods.size == position) {
+-            Snackbar.make(
+-                binding.root,
+-                "No se puede eliminar el ultimo elemento",
+-                Snackbar.LENGTH_SHORT
+-            ).show()
+-        } else {
+-            val food = foods[position]
+-            foods.removeAt(position)
+-            binding.rvFavFood.adapter?.notifyItemRemoved(position)
+-            food.fav = true
+-            binding.rvFavFood.adapter?.notifyItemChanged(position)
+-        }
+-
+-        //Se añade a la lista de favoritos
+-        Datasource.addFavFood(foods[position])
+-
+-        //Se añade un mensaje emergente de que se ha añadido a favoritos
+-        Snackbar.make(
+-            binding.root,
+-            "Has añadido a favoritos el alimento: ${foods[position].name}",
+-            Snackbar.LENGTH_SHORT
+-        ).show()
+-
+-
+-    }
+-
+-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+-        super.onViewCreated(view, savedInstanceState)
+-    }
+-
+-    companion object {
+-        @JvmStatic
+-        fun newInstance() =
+-            FavFoodFragment().apply {
+-                arguments = Bundle().apply {
+-                }
+-            }
+-    }
+-
+-    override fun navigateToDetails() {
+-        findNavController().navigate(R.id.action_listFragment_to_foodDetailsFragment)
+-    }
+-
+-         */
+-    }
+-
+-    override fun navigateToDetails(food: Food) {
+-        findNavController().navigate(R.id.action_listFragment_to_foodDetailsFragment)
+-    }
+-
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/FoodDetailsFragment.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/FoodDetailsFragment.kt b/app/src/main/java/com/example/foodcode2/FoodDetailsFragment.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/foodcode2/FoodDetailsFragment.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ /dev/null	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
+@@ -1,7 +0,0 @@
+-package com.example.foodcode2
+-
+-// TODO: Rename parameter arguments, choose names that match
+-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+-private const val ARG_PARAM1 = "param1"
+-private const val ARG_PARAM2 = "param2"
+-
+Index: app/src/main/res/navigation/nav_graph.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<navigation xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/nav_graph\"\r\n    app:startDestination=\"@id/loginFragment2\">\r\n\r\n    <fragment\r\n        android:id=\"@+id/menuFragment\"\r\n        android:name=\"com.example.foodcode2.MenuFragment\"\r\n        android:label=\"fragment_menu\"\r\n        tools:layout=\"@layout/fragment_menu\">\r\n        <action\r\n            android:id=\"@+id/action_menuFragment_to_listFragment\"\r\n            app:destination=\"@id/listFragment\" />\r\n        <action\r\n            android:id=\"@+id/action_menuFragment_to_loginFragment2\"\r\n            app:destination=\"@id/loginFragment2\" />\r\n        <action\r\n            android:id=\"@+id/action_menuFragment_to_fragmentFoodFav\"\r\n            app:destination=\"@id/fragmentFoodFav\" />\r\n        <action\r\n            android:id=\"@+id/action_menuFragment_to_infoUserFragment\"\r\n            app:destination=\"@id/infoUserFragment\" />\r\n    </fragment>\r\n    <fragment\r\n        android:id=\"@+id/listFragment\"\r\n        android:name=\"com.example.foodcode2.ui.herolist.ListFragment\"\r\n        android:label=\"fragment_list\"\r\n        tools:layout=\"@layout/fragment_list\">\r\n        <action\r\n            android:id=\"@+id/action_listFragment_to_foodDetailsFragment\"\r\n            app:destination=\"@id/foodDetailsFragment\">\r\n        </action>\r\n        <argument\r\n            android:name=\"food\"\r\n            app:argType=\"Food\" />\r\n    </fragment>\r\n    <fragment\r\n        android:id=\"@+id/creditFragment\"\r\n        android:name=\"com.example.foodcode2.CreditFragment\"\r\n        android:label=\"fragment_credit\"\r\n        tools:layout=\"@layout/fragment_credit\" />\r\n    <fragment\r\n        android:id=\"@+id/loginFragment2\"\r\n        android:name=\"com.example.foodcode2.LoginFragment\"\r\n        android:label=\"fragment_login\"\r\n        tools:layout=\"@layout/fragment_login\">\r\n        <action\r\n            android:id=\"@+id/action_loginFragment2_to_menuFragment\"\r\n            app:destination=\"@id/menuFragment\" />\r\n        <action\r\n            android:id=\"@+id/action_loginFragment2_to_noticeFragment\"\r\n            app:destination=\"@id/noticeFragment\" />\r\n    </fragment>\r\n    <fragment\r\n        android:id=\"@+id/fragmentFoodFav\"\r\n        android:name=\"com.example.foodcode2.FragmentFoodFav\"\r\n        android:label=\"fragment_food_fav\"\r\n        tools:layout=\"@layout/fragment_food_fav\" />\r\n    <fragment\r\n        android:id=\"@+id/noticeFragment\"\r\n        android:name=\"com.example.foodcode2.NoticeFragment\"\r\n        android:label=\"NoticeFragment\">\r\n        <action\r\n            android:id=\"@+id/action_noticeFragment_to_loginFragment2\"\r\n            app:destination=\"@id/loginFragment2\" />\r\n        <action\r\n            android:id=\"@+id/action_noticeFragment_to_menuFragment\"\r\n            app:destination=\"@id/menuFragment\" />\r\n    </fragment>\r\n    <fragment\r\n        android:id=\"@+id/aboutFragment\"\r\n        android:name=\"com.example.foodcode2.AboutFragment\"\r\n        android:label=\"fragment_about\"\r\n        tools:layout=\"@layout/fragment_about\" />\r\n    <fragment\r\n        android:id=\"@+id/infoUserFragment\"\r\n        android:name=\"com.example.foodcode2.InfoUserFragment\"\r\n        android:label=\"fragment_info_user\"\r\n        tools:layout=\"@layout/fragment_info_user\">\r\n        <action\r\n            android:id=\"@+id/action_infoUserFragment_to_menuFragment\"\r\n            app:destination=\"@id/menuFragment\" />\r\n        <action\r\n            android:id=\"@+id/action_infoUserFragment_to_loginFragment2\"\r\n            app:destination=\"@id/loginFragment2\" />\r\n        <action\r\n            android:id=\"@+id/action_infoUserFragment_to_loginFragment22\"\r\n            app:destination=\"@id/loginFragment2\" />\r\n    </fragment>\r\n    <fragment\r\n        android:id=\"@+id/foodDetailsFragment\"\r\n        android:name=\"com.example.foodcode2.ui.details.FoodDetailsFragment\"\r\n        android:label=\"fragment_food_details\"\r\n        tools:layout=\"@layout/fragment_food_details\">\r\n        <argument\r\n            android:name=\"food\"\r\n            app:argType=\"Food\" />\r\n    </fragment>\r\n</navigation>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/navigation/nav_graph.xml b/app/src/main/res/navigation/nav_graph.xml
+--- a/app/src/main/res/navigation/nav_graph.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/navigation/nav_graph.xml	(date 1710439807147)
+@@ -30,11 +30,7 @@
+         tools:layout="@layout/fragment_list">
+         <action
+             android:id="@+id/action_listFragment_to_foodDetailsFragment"
+-            app:destination="@id/foodDetailsFragment">
+-        </action>
+-        <argument
+-            android:name="food"
+-            app:argType="Food" />
++            app:destination="@id/foodDetailsFragment"></action>
+     </fragment>
+     <fragment
+         android:id="@+id/creditFragment"
+@@ -43,7 +39,7 @@
+         tools:layout="@layout/fragment_credit" />
+     <fragment
+         android:id="@+id/loginFragment2"
+-        android:name="com.example.foodcode2.LoginFragment"
++        android:name="com.example.foodcode2.ui.login.LoginFragment"
+         android:label="fragment_login"
+         tools:layout="@layout/fragment_login">
+         <action
+@@ -55,7 +51,7 @@
+     </fragment>
+     <fragment
+         android:id="@+id/fragmentFoodFav"
+-        android:name="com.example.foodcode2.FragmentFoodFav"
++        android:name="com.example.foodcode2.ui.favorite.FragmentFoodFav"
+         android:label="fragment_food_fav"
+         tools:layout="@layout/fragment_food_fav" />
+     <fragment
+@@ -76,7 +72,7 @@
+         tools:layout="@layout/fragment_about" />
+     <fragment
+         android:id="@+id/infoUserFragment"
+-        android:name="com.example.foodcode2.InfoUserFragment"
++        android:name="com.example.foodcode2.ui.userpreferences.InfoUserFragment"
+         android:label="fragment_info_user"
+         tools:layout="@layout/fragment_info_user">
+         <action
+@@ -96,6 +92,6 @@
+         tools:layout="@layout/fragment_food_details">
+         <argument
+             android:name="food"
+-            app:argType="Food" />
++            app:argType="integer" />
+     </fragment>
+ </navigation>
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/dependencies/AppContainer.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.foodcode2.dependencies\r\n\r\nimport FoodRepository\r\nimport android.content.Context\r\nimport com.example.foodcode2.api.ApiService\r\nimport com.example.foodcode2.api.FoodApiConfig\r\n\r\n\r\nclass AppContainer(context : Context) {\r\n\r\n    //Creación del servicio, usando la api.\r\n    private val FoodApiService = FoodApiConfig.provideRetrofit().create(ApiService::class.java)\r\n\r\n    //Creación del repositorio que hará uso de la API.\r\n    val FoodRepository : FoodRepository = FoodRepository(FoodApiService)\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/dependencies/AppContainer.kt b/app/src/main/java/com/example/foodcode2/dependencies/AppContainer.kt
+--- a/app/src/main/java/com/example/foodcode2/dependencies/AppContainer.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/dependencies/AppContainer.kt	(date 1710439807160)
+@@ -2,12 +2,20 @@
+ 
+ import FoodRepository
+ import android.content.Context
++import androidx.datastore.core.DataStore
++import androidx.datastore.preferences.core.Preferences
++import androidx.datastore.preferences.preferencesDataStore
+ import com.example.foodcode2.api.ApiService
+ import com.example.foodcode2.api.FoodApiConfig
++import com.example.foodcode2.repositories.UserRepositories
++
+ 
+ 
+ class AppContainer(context : Context) {
+ 
++
++
++
+     //Creación del servicio, usando la api.
+     private val FoodApiService = FoodApiConfig.provideRetrofit().create(ApiService::class.java)
+ 
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetDropDown\">\r\n    <value>\r\n      <entry key=\"app\">\r\n        <State />\r\n      </entry>\r\n    </value>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1710439807175)
+@@ -3,7 +3,20 @@
+   <component name="deploymentTargetDropDown">
+     <value>
+       <entry key="app">
+-        <State />
++        <State>
++          <runningDeviceTargetSelectedWithDropDown>
++            <Target>
++              <type value="RUNNING_DEVICE_TARGET" />
++              <deviceKey>
++                <Key>
++                  <type value="VIRTUAL_DEVICE_PATH" />
++                  <value value="C:\Users\Kingo\.android\avd\Pixel_3_API_34.avd" />
++                </Key>
++              </deviceKey>
++            </Target>
++          </runningDeviceTargetSelectedWithDropDown>
++          <timeTargetWasSelectedWithDropDown value="2024-03-14T15:48:45.271874400Z" />
++        </State>
+       </entry>
+     </value>
+   </component>
+Index: app/src/main/java/com/example/foodcode2/ui/favorite/FragmentFoodFav.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/favorite/FragmentFoodFav.kt b/app/src/main/java/com/example/foodcode2/ui/favorite/FragmentFoodFav.kt
+new file mode 100644
+--- /dev/null	(date 1710439807091)
++++ b/app/src/main/java/com/example/foodcode2/ui/favorite/FragmentFoodFav.kt	(date 1710439807091)
+@@ -0,0 +1,66 @@
++package com.example.foodcode2.ui.favorite
++
++import Food
++import android.os.Bundle
++import androidx.fragment.app.Fragment
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import androidx.lifecycle.ViewModelProvider
++import androidx.navigation.fragment.findNavController
++import com.example.foodcode2.NavigationCallback
++import com.example.foodcode2.R
++import com.example.foodcode2.adapter.FavoriteAdapter
++import com.example.foodcode2.databinding.FragmentFavFoodBinding
++
++class FragmentFoodFav : Fragment(), NavigationCallback {
++
++    private var _binding: FragmentFavFoodBinding? = null
++    private val binding get() = _binding!!
++
++    private lateinit var favoriteAdapter: FavoriteAdapter
++    private lateinit var viewModel: FavoriteViewModel
++
++    override fun onCreateView(
++        inflater: LayoutInflater, container: ViewGroup?,
++        savedInstanceState: Bundle?
++    ): View? {
++        _binding = FragmentFavFoodBinding.inflate(inflater, container, false)
++        favoriteAdapter = FavoriteAdapter()
++        viewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
++        return binding.root
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++        /*
++        binding.apply {
++            //Load data
++            viewModel.getFavoritesFoodList()
++            viewModel.foodList.observe(viewLifecycleOwner) { dataStatus ->
++                dataStatus.data?.let { foods ->
++                    if (foods.isEmpty()) {
++                        // Handle empty state
++                    } else {
++                        favoriteAdapter.setData(foods)
++                        rvFavFood.setupRecyclerView(LinearLayoutManager(requireContext()), favoriteAdapter)
++                        favoriteAdapter.setOnItemClickListener { food ->
++                            navigateToDetails(food)
++                        }
++                    }
++                }
++            }
++        }
++
++         */
++    }
++
++    override fun onDestroyView() {
++        super.onDestroyView()
++        _binding = null
++    }
++
++    override fun navigateToDetails(food: Food) {
++        findNavController().navigate(R.id.action_listFragment_to_foodDetailsFragment)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/drawable/nav_graph.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/nav_graph.xml b/app/src/main/res/drawable/nav_graph.xml
+new file mode 100644
+--- /dev/null	(date 1710439807153)
++++ b/app/src/main/res/drawable/nav_graph.xml	(date 1710439807153)
+@@ -0,0 +1,101 @@
++<?xml version="1.0" encoding="utf-8"?>
++<navigation xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/nav_graph"
++    app:startDestination="@id/loginFragment2">
++
++    <fragment
++        android:id="@+id/menuFragment"
++        android:name="com.example.foodcode2.MenuFragment"
++        android:label="fragment_menu"
++        tools:layout="@layout/fragment_menu">
++        <action
++            android:id="@+id/action_menuFragment_to_listFragment"
++            app:destination="@id/listFragment" />
++        <action
++            android:id="@+id/action_menuFragment_to_loginFragment2"
++            app:destination="@id/loginFragment2" />
++        <action
++            android:id="@+id/action_menuFragment_to_fragmentFoodFav"
++            app:destination="@id/fragmentFoodFav" />
++        <action
++            android:id="@+id/action_menuFragment_to_infoUserFragment"
++            app:destination="@id/infoUserFragment" />
++    </fragment>
++    <fragment
++        android:id="@+id/listFragment"
++        android:name="com.example.foodcode2.ui.herolist.ListFragment"
++        android:label="fragment_list"
++        tools:layout="@layout/fragment_list">
++        <action
++            android:id="@+id/action_listFragment_to_foodDetailsFragment"
++            app:destination="@id/foodDetailsFragment">
++        </action>
++        <argument
++            android:name="food"
++            app:argType="Food" />
++    </fragment>
++    <fragment
++        android:id="@+id/creditFragment"
++        android:name="com.example.foodcode2.CreditFragment"
++        android:label="fragment_credit"
++        tools:layout="@layout/fragment_credit" />
++    <fragment
++        android:id="@+id/loginFragment2"
++        android:name="com.example.foodcode2.ui.login.LoginFragment"
++        android:label="fragment_login"
++        tools:layout="@layout/fragment_login">
++        <action
++            android:id="@+id/action_loginFragment2_to_menuFragment"
++            app:destination="@id/menuFragment" />
++        <action
++            android:id="@+id/action_loginFragment2_to_noticeFragment"
++            app:destination="@id/noticeFragment" />
++    </fragment>
++    <fragment
++        android:id="@+id/fragmentFoodFav"
++        android:name="com.example.foodcode2.ui.favorite.FragmentFoodFav"
++        android:label="fragment_food_fav"
++        tools:layout="@layout/fragment_food_fav" />
++    <fragment
++        android:id="@+id/noticeFragment"
++        android:name="com.example.foodcode2.NoticeFragment"
++        android:label="NoticeFragment">
++        <action
++            android:id="@+id/action_noticeFragment_to_loginFragment2"
++            app:destination="@id/loginFragment2" />
++        <action
++            android:id="@+id/action_noticeFragment_to_menuFragment"
++            app:destination="@id/menuFragment" />
++    </fragment>
++    <fragment
++        android:id="@+id/aboutFragment"
++        android:name="com.example.foodcode2.AboutFragment"
++        android:label="fragment_about"
++        tools:layout="@layout/fragment_about" />
++    <fragment
++        android:id="@+id/infoUserFragment"
++        android:name="com.example.foodcode2.ui.userpreferences.InfoUserFragment"
++        android:label="fragment_info_user"
++        tools:layout="@layout/fragment_info_user">
++        <action
++            android:id="@+id/action_infoUserFragment_to_menuFragment"
++            app:destination="@id/menuFragment" />
++        <action
++            android:id="@+id/action_infoUserFragment_to_loginFragment2"
++            app:destination="@id/loginFragment2" />
++        <action
++            android:id="@+id/action_infoUserFragment_to_loginFragment22"
++            app:destination="@id/loginFragment2" />
++    </fragment>
++    <fragment
++        android:id="@+id/foodDetailsFragment"
++        android:name="com.example.foodcode2.ui.details.FoodDetailsFragment"
++        android:label="fragment_food_details"
++        tools:layout="@layout/fragment_food_details">
++        <argument
++            android:name="food"
++            app:argType="Food" />
++    </fragment>
++</navigation>
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/data/UserPreferences.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/data/UserPreferences.kt b/app/src/main/java/com/example/foodcode2/data/UserPreferences.kt
+new file mode 100644
+--- /dev/null	(date 1710439807141)
++++ b/app/src/main/java/com/example/foodcode2/data/UserPreferences.kt	(date 1710439807141)
+@@ -0,0 +1,16 @@
++package com.example.foodcode2.data
++
++import androidx.datastore.preferences.core.booleanPreferencesKey
++import androidx.datastore.preferences.core.intPreferencesKey
++import androidx.datastore.preferences.core.stringPreferencesKey
++
++data class UserPreferences(
++    val name: String = ANONYMOUS,
++    val showViewPage: Boolean = true
++) {
++    companion object {
++        const val ANONYMOUS = "anonymous"
++        val USER_NAME = stringPreferencesKey("user_name")
++        val SHOW_VIEWPAGE = booleanPreferencesKey("show_viewpage")
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/ui/userpreferences/InfoUserFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/userpreferences/InfoUserFragment.kt b/app/src/main/java/com/example/foodcode2/ui/userpreferences/InfoUserFragment.kt
+new file mode 100644
+--- /dev/null	(date 1710439807373)
++++ b/app/src/main/java/com/example/foodcode2/ui/userpreferences/InfoUserFragment.kt	(date 1710439807373)
+@@ -0,0 +1,62 @@
++package com.example.foodcode2.ui.userpreferences
++
++import android.annotation.SuppressLint
++import android.os.Bundle
++import android.util.Log
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import android.widget.Button
++import android.widget.CheckBox
++import android.widget.TextView
++import androidx.fragment.app.Fragment
++import androidx.lifecycle.lifecycleScope
++import androidx.navigation.fragment.findNavController
++import com.example.foodcode2.R
++import com.example.foodcode2.data.UserPreferences
++import com.example.foodcode2.dependencies.FoodCode
++import com.example.foodcode2.repositories.UserRepositories
++import kotlinx.coroutines.flow.first
++import kotlinx.coroutines.launch
++
++class InfoUserFragment : Fragment() {
++
++    private lateinit var userNameTextView: TextView
++    private lateinit var userCheckbox: CheckBox
++    private lateinit var saveButton: Button
++    private lateinit var userRepositories: UserRepositories
++
++    @SuppressLint("SetTextI18n")
++    override fun onCreateView(
++        inflater: LayoutInflater,
++        container: ViewGroup?,
++        savedInstanceState: Bundle?
++    ): View? {
++        val view = inflater.inflate(R.layout.fragment_info_user, container, false)
++
++        userNameTextView = view.findViewById(R.id.tvNombre)
++        userCheckbox = view.findViewById(R.id.checkBox2)
++        saveButton = view.findViewById(R.id.buttonLogOut)
++
++        // En InfoUserFragment.kt
++        lifecycleScope.launch {
++            val userName = userRepositories.getUserName().first()
++            if (userName.isEmpty() || userName == UserPreferences.ANONYMOUS) {
++                Log.d("InfoUserFragment", "No se encontró ningún nombre de usuario.")
++                userNameTextView.text = "Usuario desconocido"
++            } else {
++                Log.d("InfoUserFragment", "El nombre es: ${userName}")
++                userNameTextView.text = userName
++            }
++        }
++
++        saveButton.setOnClickListener {
++            lifecycleScope.launch {
++                userRepositories.saveSettings("name", userCheckbox.isChecked)
++                //Navegamos al fragmento de login
++                findNavController().navigate(R.id.action_infoUserFragment_to_loginFragment2)
++            }
++        }
++        return view
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/ui/login/LoginFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/login/LoginFragment.kt b/app/src/main/java/com/example/foodcode2/ui/login/LoginFragment.kt
+new file mode 100644
+--- /dev/null	(date 1710439807324)
++++ b/app/src/main/java/com/example/foodcode2/ui/login/LoginFragment.kt	(date 1710439807324)
+@@ -0,0 +1,68 @@
++package com.example.foodcode2.ui.login
++
++import android.os.Bundle
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import android.widget.EditText
++import androidx.fragment.app.Fragment
++import androidx.lifecycle.ViewModelProvider
++import androidx.lifecycle.lifecycleScope
++import androidx.navigation.fragment.findNavController
++import com.example.foodcode2.R
++import com.example.foodcode2.databinding.FragmentLoginBinding
++import com.example.foodcode2.dependencies.AppContainer
++import com.example.foodcode2.dependencies.FoodCode
++import com.example.foodcode2.repositories.UserRepositories
++import com.example.foodcode2.ui.userpreferences.InfoUserVM
++import com.google.android.material.bottomnavigation.BottomNavigationView
++import com.google.android.material.snackbar.Snackbar
++import kotlinx.coroutines.launch
++
++class LoginFragment : Fragment() {
++
++    private lateinit var binding: FragmentLoginBinding
++    private lateinit var etName: EditText
++    private lateinit var userRepositories: UserRepositories
++    private lateinit var infoUserVM: InfoUserVM
++
++    override fun onCreateView(
++        inflater: LayoutInflater, container: ViewGroup?,
++        savedInstanceState: Bundle?,
++    ): View? {
++        binding = FragmentLoginBinding.inflate(layoutInflater)
++        val appContainer = (activity?.application as FoodCode).appContainer
++        infoUserVM = ViewModelProvider(this).get(InfoUserVM::class.java)
++
++        etName = binding.editTextName
++
++        binding.btnSignup.setOnClickListener {
++            val userName = etName.text.toString()
++            if (userName.isNotEmpty()) {
++                //Si el nombre no está vacío se guarda en la base de datos si el
++                // checkbox no esta seleccionado se navega a la pantalla noticias si no a la pantalla de menu
++                lifecycleScope.launch {
++                    infoUserVM.saveUserName(userName)
++                    val userPreferences = infoUserVM.getUserPreferences()
++                    val showViewPage = userPreferences["showViewPage"] as? Boolean
++                    if (showViewPage == true) {
++                        val action = LoginFragmentDirections.actionLoginFragment2ToMenuFragment()
++                        findNavController().navigate(action)
++                    } else {
++                        val action = LoginFragmentDirections.actionLoginFragment2ToNoticeFragment()
++                        findNavController().navigate(action)
++                    }
++                }
++            } else {
++                Snackbar.make(
++                    binding.root, "El nombre no puede estar vacío", Snackbar.LENGTH_SHORT
++                ).show()
++            }
++        }
++
++        val navBar: BottomNavigationView? = activity?.findViewById(R.id.bottom_navigation)
++        navBar?.visibility = View.GONE
++
++        return binding.root
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/db/FoodDatabase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/db/FoodDatabase.kt b/app/src/main/java/com/example/foodcode2/db/FoodDatabase.kt
+new file mode 100644
+--- /dev/null	(date 1710439807300)
++++ b/app/src/main/java/com/example/foodcode2/db/FoodDatabase.kt	(date 1710439807300)
+@@ -0,0 +1,12 @@
++package com.example.foodcode2.db
++
++import FoodEntity
++import androidx.room.Database
++import androidx.room.RoomDatabase
++
++
++@Database(entities = [FoodEntity::class], version = 1, exportSchema = false)
++abstract class FoodDatabase : RoomDatabase() {
++    abstract fun foodDao(): FoodDao
++
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_info_user.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".InfoUserFragment\">\r\n\r\n    <!-- TODO: Update blank fragment layout -->\r\n    <TextView\r\n        android:id=\"@+id/InfoUser\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:fontFamily=\"casual\"\r\n        android:text=\"Informacion del usuario\"\r\n        android:textAppearance=\"@style/TextAppearance.AppCompat.Large\"\r\n        android:textSize=\"24sp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/buttonLogOut\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginBottom=\"40dp\"\r\n        android:text=\"Salir\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/tvUser\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginBottom=\"168dp\"\r\n        android:fontFamily=\"sans-serif-smallcaps\"\r\n        android:text=\"Eres el usuario: \"\r\n        android:textAppearance=\"@style/TextAppearance.AppCompat.Large\"\r\n        android:textSize=\"20sp\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/buttonLogOut\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n    <ImageView\r\n        android:id=\"@+id/imageView2\"\r\n        android:layout_width=\"411dp\"\r\n        android:layout_height=\"279dp\"\r\n        android:src=\"@drawable/ic_about_account\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/tvUser\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/InfoUser\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_info_user.xml b/app/src/main/res/layout/fragment_info_user.xml
+--- a/app/src/main/res/layout/fragment_info_user.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/layout/fragment_info_user.xml	(date 1710439807182)
+@@ -4,7 +4,8 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".InfoUserFragment">
++    android:background="@color/fondo"
++    tools:context=".ui.userpreferences.InfoUserFragment">
+ 
+     <!-- TODO: Update blank fragment layout -->
+     <TextView
+@@ -55,4 +56,30 @@
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/InfoUser" />
+ 
++    <CheckBox
++        android:id="@+id/checkBox2"
++        android:layout_width="151dp"
++        android:layout_height="52dp"
++        android:text="Mostrar noticias"
++        app:layout_constraintBottom_toTopOf="@+id/buttonLogOut"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="@+id/tvUser"
++        app:layout_constraintVertical_bias="0.77" />
++
++    <TextView
++        android:id="@+id/tvNombre"
++        android:layout_width="380dp"
++        android:layout_height="58dp"
++        android:layout_marginStart="8dp"
++        android:layout_marginEnd="8dp"
++        android:text="@string/username"
++        android:textAlignment="center"
++        android:textSize="34sp"
++        app:layout_constraintBottom_toTopOf="@+id/checkBox2"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="@+id/tvUser"
++        app:layout_constraintVertical_bias="0.808" />
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/db/FoodEntity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/db/FoodEntity.kt b/app/src/main/java/com/example/foodcode2/db/FoodEntity.kt
+new file mode 100644
+--- /dev/null	(date 1710439807285)
++++ b/app/src/main/java/com/example/foodcode2/db/FoodEntity.kt	(date 1710439807285)
+@@ -0,0 +1,14 @@
++
++import androidx.room.Entity
++import androidx.room.PrimaryKey
++
++const val FOOD_TABLE = "food_table"
++@Entity(tableName = FOOD_TABLE)
++data class FoodEntity(
++    @PrimaryKey
++    var id: Int = 0,
++    var title: String = "",
++    var category: String = "",
++    var area: String = "",
++    var img: String = ""
++)
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_food_details.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".ui.details.FoodDetailsFragment\">\r\n\r\n    <!-- Content -->\r\n    <androidx.constraintlayout.widget.ConstraintLayout\r\n        android:id=\"@+id/foodDetailsFragment\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\">\r\n\r\n        <!-- Cover -->\r\n        <ImageView\r\n            android:id=\"@+id/foodCoverImg\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"300dp\"\r\n            android:scaleType=\"centerCrop\"\r\n            app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n        <!-- Header -->\r\n        <androidx.constraintlayout.widget.ConstraintLayout\r\n            android:id=\"@+id/foodHeaderLay\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"100dp\"\r\n            android:layout_marginTop=\"-50dp\"\r\n            android:background=\"@drawable/bg_top_rounded_dark\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/foodCoverImg\">\r\n\r\n            <!-- Category -->\r\n            <TextView\r\n                android:id=\"@+id/foodCategoryTxt\"\r\n                android:layout_width=\"0dp\"\r\n                android:layout_height=\"40dp\"\r\n                android:layout_marginHorizontal=\"30dp\"\r\n                android:layout_marginTop=\"15dp\"\r\n                android:drawablePadding=\"8dp\"\r\n                android:gravity=\"center_vertical\"\r\n                android:textColor=\"@color/pewterBlue\"\r\n                android:textSize=\"16sp\"\r\n                android:textStyle=\"bold\"\r\n                app:drawableStartCompat=\"@drawable/ic_round_fastfood_24\"\r\n                app:drawableTint=\"@color/pewterBlue\"\r\n                app:layout_constraintStart_toStartOf=\"parent\"\r\n                app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n            <!-- Area -->\r\n            <TextView\r\n                android:id=\"@+id/foodAreaTxt\"\r\n                android:layout_width=\"0dp\"\r\n                android:layout_height=\"40dp\"\r\n                android:layout_marginHorizontal=\"20dp\"\r\n                android:layout_marginTop=\"15dp\"\r\n                android:drawablePadding=\"8dp\"\r\n                android:gravity=\"center_vertical\"\r\n                android:textColor=\"@color/pewterBlue\"\r\n                android:textSize=\"18sp\"\r\n                app:drawableStartCompat=\"@drawable/ic_round_language_24\"\r\n                app:drawableTint=\"@color/pewterBlue\"\r\n                app:layout_constraintStart_toEndOf=\"@id/foodCategoryTxt\"\r\n                app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n        </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n        <!-- Scrollable Content -->\r\n        <androidx.constraintlayout.widget.ConstraintLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"0dp\"\r\n            android:layout_marginTop=\"-30dp\"\r\n            android:background=\"@drawable/bg_top_rounded\"\r\n            android:paddingHorizontal=\"30dp\"\r\n            app:layout_constraintBottom_toBottomOf=\"parent\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/foodHeaderLay\">\r\n\r\n            <!-- Scroll View -->\r\n            <ScrollView\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"match_parent\"\r\n                android:fillViewport=\"true\"\r\n                android:scrollbars=\"none\">\r\n\r\n                <!-- Linear Layout for Content -->\r\n                <LinearLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:orientation=\"vertical\">\r\n\r\n                    <!-- Title -->\r\n                    <TextView\r\n                        android:id=\"@+id/foodTitleTxt\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:paddingTop=\"30dp\"\r\n                        android:textColor=\"@color/black\"\r\n                        android:textSize=\"24sp\"\r\n                        android:textStyle=\"bold\" />\r\n\r\n                    <!-- Description -->\r\n                    <TextView\r\n                        android:id=\"@+id/foodDescTxt\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:layout_marginTop=\"10dp\"\r\n                        android:textColor=\"@color/charcoal\"\r\n                        android:textSize=\"18sp\" />\r\n\r\n                    <!-- Recipes -->\r\n                    <androidx.constraintlayout.widget.ConstraintLayout\r\n                        android:id=\"@+id/foodRecipesLay\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:layout_marginTop=\"10dp\"\r\n                        android:layout_marginBottom=\"10dp\"\r\n                        android:background=\"@drawable/bg_rounded_white_smoke\"\r\n                        android:paddingHorizontal=\"15dp\"\r\n                        android:paddingTop=\"15dp\">\r\n\r\n                        <!-- Ingredient -->\r\n                        <androidx.constraintlayout.widget.ConstraintLayout\r\n                            android:id=\"@+id/foodIngredientsLay\"\r\n                            android:layout_width=\"0dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            app:layout_constraintStart_toStartOf=\"parent\"\r\n                            app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n                            <!-- Logo -->\r\n                            <ImageView\r\n                                android:id=\"@+id/ingredientsImg\"\r\n                                android:layout_width=\"25dp\"\r\n                                android:layout_height=\"25dp\"\r\n                                android:src=\"@drawable/cooking\"\r\n                                app:layout_constraintStart_toStartOf=\"parent\"\r\n                                app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n                            <!-- Title -->\r\n                            <TextView\r\n                                android:id=\"@+id/ingredientsTitle\"\r\n                                android:layout_width=\"114dp\"\r\n                                android:layout_height=\"32dp\"\r\n                                android:layout_marginStart=\"8dp\"\r\n                                android:text=\"@string/ingredients\"\r\n                                android:textColor=\"@color/tartOrange\"\r\n                                android:textSize=\"18sp\"\r\n                                android:textStyle=\"bold\"\r\n                                app:layout_constraintBottom_toBottomOf=\"@id/ingredientsImg\"\r\n                                app:layout_constraintStart_toEndOf=\"@id/ingredientsImg\"\r\n                                app:layout_constraintTop_toTopOf=\"@id/ingredientsImg\"\r\n                                app:layout_constraintVertical_bias=\"0.0\" />\r\n\r\n                            <TextView\r\n                                android:id=\"@+id/ingredientsTxt\"\r\n                                android:layout_width=\"0dp\"\r\n                                android:layout_height=\"19dp\"\r\n                                android:layout_marginTop=\"10dp\"\r\n                                android:textColor=\"@color/deepKoamaru\"\r\n                                android:textSize=\"16sp\"\r\n                                app:layout_constraintStart_toStartOf=\"@id/ingredientsImg\"\r\n                                app:layout_constraintTop_toBottomOf=\"@id/ingredientsImg\" />\r\n\r\n                        </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n                        <!-- Measure -->\r\n                        <androidx.constraintlayout.widget.ConstraintLayout\r\n                            android:id=\"@+id/foodMeasureLay\"\r\n                            android:layout_width=\"0dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:layout_marginStart=\"10dp\"\r\n                            app:layout_constraintStart_toEndOf=\"@id/foodIngredientsLay\"\r\n                            app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n                            <!-- Logo -->\r\n\r\n                            <ImageView\r\n                                android:id=\"@+id/measureImg\"\r\n                                android:layout_width=\"25dp\"\r\n                                android:layout_height=\"25dp\"\r\n                                android:layout_marginStart=\"48dp\"\r\n                                android:src=\"@drawable/garnish\"\r\n                                app:layout_constraintStart_toStartOf=\"parent\"\r\n                                app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n                            <!-- Title -->\r\n                            <TextView\r\n                                android:id=\"@+id/measureTitle\"\r\n                                android:layout_width=\"wrap_content\"\r\n                                android:layout_height=\"wrap_content\"\r\n                                android:layout_marginStart=\"8dp\"\r\n                                android:text=\"@string/measure\"\r\n                                android:textColor=\"@color/tartOrange\"\r\n                                android:textSize=\"18sp\"\r\n                                android:textStyle=\"bold\"\r\n                                app:layout_constraintBottom_toBottomOf=\"@id/measureImg\"\r\n                                app:layout_constraintStart_toEndOf=\"@id/measureImg\"\r\n                                app:layout_constraintTop_toTopOf=\"@id/measureImg\"\r\n                                app:layout_constraintVertical_bias=\"1.0\" />\r\n\r\n                            <TextView\r\n                                android:id=\"@+id/measureTxt\"\r\n                                android:layout_width=\"0dp\"\r\n                                android:layout_height=\"wrap_content\"\r\n                                android:layout_marginTop=\"10dp\"\r\n                                android:textColor=\"@color/deepKoamaru\"\r\n                                android:textSize=\"16sp\"\r\n                                app:layout_constraintStart_toStartOf=\"@id/measureImg\"\r\n                                app:layout_constraintTop_toBottomOf=\"@id/measureImg\" />\r\n\r\n                        </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n                    </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n                </LinearLayout>\r\n\r\n            </ScrollView>\r\n\r\n        </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n    </androidx.constraintlayout.widget.ConstraintLayout>\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_food_details.xml b/app/src/main/res/layout/fragment_food_details.xml
+--- a/app/src/main/res/layout/fragment_food_details.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/layout/fragment_food_details.xml	(date 1710439807193)
+@@ -1,16 +1,19 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:id="@+id/foodDetailsFragmentPartent"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".ui.details.FoodDetailsFragment">
++    tools:context=".ui.details.FoodDetailsFragment"
++    android:background="@color/fondo">
+ 
+     <!-- Content -->
+     <androidx.constraintlayout.widget.ConstraintLayout
+         android:id="@+id/foodDetailsFragment"
+         android:layout_width="match_parent"
+-        android:layout_height="match_parent">
++        android:layout_height="match_parent"
++        android:background="@color/fondo">
+ 
+         <!-- Cover -->
+         <ImageView
+@@ -72,14 +75,18 @@
+             android:background="@drawable/bg_top_rounded"
+             android:paddingHorizontal="30dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+-            app:layout_constraintTop_toBottomOf="@id/foodHeaderLay">
++            app:layout_constraintTop_toBottomOf="@id/foodHeaderLay"
++            app:layout_constraintVertical_bias="0.0"
++            tools:layout_editor_absoluteX="0dp">
+ 
+             <!-- Scroll View -->
+             <ScrollView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:fillViewport="true"
+-                android:scrollbars="none">
++                android:scrollbars="none"
++                tools:layout_editor_absoluteX="30dp"
++                tools:layout_editor_absoluteY="40dp">
+ 
+                 <!-- Linear Layout for Content -->
+                 <LinearLayout
+Index: app/src/main/java/com/example/foodcode2/db/FoodDao.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/db/FoodDao.kt b/app/src/main/java/com/example/foodcode2/db/FoodDao.kt
+new file mode 100644
+--- /dev/null	(date 1710439807316)
++++ b/app/src/main/java/com/example/foodcode2/db/FoodDao.kt	(date 1710439807316)
+@@ -0,0 +1,22 @@
++package com.example.foodcode2.db
++
++import FOOD_TABLE
++import FoodEntity
++import androidx.room.*
++
++import kotlinx.coroutines.flow.Flow
++
++@Dao
++interface FoodDao {
++    @Insert(onConflict = OnConflictStrategy.REPLACE)
++    suspend fun saveFood(entity: FoodEntity)
++
++    @Delete
++    suspend fun deleteFood(entity: FoodEntity)
++
++    @Query("SELECT * FROM $FOOD_TABLE")
++    fun getAllFoods(): Flow<MutableList<FoodEntity>>
++
++    @Query("SELECT EXISTS (SELECT 1 FROM $FOOD_TABLE WHERE id = :id)")
++    fun existsFood(id: Int): Flow<Boolean>
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/ui/favorite/FavoriteViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/favorite/FavoriteViewModel.kt b/app/src/main/java/com/example/foodcode2/ui/favorite/FavoriteViewModel.kt
+new file mode 100644
+--- /dev/null	(date 1710439807214)
++++ b/app/src/main/java/com/example/foodcode2/ui/favorite/FavoriteViewModel.kt	(date 1710439807214)
+@@ -0,0 +1,22 @@
++package com.example.foodcode2.ui.favorite
++
++import FoodEntity
++import FoodRepository
++import androidx.lifecycle.LiveData
++import androidx.lifecycle.MutableLiveData
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.viewModelScope
++
++import kotlinx.coroutines.launch
++
++class FavoriteViewModel : ViewModel() {
++
++    //private val repository = FoodRepository()
++    private val _foodList: MutableLiveData<List<FoodEntity>> = MutableLiveData()
++    val foodList: LiveData<List<FoodEntity>>
++        get() = _foodList
++
++    fun getFavoritesFoodList() = viewModelScope.launch {
++        //_foodList.value = repository.getDbFoodList()
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/repositories/UserRepositories.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/repositories/UserRepositories.kt b/app/src/main/java/com/example/foodcode2/repositories/UserRepositories.kt
+new file mode 100644
+--- /dev/null	(date 1710439807168)
++++ b/app/src/main/java/com/example/foodcode2/repositories/UserRepositories.kt	(date 1710439807168)
+@@ -0,0 +1,50 @@
++package com.example.foodcode2.repositories
++
++import androidx.datastore.core.DataStore
++import androidx.datastore.preferences.core.Preferences
++import androidx.datastore.preferences.core.edit
++import com.example.foodcode2.data.UserPreferences
++import kotlinx.coroutines.flow.Flow
++import kotlinx.coroutines.flow.map
++
++class UserRepositories(
++    private val userDataStore: DataStore<Preferences>
++) {
++
++    fun getUserPrefs(): Flow<UserPreferences> {
++        return userDataStore.data.map { userPreferences ->
++            val name = userPreferences[UserPreferences.USER_NAME] ?: UserPreferences.ANONYMOUS
++            val showViewPage = userPreferences[UserPreferences.SHOW_VIEWPAGE] ?: true
++            UserPreferences(name = name, showViewPage = showViewPage)
++        }
++    }
++
++    suspend fun saveSettings(name: String, showViewPage: Boolean) {
++        userDataStore.edit { userPreferences ->
++            userPreferences[UserPreferences.USER_NAME] = name
++            userPreferences[UserPreferences.SHOW_VIEWPAGE] = showViewPage
++        }
++    }
++
++    /**
++     * Funcion que obtiene el nombre del usuario almacenado en el DataStore y lo retorna como un Flow
++     */
++    fun getUserName(): Flow<String> {
++        // Se obtiene el valor almacenado en el DataStore y se retorna como un Flow
++        return userDataStore.data.map { userPreferences ->
++            userPreferences[UserPreferences.USER_NAME] ?: UserPreferences.ANONYMOUS
++        }
++    }
++
++    suspend fun getShowViewPage(): Boolean {
++        return userDataStore.data.map { userPreferences ->
++            userPreferences[UserPreferences.SHOW_VIEWPAGE] ?: true
++        }.toString().toBoolean()
++    }
++
++    suspend fun saveUserName(name: String) {
++        userDataStore.edit { userPreferences ->
++            userPreferences[UserPreferences.USER_NAME] = name
++        }
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_list.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".ui.herolist.ListFragment\">\r\n\r\n    <pl.droidsonroids.gif.GifImageView\r\n        android:id=\"@+id/loading_gif\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:src=\"@drawable/loading_gif\"\r\n        android:visibility=\"gone\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <!-- TODO: Update blank fragment layout -->\r\n    <TextView\r\n        android:id=\"@+id/textView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Slección de alimentos\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <androidx.recyclerview.widget.RecyclerView\r\n\r\n        android:id=\"@+id/rvFoods\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"0dp\"\r\n        android:layout_marginStart=\"16dp\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:layout_marginEnd=\"16dp\"\r\n        android:layout_marginBottom=\"16dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_list.xml b/app/src/main/res/layout/fragment_list.xml
+--- a/app/src/main/res/layout/fragment_list.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/layout/fragment_list.xml	(date 1710439807200)
+@@ -4,8 +4,10 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
++    android:background="@color/fondo"
+     tools:context=".ui.herolist.ListFragment">
+ 
++
+     <pl.droidsonroids.gif.GifImageView
+         android:id="@+id/loading_gif"
+         android:layout_width="wrap_content"
+@@ -22,7 +24,11 @@
+         android:id="@+id/textView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+-        android:text="Slección de alimentos"
++        android:layout_marginTop="8dp"
++        android:fontFamily="cursive"
++        android:text="@string/slecci_n_de_alimentos"
++        android:textSize="34sp"
++        android:textStyle="bold"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
+Index: app/src/main/java/com/example/foodcode2/adapter/FavoriteAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/adapter/FavoriteAdapter.kt b/app/src/main/java/com/example/foodcode2/adapter/FavoriteAdapter.kt
+new file mode 100644
+--- /dev/null	(date 1710439807239)
++++ b/app/src/main/java/com/example/foodcode2/adapter/FavoriteAdapter.kt	(date 1710439807239)
+@@ -0,0 +1,78 @@
++package com.example.foodcode2.adapter
++
++import FoodEntity
++import android.annotation.SuppressLint
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import androidx.recyclerview.widget.DiffUtil
++import androidx.recyclerview.widget.RecyclerView
++import coil.load
++import com.example.foodcode2.databinding.FoodItemBinding
++
++
++class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.ViewHolder>() {
++
++    private lateinit var binding: FoodItemBinding
++    private var moviesList = emptyList<FoodEntity>()
++
++    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
++        binding = FoodItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
++        return ViewHolder()
++    }
++
++    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
++        //getItem from PagingDataAdapter
++        holder.bind(moviesList[position])
++        //Not duplicate items
++        holder.setIsRecyclable(false)
++    }
++
++    override fun getItemCount() = moviesList.size
++
++    inner class ViewHolder : RecyclerView.ViewHolder(binding.root) {
++        @SuppressLint("SetTextI18n")
++        fun bind(item: FoodEntity) {
++            binding.apply {
++                binding.tvName.text = item.title
++                binding.tvCalories.text = item.category
++                binding.tvProteins.text = item.area
++                binding.ivPhoto.load(item.img)
++
++                //Click
++                root.setOnClickListener { onItemClickListener?.let { it(item) } }
++            }
++        }
++    }
++
++    private var onItemClickListener: ((FoodEntity) -> Unit)? = null
++
++    fun setOnItemClickListener(listener: (FoodEntity) -> Unit) {
++        onItemClickListener = listener
++    }
++
++    fun setData(data: List<FoodEntity>) {
++        val moviesDiffUtil = MoviesDiffUtils(moviesList, data)
++        val diffUtils = DiffUtil.calculateDiff(moviesDiffUtil)
++        moviesList = data
++        diffUtils.dispatchUpdatesTo(this)
++    }
++
++    class MoviesDiffUtils(private val oldItem: List<FoodEntity>, private val newItem: List<FoodEntity>) : DiffUtil.Callback() {
++        override fun getOldListSize(): Int {
++            return oldItem.size
++        }
++
++        override fun getNewListSize(): Int {
++            return newItem.size
++        }
++
++        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
++            return oldItem[oldItemPosition] === newItem[newItemPosition]
++        }
++
++        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
++            return oldItem[oldItemPosition] === newItem[newItemPosition]
++        }
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_tab2_notice.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <TextView\r\n        android:layout_width=\"394dp\"\r\n        android:layout_height=\"34dp\"\r\n        android:text=\"@string/credits\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n\r\n    <Button\r\n        android:id=\"@+id/btnBack\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"@string/back\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_tab2_notice.xml b/app/src/main/res/layout/fragment_tab2_notice.xml
+--- a/app/src/main/res/layout/fragment_tab2_notice.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/layout/fragment_tab2_notice.xml	(date 1710439807208)
+@@ -5,10 +5,11 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+-
+     <TextView
++        android:id="@+id/textView2"
+         android:layout_width="394dp"
+         android:layout_height="34dp"
++        android:layout_marginStart="8dp"
+         android:text="@string/credits"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+@@ -26,4 +27,17 @@
+         app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent" />
+ 
++    <CheckBox
++        android:id="@+id/checkBox"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_marginStart="8dp"
++        android:text="No volver a mostrar esta vista"
++        app:layout_constraintBottom_toTopOf="@+id/btnBack"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.0"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/textView2"
++        app:layout_constraintVertical_bias="0.051" />
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:padding=\"16dp\"\r\n    tools:context=\".LoginFragment\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:layout_weight=\"20\"\r\n        android:text=\"@string/welcome\"\r\n        android:textAlignment=\"center\"\r\n        android:textSize=\"30sp\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <ImageView\r\n        android:id=\"@+id/imageView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:layout_weight=\"40\"\r\n        android:src=\"@drawable/foodlogo\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView\"\r\n        tools:layout_editor_absoluteX=\"0dp\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/editTextName\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"64dp\"\r\n        android:layout_margin=\"20dp\"\r\n        android:layout_marginStart=\"16dp\"\r\n        android:layout_marginTop=\"32dp\"\r\n        android:layout_marginEnd=\"16dp\"\r\n        android:layout_weight=\"20\"\r\n        android:ems=\"10\"\r\n        android:hint=\"@string/username\"\r\n        android:inputType=\"text\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/imageView\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/btnSignup\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"16dp\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:layout_marginEnd=\"16dp\"\r\n        android:layout_weight=\"20\"\r\n        android:onClick=\"next\"\r\n        android:text=\"@string/next\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/editTextName\" />\r\n\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_login.xml b/app/src/main/res/layout/fragment_login.xml
+--- a/app/src/main/res/layout/fragment_login.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/layout/fragment_login.xml	(date 1710439807222)
+@@ -5,7 +5,8 @@
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:padding="16dp"
+-    tools:context=".LoginFragment">
++    android:background="@color/fondo"
++    tools:context=".ui.login.LoginFragment">
+ 
+     <TextView
+         android:id="@+id/textView"
+@@ -13,20 +14,30 @@
+         android:layout_height="wrap_content"
+         android:layout_marginTop="16dp"
+         android:layout_weight="20"
++        android:fontFamily="cursive"
+         android:text="@string/welcome"
+         android:textAlignment="center"
+-        android:textSize="30sp"
+-        app:layout_constraintTop_toTopOf="parent" />
++        android:textSize="48sp"
++        android:textStyle="bold"
++        app:layout_constraintTop_toTopOf="parent"
++        tools:layout_editor_absoluteX="16dp" />
+ 
+     <ImageView
+         android:id="@+id/imageView"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:layout_marginTop="16dp"
++        android:layout_width="360dp"
++        android:layout_height="311dp"
++        android:layout_marginStart="8dp"
++        android:layout_marginTop="12dp"
++        android:layout_marginEnd="8dp"
+         android:layout_weight="40"
+-        android:src="@drawable/foodlogo"
++        android:src="@drawable/chef"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="1.0"
++        app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/textView"
+-        tools:layout_editor_absoluteX="0dp" />
++        app:layout_constraintVertical_bias="0.143"
++        android:contentDescription="TODO" />
+ 
+     <EditText
+         android:id="@+id/editTextName"
+@@ -40,9 +51,11 @@
+         android:ems="10"
+         android:hint="@string/username"
+         android:inputType="text"
++        android:textColorHint="#616161"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
++        app:layout_constraintTop_toBottomOf="@+id/imageView"
++        android:autofillHints="" />
+ 
+     <Button
+         android:id="@+id/btnSignup"
+@@ -54,6 +67,8 @@
+         android:layout_weight="20"
+         android:onClick="next"
+         android:text="@string/next"
++        android:textColor="#795548"
++        android:textStyle="bold"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/editTextName" />
+Index: app/src/main/java/com/example/foodcode2/ui/userpreferences/infoUserVM.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/userpreferences/infoUserVM.kt b/app/src/main/java/com/example/foodcode2/ui/userpreferences/infoUserVM.kt
+new file mode 100644
+--- /dev/null	(date 1710439807403)
++++ b/app/src/main/java/com/example/foodcode2/ui/userpreferences/infoUserVM.kt	(date 1710439807403)
+@@ -0,0 +1,42 @@
++package com.example.foodcode2.ui.userpreferences
++
++import android.app.Application
++import android.content.Context
++import android.util.Log
++import androidx.lifecycle.AndroidViewModel
++
++class InfoUserVM(application: Application) : AndroidViewModel(application) {
++
++    private val sharedPreferences = application.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
++
++    //Guarda el nombre del usuario en las preferencias compartidas.
++    fun saveUserName(name: String) {
++        sharedPreferences.edit().putString("user_name", name).apply()
++    }
++
++    fun getUserName(): String {
++        return sharedPreferences.getString("user_name", "") ?: ""
++        Log.d("InfoUserFragment", "El nombre es: ${sharedPreferences.getString("user_name", "")}")
++    }
++
++    fun saveCheckboxState(state: Boolean) {
++        sharedPreferences.edit().putBoolean("checkbox_state", state).apply()
++    }
++
++    fun getCheckboxState(): Boolean {
++        return sharedPreferences.getBoolean("checkbox_state", false)
++    }
++
++    fun saveSettings(key: String, value: Any) {
++        when (value) {
++            is String -> sharedPreferences.edit().putString(key, value).apply()
++            is Boolean -> sharedPreferences.edit().putBoolean(key, value).apply()
++        }
++    }
++
++    fun getUserPreferences(): Map<String, *> {
++        return sharedPreferences.all
++    }
++
++
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".AccessFragment\">\r\n\r\n    <ImageView\r\n        android:id=\"@+id/ivPortrait\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:contentDescription=\"@string/app_name\"\r\n        android:src=\"@drawable/foodlogo\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.495\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.18\" />\r\n\r\n    <!-- Un textView que lea el usuario que haya introducido anteriormente-->\r\n\r\n    <TextView\r\n        android:id=\"@+id/etUsername\"\r\n        android:layout_width=\"275dp\"\r\n        android:layout_height=\"55dp\"\r\n        android:ems=\"10\"\r\n        android:fontFamily=\"@font/alata\"\r\n        android:hint=\"@string/bienvenido\"\r\n        android:inputType=\"textPersonName\"\r\n        android:textSize=\"24sp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"@+id/ivPortrait\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/ivPortrait\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/ivPortrait\"\r\n        app:layout_constraintVertical_bias=\"0.088\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/btnList\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:fontFamily=\"casual\"\r\n        android:text=\"@string/list\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/etUsername\"\r\n        app:layout_constraintVertical_bias=\"0.208\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/btnFavList\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:fontFamily=\"casual\"\r\n        android:text=\"@string/favouriteList\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"@+id/btnList\"\r\n        app:layout_constraintHorizontal_bias=\"0.487\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/btnList\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/btnList\"\r\n        app:layout_constraintVertical_bias=\"0.173\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/btnExitMenu\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginBottom=\"16dp\"\r\n        android:fontFamily=\"casual\"\r\n        android:text=\"@string/exit\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"@+id/btnFavList\"\r\n        app:layout_constraintHorizontal_bias=\"0.489\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/btnFavList\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/btnFavList\"\r\n        app:layout_constraintVertical_bias=\"0.291\" />\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_menu.xml b/app/src/main/res/layout/fragment_menu.xml
+--- a/app/src/main/res/layout/fragment_menu.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/layout/fragment_menu.xml	(date 1710439807230)
+@@ -4,63 +4,72 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".AccessFragment">
++    android:background="@color/fondo"
++    tools:context=".MenuFragment">
+ 
+     <ImageView
+         android:id="@+id/ivPortrait"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="403dp"
++        android:layout_height="287dp"
++        android:layout_marginTop="8dp"
++        android:layout_marginEnd="8dp"
+         android:contentDescription="@string/app_name"
+-        android:src="@drawable/foodlogo"
++        android:src="@drawable/chef"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.495"
++        app:layout_constraintHorizontal_bias="1.0"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.18" />
+-
+-    <!-- Un textView que lea el usuario que haya introducido anteriormente-->
++        app:layout_constraintVertical_bias="0.178" />
+ 
+     <TextView
+         android:id="@+id/etUsername"
+-        android:layout_width="275dp"
+-        android:layout_height="55dp"
++        android:layout_width="300dp"
++        android:layout_height="52dp"
+         android:ems="10"
+-        android:fontFamily="@font/alata"
++        android:fontFamily="cursive"
+         android:hint="@string/bienvenido"
+         android:inputType="textPersonName"
+-        android:textSize="24sp"
++        android:textAlignment="center"
++        android:textAllCaps="false"
++        android:textColorHint="#607D8B"
++        android:textSize="34sp"
++        android:textStyle="bold"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="@+id/ivPortrait"
++        app:layout_constraintHorizontal_bias="0.533"
+         app:layout_constraintStart_toStartOf="@+id/ivPortrait"
+         app:layout_constraintTop_toBottomOf="@+id/ivPortrait"
+-        app:layout_constraintVertical_bias="0.088" />
++        app:layout_constraintVertical_bias="0.222"
++        tools:ignore="TextViewEdits" />
+ 
+     <Button
+         android:id="@+id/btnList"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="260dp"
++        android:layout_height="57dp"
+         android:fontFamily="casual"
+         android:text="@string/list"
++        android:textColor="#424242"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.498"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/etUsername"
+-        app:layout_constraintVertical_bias="0.208" />
++        app:layout_constraintVertical_bias="0.081" />
+ 
+     <Button
+         android:id="@+id/btnFavList"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="260dp"
++        android:layout_height="57dp"
+         android:fontFamily="casual"
+         android:text="@string/favouriteList"
++        android:textColor="#424242"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="@+id/btnList"
+         app:layout_constraintHorizontal_bias="0.487"
+         app:layout_constraintStart_toStartOf="@+id/btnList"
+         app:layout_constraintTop_toBottomOf="@+id/btnList"
+-        app:layout_constraintVertical_bias="0.173" />
++        app:layout_constraintVertical_bias="0.173"
++        tools:ignore="TextSizeCheck" />
+ 
+     <Button
+         android:id="@+id/btnExitMenu"
+@@ -69,6 +78,7 @@
+         android:layout_marginBottom="16dp"
+         android:fontFamily="casual"
+         android:text="@string/exit"
++        android:textColor="#424242"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="@+id/btnFavList"
+         app:layout_constraintHorizontal_bias="0.489"
+Index: app/src/main/java/com/example/foodcode2/MenuFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.foodcode2\r\n\r\nimport android.os.Bundle\r\nimport android.content.Intent\r\nimport androidx.fragment.app.Fragment\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.TextView\r\nimport androidx.navigation.fragment.findNavController\r\nimport com.example.foodcode2.databinding.FragmentMenuBinding\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView\r\n\r\n\r\nclass MenuFragment : Fragment() {\r\n\r\n    private lateinit var binding: FragmentMenuBinding\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        arguments?.let {\r\n\r\n        }\r\n    }\r\n\r\n    override fun onCreateView(\r\n\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n\r\n    ): View? {\r\n\r\n        binding = FragmentMenuBinding.inflate(layoutInflater)\r\n\r\n\r\n        //Cogemos el nombre del usuario de la pantalla anterior y lo mostramos en la pantalla de acceso\r\n        val name = arguments?.getString(LoginFragment.NAME)\r\n        binding.etUsername.text = name\r\n\r\n\r\n        binding.btnList.setOnClickListener {\r\n            findNavController().navigate(R.id.action_menuFragment_to_listFragment)\r\n        }\r\n\r\n        binding.btnFavList.setOnClickListener {\r\n            findNavController().navigate(R.id.action_menuFragment_to_fragmentFoodFav)\r\n        }\r\n\r\n\r\n        binding.btnExitMenu.setOnClickListener {\r\n            findNavController().navigate(R.id.action_menuFragment_to_loginFragment2)\r\n        }\r\n\r\n        view?.let { super.onViewCreated(it, savedInstanceState) }\r\n        val navBar: BottomNavigationView? = activity?.findViewById(R.id.bottom_navigation)\r\n        navBar?.visibility = View.VISIBLE\r\n\r\n        return binding.root\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/MenuFragment.kt b/app/src/main/java/com/example/foodcode2/MenuFragment.kt
+--- a/app/src/main/java/com/example/foodcode2/MenuFragment.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/MenuFragment.kt	(date 1710439807246)
+@@ -1,14 +1,13 @@
+ package com.example.foodcode2
+ 
+ import android.os.Bundle
+-import android.content.Intent
+ import androidx.fragment.app.Fragment
+ import android.view.LayoutInflater
+ import android.view.View
+ import android.view.ViewGroup
+-import android.widget.TextView
+ import androidx.navigation.fragment.findNavController
+ import com.example.foodcode2.databinding.FragmentMenuBinding
++import com.example.foodcode2.ui.login.LoginFragment
+ import com.google.android.material.bottomnavigation.BottomNavigationView
+ 
+ 
+@@ -31,12 +30,6 @@
+ 
+         binding = FragmentMenuBinding.inflate(layoutInflater)
+ 
+-
+-        //Cogemos el nombre del usuario de la pantalla anterior y lo mostramos en la pantalla de acceso
+-        val name = arguments?.getString(LoginFragment.NAME)
+-        binding.etUsername.text = name
+-
+-
+         binding.btnList.setOnClickListener {
+             findNavController().navigate(R.id.action_menuFragment_to_listFragment)
+         }
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n\r\n    <color name=\"bg\">#F6F6F6</color>\r\n    <color name=\"grayLight\">#f6f8f9</color>\r\n    <color name=\"grayDark\">#737980</color>\r\n    <color name=\"yellowLight\">#faf6e9</color>\r\n    <color name=\"yellowDark\">#b89b36</color>\r\n    <color name=\"red\">#E91E63</color>\r\n    <color name=\"aqua\">#00BCD4</color>\r\n    <color name=\"yellow\">#FFC107</color>\r\n    <color name=\"green\">#2fdf84</color>\r\n\r\n    <color name=\"whiteSmoke\">#f6f6f6</color>\r\n    <color name=\"darkSlategray\">#202d3d</color>\r\n    <color name=\"darkSlategray70\">#B3202d3d</color>\r\n    <color name=\"tartOrange\">#F24C4C</color>\r\n    <color name=\"deepKoamaru\">#363062</color>\r\n    <color name=\"metallicYellow\">#FBCB0A</color>\r\n    <color name=\"charcoal\">#354259</color>\r\n    <color name=\"shadowBlue\">#7490A8</color>\r\n    <color name=\"pewterBlue\">#92A9BD</color>\r\n    <color name=\"lotion\">#fdfdfd</color>\r\n\r\n    <color name=\"purple_200\">#FFBB86FC</color>\r\n    <color name=\"purple_500\">#FF6200EE</color>\r\n    <color name=\"purple_700\">#FF3700B3</color>\r\n    <color name=\"teal_200\">#FF03DAC5</color>\r\n    <color name=\"teal_700\">#FF018786</color>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n    <color name=\"g_loading\">#FF0000</color>\r\n\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+--- a/app/src/main/res/values/colors.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/values/colors.xml	(date 1710439807253)
+@@ -30,5 +30,5 @@
+     <color name="black">#FF000000</color>
+     <color name="white">#FFFFFFFF</color>
+     <color name="g_loading">#FF0000</color>
+-
++    <color name="fondo">#C3EFE9B0</color>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.foodcode2\r\n\r\nimport android.os.Bundle\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport com.example.foodcode2.databinding.ActivityMainBinding\r\nimport com.example.foodcode2.ui.herolist.ListFragment\r\n\r\nclass MainActivity : AppCompatActivity() {\r\n\r\n    private lateinit var binding: ActivityMainBinding\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        //setContentView(R.layout.activity_main)\r\n\r\n        binding = ActivityMainBinding.inflate(layoutInflater)\r\n        setContentView(binding.root)\r\n\r\n        binding.bottomNavigation.setOnItemSelectedListener { item ->\r\n            when (item.itemId) {\r\n                R.id.listFragment -> {\r\n                    supportFragmentManager.beginTransaction()\r\n                        .replace(R.id.NavHostFragment, ListFragment())\r\n                        .commitNow()\r\n                }\r\n\r\n                R.id.fragmentFoodFav -> {\r\n\r\n                }\r\n\r\n                R.id.infoUserFragment -> {\r\n                    supportFragmentManager.beginTransaction()\r\n                        .replace(R.id.NavHostFragment, InfoUserFragment.newInstance())\r\n                        .commitNow()\r\n                }\r\n            }\r\n            true\r\n        }\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/MainActivity.kt b/app/src/main/java/com/example/foodcode2/MainActivity.kt
+--- a/app/src/main/java/com/example/foodcode2/MainActivity.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/MainActivity.kt	(date 1710439807261)
+@@ -4,6 +4,7 @@
+ import androidx.appcompat.app.AppCompatActivity
+ import com.example.foodcode2.databinding.ActivityMainBinding
+ import com.example.foodcode2.ui.herolist.ListFragment
++import com.example.foodcode2.ui.userpreferences.InfoUserFragment
+ 
+ class MainActivity : AppCompatActivity() {
+ 
+@@ -30,8 +31,7 @@
+ 
+                 R.id.infoUserFragment -> {
+                     supportFragmentManager.beginTransaction()
+-                        .replace(R.id.NavHostFragment, InfoUserFragment.newInstance())
+-                        .commitNow()
++                        .replace(R.id.NavHostFragment, InfoUserFragment()).commitNow()
+                 }
+             }
+             true
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.util.regex.Pattern.compile\r\n\r\n\r\nplugins {\r\n    id(\"com.android.application\")\r\n    id(\"org.jetbrains.kotlin.android\")\r\n    id (\"androidx.navigation.safeargs.kotlin\")\r\n}\r\n\r\nandroid {\r\n    namespace = \"com.example.foodcode2\"\r\n    compileSdk = 34\r\n\r\n    defaultConfig {\r\n        applicationId = \"com.example.foodcode2\"\r\n        minSdk = 34\r\n        targetSdk = 34\r\n        versionCode = 1\r\n        versionName = \"1.0\"\r\n\r\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            isMinifyEnabled = false\r\n            proguardFiles(\r\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\r\n                \"proguard-rules.pro\"\r\n            )\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility = JavaVersion.VERSION_1_8\r\n        targetCompatibility = JavaVersion.VERSION_1_8\r\n    }\r\n    kotlinOptions {\r\n        jvmTarget = \"1.8\"\r\n    }\r\n\r\n    viewBinding{\r\n        enable = true\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation(\"androidx.room:room-common:2.6.1\")\r\n    val nav_version = \"2.7.0\"\r\n    //noinspection GradleDependency\r\n    implementation(\"androidx.navigation:navigation-fragment-ktx:$nav_version\")\r\n    //noinspection GradleDependency\r\n    implementation(\"androidx.navigation:navigation-ui-ktx:$nav_version\")\r\n    implementation(\"androidx.core:core-ktx:1.12.0\")\r\n    implementation(\"androidx.appcompat:appcompat:1.6.1\")\r\n    implementation(\"com.google.android.material:material:1.11.0\")\r\n    implementation(\"androidx.constraintlayout:constraintlayout:2.1.4\")\r\n    testImplementation(\"junit:junit:4.13.2\")\r\n    androidTestImplementation(\"androidx.test.ext:junit:1.1.5\")\r\n    androidTestImplementation(\"androidx.test.espresso:espresso-core:3.5.1\")\r\n\r\n    //Navigation Kotlin\r\n    implementation (\"androidx.navigation:navigation-fragment-ktx:2.5.3\")\r\n    implementation (\"androidx.navigation:navigation-ui-ktx:2.5.3\")\r\n\r\n    //retrofit2\r\n    implementation (\"com.squareup.retrofit2:retrofit:2.9.0\")\r\n    implementation (\"com.squareup.retrofit2:converter-gson:2.9.0\")\r\n\r\n    //corrutinas\r\n    implementation (\"org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9\")\r\n    //gif\r\n    implementation (\"pl.droidsonroids.gif:android-gif-drawable:1.2.17\")\r\n    //Image Loading\r\n    implementation (\"io.coil-kt:coil:2.1.0\")\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/build.gradle.kts	(date 1710439807269)
+@@ -45,7 +45,11 @@
+ 
+ dependencies {
+ 
++
+     implementation("androidx.room:room-common:2.6.1")
++    implementation("androidx.datastore:datastore:1.0.0")
++    implementation("androidx.datastore:datastore-preferences:1.0.0")
++    implementation("androidx.room:room-ktx:2.6.1")
+     val nav_version = "2.7.0"
+     //noinspection GradleDependency
+     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">FoodCode2</string>\r\n    <!-- TODO: Remove or change this placeholder text -->\r\n    <string name=\"hello_blank_fragment\">Informacion Producto</string>\r\n    <string name=\"appname\">FoodCode</string>\r\n    <string name=\"welcome\">Bienvenido</string>\r\n    <string name=\"username\">Nombre de Usuario</string>\r\n    <string name=\"next\">Siguiente</string>\r\n    <string name=\"description\">Usuario estás usando la versión 1 de FoodCode</string>\r\n    <string name=\"contact\">Contactar</string>\r\n    <!-- TODO: Remove or change this placeholder text -->\r\n    <string name=\"about\">Sobre la app</string>\r\n    <string name=\"credits\">App desarrollada por José Miguel Gutiérrez Hernández para la asignatura de Programación de Aplicaciones Móviles</string>\r\n    <string name=\"valor_energetico\">sdsdfsdfsdf</string>\r\n    <string name=\"food_image\">Logo</string>\r\n    <string name=\"calories\">Calorias</string>\r\n    <string name=\"caps\">Valor energético</string>\r\n    <string name=\"FoodTitle\">Manzana</string>\r\n    <string name=\"cafeTitle\">Descafeinado Clasico Nestlé</string>\r\n    <string name=\"calorias\">Cálorias</string>\r\n    <string name=\"proteinas\">Proteínas</string>\r\n    <string name=\"bienvenido\">Bienvenido a Food Code.</string>\r\n    <string name=\"list\">Lista de alimentos</string>\r\n    <string name=\"favouriteList\">Lista de alimentos favoritos</string>\r\n    <string name=\"exit\">Salir</string>\r\n    <string name=\"notice\">Estamos en la pantalla de Novedades: para informar a los usuarios de las novedades de la aplicación y de la empresa. Estamos en la version 2.0.0</string>\r\n    <string name=\"back\">Volver</string>\r\n    <string name=\"novedades\">Novedad en nuestra APP</string>\r\n    <string name=\"fav\">Favoritos</string>\r\n    <string name=\"lista\">Alimentos</string>\r\n    <string name=\"about2\">Datos Usuario</string>\r\n    <string name=\"listFood\">Lista alimentos</string>\r\n    <string name=\"listFavFood\">Alimentos favoritos</string>\r\n    <string name=\"userInfo\">Perfil</string>\r\n    <string name=\"descripci_n_de_la_aplicaci_n\">asdasd</string>\r\n    <string name=\"categorias\">Categoría</string>\r\n    <string name=\"Origen\">Orígen</string>\r\n    <string name=\"ingredients\">Ingredientes\\n</string>\r\n    <string name=\"measure\">Medida</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/values/strings.xml	(date 1710439807276)
+@@ -33,8 +33,9 @@
+     <string name="listFavFood">Alimentos favoritos</string>
+     <string name="userInfo">Perfil</string>
+     <string name="descripci_n_de_la_aplicaci_n">asdasd</string>
+-    <string name="categorias">Categoría</string>
+-    <string name="Origen">Orígen</string>
+-    <string name="ingredients">Ingredientes\n</string>
+-    <string name="measure">Medida</string>
++    <string name="categorias" translatable="false">Categoría</string>
++    <string name="Origen" translatable="false">Orígen</string>
++    <string name="ingredients" translatable="false">Ingredientes\n</string>
++    <string name="measure" translatable="false">Medida</string>
++    <string name="slecci_n_de_alimentos">Slección de alimentos</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/values/themes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources xmlns:tools=\"http://schemas.android.com/tools\">\r\n     <!-- Base application theme. -->\r\n    <style name=\"Base.Theme.FoodCode\" parent=\"Theme.Material3.DayNight.NoActionBar\">\r\n        <!-- Customize your light theme here. -->\r\n        <item name=\"android:windowSplashScreenAnimatedIcon\" tools:targetApi=\"s\">@drawable/foodlogo</item>\r\n        <item name=\"android:windowSplashScreenAnimationDuration\" tools:targetApi=\"s\">1000</item>\r\n        <item name=\"android:windowSplashScreenBackground\" tools:targetApi=\"s\">@color/naranja</item>\r\n        <!-- Colores para los botones -->\r\n        <item name=\"colorPrimary\">@color/my_primary</item>\r\n        <!-- <item name=\"colorPrimary\">@color/my_light_primary</item> -->\r\n        <!-- colores para el fondo de app -->\r\n        <item name=\"colorPrimaryVariant\">@color/my_primary_variant</item>\r\n    </style>\r\n\r\n    <style name=\"Theme.FoodCode\" parent=\"Base.Theme.FoodCode\" />\r\n\r\n    <color name=\"my_primary\">#774E30</color>\r\n\r\n    <color name=\"my_primary_variant\">#A2755D</color>\r\n    <color name=\"naranja\">#A2755D</color>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes.xml
+--- a/app/src/main/res/values/themes.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/values/themes.xml	(date 1710439807292)
+@@ -14,8 +14,8 @@
+ 
+     <style name="Theme.FoodCode" parent="Base.Theme.FoodCode" />
+ 
+-    <color name="my_primary">#774E30</color>
++    <color name="my_primary">#FF9800</color>
+ 
+-    <color name="my_primary_variant">#A2755D</color>
+-    <color name="naranja">#A2755D</color>
++    <color name="my_primary_variant">#FF9800</color>
++    <color name="naranja">#FF9800</color>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/drawable/bg_top_rounded.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<shape xmlns:android=\"http://schemas.android.com/apk/res/android\">\r\n    <solid android:color=\"@color/lotion\" />\r\n    <corners\r\n        android:topLeftRadius=\"30dp\"\r\n        android:topRightRadius=\"30dp\" />\r\n</shape>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/bg_top_rounded.xml b/app/src/main/res/drawable/bg_top_rounded.xml
+--- a/app/src/main/res/drawable/bg_top_rounded.xml	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/res/drawable/bg_top_rounded.xml	(date 1710439807308)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <shape xmlns:android="http://schemas.android.com/apk/res/android">
+-    <solid android:color="@color/lotion" />
++    <solid android:color="@color/fondo" />
+     <corners
+         android:topLeftRadius="30dp"
+         android:topRightRadius="30dp" />
+Index: app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsVM.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import android.util.Log\r\nimport androidx.lifecycle.ViewModel\r\nimport androidx.lifecycle.viewModelScope\r\nimport kotlinx.coroutines.flow.MutableStateFlow\r\nimport kotlinx.coroutines.flow.StateFlow\r\nimport kotlinx.coroutines.flow.asStateFlow\r\nimport kotlinx.coroutines.launch\r\n\r\ndata class FoodDetailsUiState(\r\n    val food: Food? = null,\r\n    val isLoading: Boolean = false,\r\n    val error: String? = null\r\n)\r\n\r\nclass FoodDetailsVM(\r\n    private val foodRepository: FoodRepository\r\n) : ViewModel() {\r\n    private val _uiState: MutableStateFlow<FoodDetailsUiState> = MutableStateFlow(\r\n        FoodDetailsUiState()\r\n    )\r\n    val uiState: StateFlow<FoodDetailsUiState> = _uiState.asStateFlow()\r\n\r\n    init {\r\n\r\n    }\r\n\r\n    fun fetchFoodsByIds(ids: List<Int>) {\r\n        _uiState.value = FoodDetailsUiState(isLoading = true)\r\n        viewModelScope.launch {\r\n            val response = foodRepository.getFoodsByIds(ids)\r\n            if (response.isSuccessful) {\r\n            } else {\r\n                Log.d(\"FoodDetailsVM\", \"Error fetching foods\")\r\n            }\r\n        }\r\n    }\r\n\r\n    fun setFood(idFood: String) {\r\n        viewModelScope.launch {\r\n            val foodResp = foodRepository.getFullFood(idFood.toInt())\r\n            val foodListResponse = foodResp.body()\r\n            val food = foodListResponse?.meals?.firstOrNull()?.toFood()\r\n            _uiState.value = _uiState.value.copy(\r\n                isLoading = false,\r\n                food = food\r\n            )\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsVM.kt b/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsVM.kt
+--- a/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsVM.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsVM.kt	(date 1710439807353)
+@@ -1,6 +1,9 @@
+ import android.util.Log
+ import androidx.lifecycle.ViewModel
++import androidx.lifecycle.ViewModelProvider
+ import androidx.lifecycle.viewModelScope
++import androidx.lifecycle.viewmodel.CreationExtras
++import com.example.foodcode2.dependencies.FoodCode
+ import kotlinx.coroutines.flow.MutableStateFlow
+ import kotlinx.coroutines.flow.StateFlow
+ import kotlinx.coroutines.flow.asStateFlow
+@@ -24,18 +27,7 @@
+ 
+     }
+ 
+-    fun fetchFoodsByIds(ids: List<Int>) {
+-        _uiState.value = FoodDetailsUiState(isLoading = true)
+-        viewModelScope.launch {
+-            val response = foodRepository.getFoodsByIds(ids)
+-            if (response.isSuccessful) {
+-            } else {
+-                Log.d("FoodDetailsVM", "Error fetching foods")
+-            }
+-        }
+-    }
+-
+-    fun setFood(idFood: String) {
++    fun setFood(idFood: Int) {
+         viewModelScope.launch {
+             val foodResp = foodRepository.getFullFood(idFood.toInt())
+             val foodListResponse = foodResp.body()
+@@ -46,4 +38,19 @@
+             )
+         }
+     }
++
++    companion object {
++        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
++            @Suppress("UNCHECKED_CAST")
++            override fun <T : ViewModel> create(
++                modelClass: Class<T>,
++                extras: CreationExtras
++            ): T {
++                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
++                return FoodDetailsVM(
++                    (application as FoodCode).appContainer.FoodRepository
++                ) as T
++            }
++        }
++    }
+ }
+Index: app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.fragment.app.Fragment\r\nimport com.example.foodcode2.R\r\nimport com.example.foodcode2.databinding.FragmentFoodDetailsBinding\r\n\r\nclass FoodDetailsFragment : Fragment() {\r\n    private lateinit var food: Food\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        food = arguments?.getParcelable(\"food\") ?: Food() // Reemplaza Food() con un objeto Food vacío o predeterminado\r\n    }\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View? {\r\n        val view = inflater.inflate(R.layout.fragment_food_details, container, false)\r\n        val binding = FragmentFoodDetailsBinding.bind(view)\r\n        binding.foodTitleTxt.text = food.title\r\n        binding.foodDescTxt.text = food.strCategory\r\n        binding.foodAreaTxt.text = food.strArea\r\n        val resourceId = resources.getIdentifier(food.strImageSource, \"drawable\", context?.packageName)\r\n        binding.foodCoverImg.setImageResource(resourceId)\r\n        return view\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsFragment.kt b/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsFragment.kt
+--- a/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsFragment.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/ui/details/FoodDetailsFragment.kt	(date 1710439807360)
+@@ -1,30 +1,61 @@
++package com.example.foodcode2.ui.details
++import FoodDetailsVM
+ import android.os.Bundle
+ import android.view.LayoutInflater
+ import android.view.View
+ import android.view.ViewGroup
++import androidx.core.view.get
+ import androidx.fragment.app.Fragment
+-import com.example.foodcode2.R
++import androidx.fragment.app.viewModels
++import androidx.lifecycle.Lifecycle
++import androidx.lifecycle.lifecycleScope
++import androidx.lifecycle.repeatOnLifecycle
++import androidx.navigation.fragment.navArgs
++import coil.load
+ import com.example.foodcode2.databinding.FragmentFoodDetailsBinding
++import kotlinx.coroutines.launch
++
+ 
+ class FoodDetailsFragment : Fragment() {
+-    private lateinit var food: Food
++
++    private var _binding: FragmentFoodDetailsBinding? = null
++    val binding
++        get() = _binding!!
+ 
++    val args: FoodDetailsFragmentArgs by navArgs()
++
++    private val foodDetailsVM by viewModels<FoodDetailsVM> { FoodDetailsVM.Factory }
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+-        food = arguments?.getParcelable("food") ?: Food() // Reemplaza Food() con un objeto Food vacío o predeterminado
++        arguments?.let {
++
++        }
+     }
+ 
+     override fun onCreateView(
+         inflater: LayoutInflater, container: ViewGroup?,
+         savedInstanceState: Bundle?
+     ): View? {
+-        val view = inflater.inflate(R.layout.fragment_food_details, container, false)
+-        val binding = FragmentFoodDetailsBinding.bind(view)
+-        binding.foodTitleTxt.text = food.title
+-        binding.foodDescTxt.text = food.strCategory
+-        binding.foodAreaTxt.text = food.strArea
+-        val resourceId = resources.getIdentifier(food.strImageSource, "drawable", context?.packageName)
+-        binding.foodCoverImg.setImageResource(resourceId)
+-        return view
++        _binding = FragmentFoodDetailsBinding.inflate(inflater, container, false)
++        foodDetailsVM.setFood(args.food)
++        return binding.root
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++        setCollectors()
++    }
++
++    private fun setCollectors() {
++        lifecycleScope.launch {
++            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
++                foodDetailsVM.uiState.collect { foodState ->
++                    if(!foodState.isLoading) {
++                        binding.foodTitleTxt.text = foodState.food?.title ?: ""
++                        binding.measureImg.load(foodState.food?.strMealThumb)
++                    }
++                }
++            }
++        }
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/foodcode2/ui/herolist/ListFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.foodcode2.ui.herolist\r\n\r\nimport Food\r\nimport FoodAdapter\r\nimport FoodListVM\r\nimport FoodRepository\r\nimport android.content.res.Configuration\r\nimport android.os.Bundle\r\nimport androidx.fragment.app.Fragment\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.fragment.app.viewModels\r\nimport androidx.lifecycle.Lifecycle\r\nimport androidx.lifecycle.ViewModelProvider\r\nimport androidx.lifecycle.lifecycleScope\r\nimport androidx.lifecycle.repeatOnLifecycle\r\nimport androidx.navigation.findNavController\r\nimport androidx.navigation.fragment.findNavController\r\nimport androidx.recyclerview.widget.LinearLayoutManager\r\nimport com.example.foodcode2.NavigationCallback\r\nimport com.example.foodcode2.R\r\n\r\nimport com.example.foodcode2.api.ApiService\r\nimport com.example.foodcode2.databinding.FragmentListBinding\r\nimport kotlinx.coroutines.flow.collect\r\nimport kotlinx.coroutines.launch\r\n\r\nclass ListFragment : Fragment(), NavigationCallback {\r\n\r\n    private var _binding: FragmentListBinding? = null\r\n    val binding\r\n        get() = _binding!!\r\n\r\n    private val foodListVM by viewModels<FoodListVM> { FoodListVM.Factory }\r\n\r\n    private lateinit var foodAdapter: FoodAdapter\r\n\r\n    private val foodListState: MutableList<Food> = mutableListOf()\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        arguments?.let {\r\n        }\r\n    }\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View {\r\n        _binding = FragmentListBinding.inflate(inflater, container, false)\r\n        binding.textView.text = \"Food List\"\r\n        return binding.root\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        initRecView()\r\n\r\n        setCollectors()\r\n    }\r\n\r\n    private fun initRecView() {\r\n        foodAdapter = FoodAdapter(\r\n            listFood = mutableListOf(),\r\n            onClickItem = { selectFood(it) },\r\n            onClickToFavorites = { addToFavorites(it) },\r\n            callback = this\r\n        )\r\n        binding.rvFoods.adapter = foodAdapter\r\n        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)\r\n            binding.rvFoods.layoutManager =\r\n                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)\r\n        else {\r\n            binding.textView.visibility = View.GONE\r\n            binding.rvFoods.layoutManager =\r\n                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)\r\n        }\r\n    }\r\n\r\n    private fun setCollectors() {\r\n        lifecycleScope.launch {\r\n            repeatOnLifecycle(Lifecycle.State.STARTED) {\r\n                foodListVM.uiState.collect { state ->\r\n                    if (state.isLoading) {\r\n                        binding.loadingGif.visibility = View.VISIBLE\r\n                    } else {\r\n                        binding.loadingGif.visibility = View.INVISIBLE\r\n                        foodAdapter.setFoodList(state.foodList)\r\n                        foodAdapter.notifyDataSetChanged()\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Esta función se encarga de añadir un alimento a la lista de favoritos\r\n     */\r\n    private fun addToFavorites(it: Int) {\r\n        //Añade el elemento a la lista de favoritos\r\n        foodListState[it].isFavorite = true\r\n        //Actualiza el adapter\r\n        foodAdapter.notifyDataSetChanged()\r\n    }\r\n\r\n    private fun selectFood(foodIndex: Int) {\r\n        val food = foodAdapter.listFood[foodIndex]\r\n        navigateToDetails(food)\r\n    }\r\n\r\n    override fun navigateToDetails(food: Food) {\r\n        if (isAdded) {\r\n            val action = ListFragmentDirections.actionListFragmentToFoodDetailsFragment(food)\r\n            view?.findNavController()?.navigate(action)\r\n        }\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/foodcode2/ui/herolist/ListFragment.kt b/app/src/main/java/com/example/foodcode2/ui/herolist/ListFragment.kt
+--- a/app/src/main/java/com/example/foodcode2/ui/herolist/ListFragment.kt	(revision 4539efb33e2ae85f34785236fa85ea46d455d0cc)
++++ b/app/src/main/java/com/example/foodcode2/ui/herolist/ListFragment.kt	(date 1710439807367)
+@@ -3,7 +3,6 @@
+ import Food
+ import FoodAdapter
+ import FoodListVM
+-import FoodRepository
+ import android.content.res.Configuration
+ import android.os.Bundle
+ import androidx.fragment.app.Fragment
+@@ -12,18 +11,12 @@
+ import android.view.ViewGroup
+ import androidx.fragment.app.viewModels
+ import androidx.lifecycle.Lifecycle
+-import androidx.lifecycle.ViewModelProvider
+ import androidx.lifecycle.lifecycleScope
+ import androidx.lifecycle.repeatOnLifecycle
+-import androidx.navigation.findNavController
+ import androidx.navigation.fragment.findNavController
+ import androidx.recyclerview.widget.LinearLayoutManager
+ import com.example.foodcode2.NavigationCallback
+-import com.example.foodcode2.R
+-
+-import com.example.foodcode2.api.ApiService
+ import com.example.foodcode2.databinding.FragmentListBinding
+-import kotlinx.coroutines.flow.collect
+ import kotlinx.coroutines.launch
+ 
+ class ListFragment : Fragment(), NavigationCallback {
+@@ -111,10 +104,12 @@
+     }
+ 
+     override fun navigateToDetails(food: Food) {
+-        if (isAdded) {
+-            val action = ListFragmentDirections.actionListFragmentToFoodDetailsFragment(food)
+-            view?.findNavController()?.navigate(action)
+-        }
++
++            val idNumber = food.id
++
++            val action = ListFragmentDirections.actionListFragmentToFoodDetailsFragment(idNumber)
++            findNavController().navigate(action)
++
+     }
+ 
+ }
+\ No newline at end of file

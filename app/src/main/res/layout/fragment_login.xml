@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".LoginFragment">
+    android:background="@color/fondo"
+    tools:context=".ui.login.LoginFragment">
 
     <TextView
         android:id="@+id/textView"
@@ -13,20 +14,30 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_weight="20"
+        android:fontFamily="cursive"
         android:text="@string/welcome"
         android:textAlignment="center"
-        android:textSize="30sp"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_width="360dp"
+        android:layout_height="311dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="40"
-        android:src="@drawable/foodlogo"
+        android:src="@drawable/chef"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintVertical_bias="0.143"
+        android:contentDescription="TODO" />
 
     <EditText
         android:id="@+id/editTextName"
@@ -40,9 +51,11 @@
         android:ems="10"
         android:hint="@string/username"
         android:inputType="text"
+        android:textColorHint="#616161"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        android:autofillHints="" />
 
     <Button
         android:id="@+id/btnSignup"
@@ -54,6 +67,8 @@
         android:layout_weight="20"
         android:onClick="next"
         android:text="@string/next"
+        android:textColor="#795548"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextName" />

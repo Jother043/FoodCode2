@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("search.php")
-    suspend fun getFoodList(@Query("f") latter : String) : Response<FoodsListResponse>
+    suspend fun getFoodList(@Query("i") latter : String) : Response<FoodsListResponse>
 
     @GET("lookup.php")
     suspend fun getFoodDetails(@Query("i") idFood: Int) : Response<FoodsListResponse>

@@ -4,63 +4,72 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AccessFragment">
+    android:background="@color/fondo"
+    tools:context=".MenuFragment">
 
     <ImageView
         android:id="@+id/ivPortrait"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="403dp"
+        android:layout_height="287dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/foodlogo"
+        android:src="@drawable/chef"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.18" />
-
-    <!-- Un textView que lea el usuario que haya introducido anteriormente-->
+        app:layout_constraintVertical_bias="0.178" />
 
     <TextView
         android:id="@+id/etUsername"
-        android:layout_width="275dp"
-        android:layout_height="55dp"
+        android:layout_width="300dp"
+        android:layout_height="52dp"
         android:ems="10"
-        android:fontFamily="@font/alata"
+        android:fontFamily="cursive"
         android:hint="@string/bienvenido"
         android:inputType="textPersonName"
-        android:textSize="24sp"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColorHint="#607D8B"
+        android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/ivPortrait"
+        app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="@+id/ivPortrait"
         app:layout_constraintTop_toBottomOf="@+id/ivPortrait"
-        app:layout_constraintVertical_bias="0.088" />
+        app:layout_constraintVertical_bias="0.222"
+        tools:ignore="TextViewEdits" />
 
     <Button
         android:id="@+id/btnList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="260dp"
+        android:layout_height="57dp"
         android:fontFamily="casual"
         android:text="@string/list"
+        android:textColor="#424242"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etUsername"
-        app:layout_constraintVertical_bias="0.208" />
+        app:layout_constraintVertical_bias="0.081" />
 
     <Button
         android:id="@+id/btnFavList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="260dp"
+        android:layout_height="57dp"
         android:fontFamily="casual"
         android:text="@string/favouriteList"
+        android:textColor="#424242"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btnList"
         app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="@+id/btnList"
         app:layout_constraintTop_toBottomOf="@+id/btnList"
-        app:layout_constraintVertical_bias="0.173" />
+        app:layout_constraintVertical_bias="0.173"
+        tools:ignore="TextSizeCheck" />
 
     <Button
         android:id="@+id/btnExitMenu"
@@ -69,6 +78,7 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="casual"
         android:text="@string/exit"
+        android:textColor="#424242"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btnFavList"
         app:layout_constraintHorizontal_bias="0.489"

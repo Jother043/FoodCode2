@@ -5,7 +5,7 @@ import androidx.versionedparcelable.ParcelField
 
 data class Food(
     var id: Int = 0,
-    var title: String? = "",
+    var title: String = "",
     var strDrinkAlternate: String? = null,
     var strCategory: String? = null,
     var strArea: String? = null,
@@ -61,7 +61,7 @@ data class Food(
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
-        parcel.readString(),
+        parcel.readString().toString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),

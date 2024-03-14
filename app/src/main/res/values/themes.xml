@@ -14,8 +14,8 @@
 
     <style name="Theme.FoodCode" parent="Base.Theme.FoodCode" />
 
-    <color name="my_primary">#774E30</color>
+    <color name="my_primary">#FF9800</color>
 
-    <color name="my_primary_variant">#A2755D</color>
-    <color name="naranja">#A2755D</color>
+    <color name="my_primary_variant">#FF9800</color>
+    <color name="naranja">#FF9800</color>
 </resources>
