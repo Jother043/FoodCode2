@@ -33,8 +33,9 @@
     <string name="listFavFood">Alimentos favoritos</string>
     <string name="userInfo">Perfil</string>
     <string name="descripci_n_de_la_aplicaci_n">asdasd</string>
-    <string name="categorias">Categoría</string>
-    <string name="Origen">Orígen</string>
-    <string name="ingredients">Ingredientes\n</string>
-    <string name="measure">Medida</string>
+    <string name="categorias" translatable="false">Categoría</string>
+    <string name="Origen" translatable="false">Orígen</string>
+    <string name="ingredients" translatable="false">Ingredientes\n</string>
+    <string name="measure" translatable="false">Medida</string>
+    <string name="slecci_n_de_alimentos">Slección de alimentos</string>
 </resources>

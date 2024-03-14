@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class MainActivity {
+    +onCreate(savedInstanceState: Bundle): void
+}
+
+class FoodApiConfig {
+    -BASE_URL: String
+    +provideRetrofit(): Retrofit
+}
+
+class FoodEntity {
+}
+
+class FoodDao {
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+    +getAllFoods(): Flow<MutableList<FoodEntity>>
+    +existsFood(id: Int): Flow<Boolean>
+}
+
+class FoodDatabase {
+    +foodDao(): FoodDao
+}
+
+class FoodRepository {
+    +getFoods(): Flow<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+class FoodViewModel {
+    +foods: LiveData<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+MainActivity "1" -- "1" FoodViewModel : uses
+FoodViewModel "1" -- "1" FoodRepository : uses
+FoodRepository "1" -- "1" FoodDao : uses
+FoodDao "1" -- "many" FoodEntity : manages
+FoodDatabase "1" -- "1" FoodDao : contains
+FoodApiConfig "1" -- "many" FoodEntity : provides
+
+@enduml

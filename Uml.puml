@@ -1,194 +1,41 @@
 @startuml
-class com.example.foodcode2.Tab2NoticeFragment {
-- FragmentTab2NoticeBinding? _binding
--  binding
-+ void onCreate(Bundle?)
-+ void onCreateView(void,LayoutInflater,ViewGroup?,void,Bundle?)
-+ void null()
-+ void onViewCreated(View,Bundle?)
+class com.example.foodcode2.adapter.FavoriteAdapter$ViewHolder {
++ void bind(FoodEntity)
 }
-class com.example.foodcode2.MainActivity {
-- ActivityMainBinding binding
-+ void onCreate(Bundle?)
+
+class com.example.foodcode2.adapter.FavoriteAdapter$MoviesDiffUtils {
++ Int getOldListSize()
++ Int getNewListSize()
++ Boolean areItemsTheSame(Int,Int)
++ Boolean areContentsTheSame(Int,Int)
 }
-class com.example.foodcode2.FoodAdapter {
-}
-class com.example.foodcode2.ListViewHolder$Companion {
-+  DRAWABLE
-}
-class com.example.foodcode2.ListViewHolder {
--  binding
-+ void bind(Food,(Int) -> Unit)
-}
-class com.example.foodcode2.NoticeFragment {
-- FragmentNoticeBinding? _binding
--  binding
-+ void onCreate(Bundle?)
-+ View? onCreateView(LayoutInflater,ViewGroup?,Bundle?)
-+ void onViewCreated(View,Bundle?)
-}
-class com.example.foodcode2.NoticeAdapter {
-+ Int getItemCount()
-+ Fragment createFragment(Int)
-}
-class com.example.foodcode2.MenuFragment {
-- FragmentMenuBinding binding
-+ void onCreate(Bundle?)
-+ void onCreateView(void)
-+ void null()
-}
-class com.example.foodcode2.InfoUserFragment$Companion {
-+ void newInstance()
-}
-class com.example.foodcode2.InfoUserFragment {
-- String? param1
-- String? param2
-- InfoUserFragment? _binding
--  binding
-+ void onCreate(Bundle?)
-+ View? onCreateView(LayoutInflater,ViewGroup?,Bundle?)
-}
-class com.example.foodcode2.FoodFavAdapter {
-}
-class com.example.foodcode2.ListViewHolder$Companion {
-+  DRAWABLE
-}
-class com.example.foodcode2.ListViewHolder {
--  binding
-+ void bind(Food,(Int) -> Unit)
-}
-class com.example.foodcode2.AboutFragment$Companion {
-+ void newInstance(String,String)
-}
-class com.example.foodcode2.AboutFragment {
-- String? param1
-- String? param2
-+ void onCreate(Bundle?)
-+ View? onCreateView(LayoutInflater,ViewGroup?,Bundle?)
-}
-class com.example.foodcode2.ListFragment$Companion {
-+ void newInstance()
-+ void null()
-}
-class com.example.foodcode2.ListFragment {
-- FragmentListBinding? _binding
--  binding
-+  foods
-- FoodAdapter foodAdapter
-- LinearLayoutManager layaoutManager
-+ void onCreate(Bundle?)
-+ void onCreateView(void,LayoutInflater,ViewGroup?,void,Bundle?)
-+ void null()
-+ void favFood(Int)
-- void initRecyclerView()
-+ void onViewCreated(View,Bundle?)
-+ void navigateToDetails()
-}
-class com.example.foodcode2.Datasource {
-+ MutableList<Food> getFoodList()
-+ MutableList<Food> getFavFoodList()
-+ void addFavFood(Food)
-}
-class com.example.foodcode2.Food {
-}
-class com.example.foodcode2.Tab1NoticeFragment {
-+ void onCreate(Bundle?)
-+ void onCreateView(void,LayoutInflater,ViewGroup?,void,Bundle?)
-+ void null()
-+ void onViewCreated(View,Bundle?)
-}
-class com.example.foodcode2.NoticeOneFragment$Companion {
-+ void newInstance(String,String)
-}
-class com.example.foodcode2.NoticeOneFragment {
-- String? param1
-- String? param2
-+ void onCreate(Bundle?)
-+ View? onCreateView(LayoutInflater,ViewGroup?,Bundle?)
-}
-class com.example.foodcode2.CreditFragment {
-+ void onCreateView(void,LayoutInflater,ViewGroup?,void,Bundle?)
-+ void null()
-}
-class com.example.foodcode2.FavFoodFragment$Companion {
-+ void newInstance()
-}
-class com.example.foodcode2.FavFoodFragment {
-- FragmentFavFoodBinding? _binding
--  binding
-+  foods
-+ void onCreate(Bundle?)
-+ View? onCreateView(LayoutInflater,ViewGroup?,Bundle?)
-- void initRecyclerView()
-+ void favFood(Int)
-+ void onViewCreated(View,Bundle?)
-+ void navigateToDetails()
-}
-class com.example.foodcode2.FoodDetailsFragment$Companion {
-+ void newInstance(String,String)
-}
-class com.example.foodcode2.FoodDetailsFragment {
-- String? param1
-- String? param2
-+ void onCreate(Bundle?)
-+ View? onCreateView(LayoutInflater,ViewGroup?,Bundle?)
-}
-class com.example.foodcode2.LoginFragment$Companion {
-+  NAME
-}
-class com.example.foodcode2.LoginFragment {
-- FragmentLoginBinding binding
-- EditText etName
-+ View? onCreateView(void,LayoutInflater,ViewGroup?,void,Bundle?,void)
-- void goToElection()
-}
-interface com.example.foodcode2.NavigationCallback {
-+ void navigateToDetails()
-}
-class com.example.foodcode2.FragmentFoodFav$Companion {
-+ void newInstance()
-}
-class com.example.foodcode2.FragmentFoodFav {
-- FragmentFavFoodBinding? _binding
--  binding
-+  foods
-+ void onCreate(Bundle?)
-+ View? onCreateView(LayoutInflater,ViewGroup?,Bundle?)
-- void initRecyclerView()
-+ void favFood(Int)
-+ void onViewCreated(View,Bundle?)
-+ void navigateToDetails()
+
+class com.example.foodcode2.adapter.FavoriteAdapter {
+- FoodItemBinding binding
+-  moviesList
+- ((FoodEntity) -> Unit)? onItemClickListener
++ ViewHolder onCreateViewHolder(ViewGroup,Int)
++ void onBindViewHolder(ViewHolder,Int)
++ void getItemCount()
++ void setOnItemClickListener((FoodEntity) -> Unit)
++ void setData(List<FoodEntity>)
 }
 
 
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.Tab2NoticeFragment
-androidx.appcompat.app.AppCompatActivity <|-- com.example.foodcode2.MainActivity
-com.example.foodcode2.ListViewHolder +.. com.example.foodcode2.ListViewHolder$Companion
-com.example.foodcode2.ViewHolder <|-- com.example.foodcode2.ListViewHolder
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.NoticeFragment
-androidx.viewpager2.adapter.FragmentStateAdapter <|-- com.example.foodcode2.NoticeAdapter
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.MenuFragment
-com.example.foodcode2.InfoUserFragment +.. com.example.foodcode2.InfoUserFragment$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.InfoUserFragment
-com.example.foodcode2.ListViewHolder +.. com.example.foodcode2.ListViewHolder$Companion
-com.example.foodcode2.ViewHolder <|-- com.example.foodcode2.ListViewHolder
-com.example.foodcode2.AboutFragment +.. com.example.foodcode2.AboutFragment$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.AboutFragment
-com.example.foodcode2.ListFragment +.. com.example.foodcode2.ListFragment$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.ListFragment
-com.example.foodcode2.NavigationCallback <|.. com.example.foodcode2.ListFragment
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.Tab1NoticeFragment
-com.example.foodcode2.NoticeOneFragment +.. com.example.foodcode2.NoticeOneFragment$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.NoticeOneFragment
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.CreditFragment
-com.example.foodcode2.FavFoodFragment +.. com.example.foodcode2.FavFoodFragment$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.FavFoodFragment
-com.example.foodcode2.NavigationCallback <|.. com.example.foodcode2.FavFoodFragment
-com.example.foodcode2.FoodDetailsFragment +.. com.example.foodcode2.FoodDetailsFragment$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.FoodDetailsFragment
-com.example.foodcode2.LoginFragment +.. com.example.foodcode2.LoginFragment$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.LoginFragment
-com.example.foodcode2.FragmentFoodFav +.. com.example.foodcode2.FragmentFoodFav$Companion
-androidx.fragment.app.Fragment <|-- com.example.foodcode2.FragmentFoodFav
-com.example.foodcode2.NavigationCallback <|.. com.example.foodcode2.FragmentFoodFav
+class FoodAdapter {
+}
+class ListViewHolder {
+}
+class null {
++  DRAWABLE
+}
+
+
+
+com.example.foodcode2.adapter.FavoriteAdapter +.. com.example.foodcode2.adapter.FavoriteAdapter$ViewHolder
+com.example.foodcode2.adapter.ViewHolder <|-- com.example.foodcode2.adapter.FavoriteAdapter$ViewHolder
+com.example.foodcode2.adapter.FavoriteAdapter +.. com.example.foodcode2.adapter.FavoriteAdapter$MoviesDiffUtils
+com.example.foodcode2.adapter.Callback <|-- com.example.foodcode2.adapter.FavoriteAdapter$MoviesDiffUtils
+com.example.foodcode2.adapter.Adapter <|-- com.example.foodcode2.adapter.FavoriteAdapter
+ <|.. ListViewHolder
 @enduml

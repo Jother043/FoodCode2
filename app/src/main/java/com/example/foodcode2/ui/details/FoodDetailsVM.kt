@@ -1,6 +1,9 @@
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.foodcode2.dependencies.FoodCode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,18 +27,7 @@ class FoodDetailsVM(
 
     }
 
-    fun fetchFoodsByIds(ids: List<Int>) {
-        _uiState.value = FoodDetailsUiState(isLoading = true)
-        viewModelScope.launch {
-            val response = foodRepository.getFoodsByIds(ids)
-            if (response.isSuccessful) {
-            } else {
-                Log.d("FoodDetailsVM", "Error fetching foods")
-            }
-        }
-    }
-
-    fun setFood(idFood: String) {
+    fun setFood(idFood: Int) {
         viewModelScope.launch {
             val foodResp = foodRepository.getFullFood(idFood.toInt())
             val foodListResponse = foodResp.body()
@@ -44,6 +36,21 @@ class FoodDetailsVM(
                 isLoading = false,
                 food = food
             )
+        }
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(
+                modelClass: Class<T>,
+                extras: CreationExtras
+            ): T {
+                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                return FoodDetailsVM(
+                    (application as FoodCode).appContainer.FoodRepository
+                ) as T
+            }
         }
     }
 }

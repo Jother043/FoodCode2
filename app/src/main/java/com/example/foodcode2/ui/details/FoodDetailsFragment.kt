@@ -1,30 +1,61 @@
+package com.example.foodcode2.ui.details
+import FoodDetailsVM
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import com.example.foodcode2.R
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
+import coil.load
 import com.example.foodcode2.databinding.FragmentFoodDetailsBinding
+import kotlinx.coroutines.launch
+
 
 class FoodDetailsFragment : Fragment() {
-    private lateinit var food: Food
 
+    private var _binding: FragmentFoodDetailsBinding? = null
+    val binding
+        get() = _binding!!
+
+    val args: FoodDetailsFragmentArgs by navArgs()
+
+    private val foodDetailsVM by viewModels<FoodDetailsVM> { FoodDetailsVM.Factory }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        food = arguments?.getParcelable("food") ?: Food() // Reemplaza Food() con un objeto Food vacío o predeterminado
+        arguments?.let {
+
+        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_food_details, container, false)
-        val binding = FragmentFoodDetailsBinding.bind(view)
-        binding.foodTitleTxt.text = food.title
-        binding.foodDescTxt.text = food.strCategory
-        binding.foodAreaTxt.text = food.strArea
-        val resourceId = resources.getIdentifier(food.strImageSource, "drawable", context?.packageName)
-        binding.foodCoverImg.setImageResource(resourceId)
-        return view
+        _binding = FragmentFoodDetailsBinding.inflate(inflater, container, false)
+        foodDetailsVM.setFood(args.food)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setCollectors()
+    }
+
+    private fun setCollectors() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                foodDetailsVM.uiState.collect { foodState ->
+                    if(!foodState.isLoading) {
+                        binding.foodTitleTxt.text = foodState.food?.title ?: ""
+                        binding.measureImg.load(foodState.food?.strMealThumb)
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/foodDetailsFragmentPartent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.details.FoodDetailsFragment">
+    tools:context=".ui.details.FoodDetailsFragment"
+    android:background="@color/fondo">
 
     <!-- Content -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/foodDetailsFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/fondo">
 
         <!-- Cover -->
         <ImageView
@@ -72,14 +75,18 @@
             android:background="@drawable/bg_top_rounded"
             android:paddingHorizontal="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/foodHeaderLay">
+            app:layout_constraintTop_toBottomOf="@id/foodHeaderLay"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="0dp">
 
             <!-- Scroll View -->
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true"
-                android:scrollbars="none">
+                android:scrollbars="none"
+                tools:layout_editor_absoluteX="30dp"
+                tools:layout_editor_absoluteY="40dp">
 
                 <!-- Linear Layout for Content -->
                 <LinearLayout

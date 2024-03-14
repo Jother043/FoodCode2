@@ -24,7 +24,7 @@ class FoodListVM(
     val uiState: StateFlow<FoodListUiState> = _uiState.asStateFlow()
 
     init {
-        val ids = listOf(52771, 52772, 52773, 52774, 52775, 52776) // Reemplaza esto con los IDs que quieras obtener
+        val ids = listOf(52771, 52772, 52773, 52774, 52775, 52776, 52777) // Reemplaza esto con los IDs que quieras obtener
         fetchFoodsByIds(ids)
     }
 
@@ -43,7 +43,6 @@ class FoodListVM(
     }
 
     companion object {
-         const val NUM_FOODS = 10
 
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

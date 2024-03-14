@@ -9,6 +9,7 @@ import coil.load
 import com.example.foodcode2.NavigationCallback
 import com.example.foodcode2.R
 import com.example.foodcode2.databinding.FoodItemBinding
+
 import com.example.foodcode2.ui.herolist.ListFragmentDirections
 import com.google.android.material.snackbar.Snackbar
 

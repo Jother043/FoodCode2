@@ -30,7 +30,11 @@
         tools:layout="@layout/fragment_list">
         <action
             android:id="@+id/action_listFragment_to_foodDetailsFragment"
-            app:destination="@id/foodDetailsFragment"></action>
+            app:destination="@id/foodDetailsFragment">
+        </action>
+        <argument
+            android:name="food"
+            app:argType="Food" />
     </fragment>
     <fragment
         android:id="@+id/creditFragment"
@@ -92,6 +96,6 @@
         tools:layout="@layout/fragment_food_details">
         <argument
             android:name="food"
-            app:argType="integer" />
+            app:argType="Food" />
     </fragment>
 </navigation>

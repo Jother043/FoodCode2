@@ -1,6 +1,8 @@
 import android.util.Log
 import com.example.foodcode2.api.ApiService
 import com.example.foodcode2.data.FoodsListResponse
+import com.example.foodcode2.db.FoodDao
+import com.example.foodcode2.db.FoodDatabase
 import kotlinx.coroutines.withTimeout
 import retrofit2.Response
 import kotlin.random.Random
@@ -82,4 +84,13 @@ class FoodRepository(
         }
         return Response.success(foodList)
     }
+
+    /*
+    fun getDbFoodList(): List<FoodEntity>? {
+        //val foodDao = FoodDatabase.getDatabase().foodDao()
+        //Obtiene la lista de comidas de la base de datos.
+        //return foodDao.getAllFoods()
+    }
+
+     */
 }

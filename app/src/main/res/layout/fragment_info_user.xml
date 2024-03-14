@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InfoUserFragment">
+    android:background="@color/fondo"
+    tools:context=".ui.userpreferences.InfoUserFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -54,5 +55,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/InfoUser" />
+
+    <CheckBox
+        android:id="@+id/checkBox2"
+        android:layout_width="151dp"
+        android:layout_height="52dp"
+        android:text="Mostrar noticias"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLogOut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvUser"
+        app:layout_constraintVertical_bias="0.77" />
+
+    <TextView
+        android:id="@+id/tvNombre"
+        android:layout_width="380dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/username"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/checkBox2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvUser"
+        app:layout_constraintVertical_bias="0.808" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

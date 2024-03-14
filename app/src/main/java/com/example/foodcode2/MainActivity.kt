@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodcode2.databinding.ActivityMainBinding
 import com.example.foodcode2.ui.herolist.ListFragment
+import com.example.foodcode2.ui.userpreferences.InfoUserFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,8 +31,7 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.infoUserFragment -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.NavHostFragment, InfoUserFragment.newInstance())
-                        .commitNow()
+                        .replace(R.id.NavHostFragment, InfoUserFragment()).commitNow()
                 }
             }
             true

@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fondo"
     tools:context=".ui.herolist.ListFragment">
+
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/loading_gif"
@@ -22,7 +24,11 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Slección de alimentos"
+        android:layout_marginTop="8dp"
+        android:fontFamily="cursive"
+        android:text="@string/slecci_n_de_alimentos"
+        android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
