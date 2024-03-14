@@ -1,6 +1,10 @@
+import java.util.regex.Pattern.compile
+
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id ("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -41,6 +45,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.room:room-common:2.6.1")
     val nav_version = "2.7.0"
     //noinspection GradleDependency
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
@@ -53,4 +58,19 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    //Navigation Kotlin
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+
+    //retrofit2
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //corrutinas
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    //gif
+    implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.17")
+    //Image Loading
+    implementation ("io.coil-kt:coil:2.1.0")
 }

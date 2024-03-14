@@ -14,7 +14,7 @@
         android:contentDescription="@string/food_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/Colacao" />
+        app:srcCompat="@drawable/cafe" />
 
     <TextView
         android:id="@+id/tvName"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="@string/seasons"
+        android:text="@string/calories"
         app:layout_constraintEnd_toStartOf="@+id/textView4"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"

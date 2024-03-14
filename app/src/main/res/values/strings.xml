@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FoodCode2</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Informacion Producto</string>
     <string name="appname">FoodCode</string>
     <string name="welcome">Bienvenido</string>
     <string name="username">Nombre de Usuario</string>
@@ -10,17 +10,31 @@
     <string name="contact">Contactar</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="about">Sobre la app</string>
-    <string name="credits">Créditos</string>
+    <string name="credits">App desarrollada por José Miguel Gutiérrez Hernández para la asignatura de Programación de Aplicaciones Móviles</string>
     <string name="valor_energetico">sdsdfsdfsdf</string>
     <string name="food_image">Logo</string>
-    <string name="seasons">Calorias</string>
+    <string name="calories">Calorias</string>
     <string name="caps">Valor energético</string>
     <string name="FoodTitle">Manzana</string>
     <string name="cafeTitle">Descafeinado Clasico Nestlé</string>
     <string name="calorias">Cálorias</string>
     <string name="proteinas">Proteínas</string>
-    <string name="bienvenido">Bienvenido a mi APP</string>
+    <string name="bienvenido">Bienvenido a Food Code.</string>
     <string name="list">Lista de alimentos</string>
     <string name="favouriteList">Lista de alimentos favoritos</string>
     <string name="exit">Salir</string>
+    <string name="notice">Estamos en la pantalla de Novedades: para informar a los usuarios de las novedades de la aplicación y de la empresa. Estamos en la version 2.0.0</string>
+    <string name="back">Volver</string>
+    <string name="novedades">Novedad en nuestra APP</string>
+    <string name="fav">Favoritos</string>
+    <string name="lista">Alimentos</string>
+    <string name="about2">Datos Usuario</string>
+    <string name="listFood">Lista alimentos</string>
+    <string name="listFavFood">Alimentos favoritos</string>
+    <string name="userInfo">Perfil</string>
+    <string name="descripci_n_de_la_aplicaci_n">asdasd</string>
+    <string name="categorias">Categoría</string>
+    <string name="Origen">Orígen</string>
+    <string name="ingredients">Ingredientes\n</string>
+    <string name="measure">Medida</string>
 </resources>
