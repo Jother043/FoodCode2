@@ -2,7 +2,9 @@ package com.example.foodcode2.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.foodcode2.data.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -11,40 +13,39 @@ class UserRepositories(
     private val userDataStore: DataStore<Preferences>
 ) {
 
+    //Obtener las preferencias del usuario.
     fun getUserPrefs(): Flow<UserPreferences> {
         return userDataStore.data.map { userPreferences ->
-            val name = userPreferences[UserPreferences.USER_NAME] ?: UserPreferences.ANONYMOUS
-            val showViewPage = userPreferences[UserPreferences.SHOW_VIEWPAGE] ?: true
-            UserPreferences(name = name, showViewPage = showViewPage)
+            val name = userPreferences[stringPreferencesKey(UserPreferences.USER_NAME)]
+                ?: UserPreferences.ANONYMOUS
+            val checked = userPreferences[booleanPreferencesKey(UserPreferences.SHOW_VIEW_PAGE)]
+                ?: UserPreferences.SHOW_VIEW_PAGE_DEFAULT
+            return@map UserPreferences(
+                name = name,
+                showViewPage = checked,
+            )
         }
     }
 
-    suspend fun saveSettings(name: String, showViewPage: Boolean) {
+    //Guardar las preferencias del usuario.
+    suspend fun saveSettings(name: String, checked: Boolean, saveChecked: Boolean) {
         userDataStore.edit { userPreferences ->
-            userPreferences[UserPreferences.USER_NAME] = name
-            userPreferences[UserPreferences.SHOW_VIEWPAGE] = showViewPage
+            userPreferences[stringPreferencesKey(UserPreferences.USER_NAME)] = name
+            userPreferences[booleanPreferencesKey(UserPreferences.SHOW_VIEW_PAGE)] = checked
         }
     }
 
-    /**
-     * Funcion que obtiene el nombre del usuario almacenado en el DataStore y lo retorna como un Flow
-     */
-    fun getUserName(): Flow<String> {
-        // Se obtiene el valor almacenado en el DataStore y se retorna como un Flow
-        return userDataStore.data.map { userPreferences ->
-            userPreferences[UserPreferences.USER_NAME] ?: UserPreferences.ANONYMOUS
-        }
-    }
-
-    suspend fun getShowViewPage(): Boolean {
-        return userDataStore.data.map { userPreferences ->
-            userPreferences[UserPreferences.SHOW_VIEWPAGE] ?: true
-        }.toString().toBoolean()
-    }
-
-    suspend fun saveUserName(name: String) {
+    //Guardar el nombre del usuario.
+    suspend fun saveName(name: String) {
         userDataStore.edit { userPreferences ->
-            userPreferences[UserPreferences.USER_NAME] = name
+            userPreferences[stringPreferencesKey(UserPreferences.USER_NAME)] = name
+        }
+    }
+
+    //Guardar la preferencia de mostrar la vista de la página.
+    suspend fun saveSettingsViewPage(checked: Boolean) {
+        userDataStore.edit { userPreferences ->
+            userPreferences[booleanPreferencesKey(UserPreferences.SHOW_VIEW_PAGE)] = checked
         }
     }
 }

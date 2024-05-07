@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
+import coil.transform.CircleCropTransformation
 import com.example.foodcode2.databinding.FragmentDetailsBinding
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,7 @@ class DetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ):View {
+    ): View {
         _binding = FragmentDetailsBinding.inflate(layoutInflater, container, false)
 
         detailsVM.setFood(args.food)
@@ -47,27 +48,31 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setCollectors()
+        collectors()
 
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
     }
 
-    private fun setCollectors(){
-        lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                detailsVM.uiState.collect{ foodState ->
-                    if(!foodState.isLoading){
+    //Función que se encarga de recolectar los datos de la comida y mostrarlos en la vista
+    private fun collectors() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                detailsVM.uiState.collect { foodState ->
+                    if (!foodState.isLoading) {
                         binding.pbLoadingDetails.isVisible = false
                         foodState.food?.let { food ->
                             binding.tvName.text = food.title
-                            binding.ivPhoto.load(food.strImageSource)
-                            binding.rbPower.text = food.strArea
-                            binding.rbIntelligence.text = food.strCategory
-                            binding.tvDesc.text = food.instructions
+                            binding.ivPhoto.load(food.imageUrl) {
+                                transformations(CircleCropTransformation())
+                            }
+                            binding.rbPower.text = food.energyKcal.toString()
+                            binding.rbIntelligence.text = food.ecoscoreGrade
+                            binding.tvDesc.text = food.title
+
                         }
-                    }else{
+                    } else {
                         binding.pbLoadingDetails.isVisible = true
                     }
                 }

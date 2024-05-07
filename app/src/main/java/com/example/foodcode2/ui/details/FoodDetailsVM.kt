@@ -3,6 +3,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.foodcode2.api.Food
 import com.example.foodcode2.dependencies.FoodCode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,9 +28,9 @@ class FoodDetailsVM(
 
     }
 
-    fun setFood(id: Int) {
+    fun setFood(barcode: String) {
         viewModelScope.launch {
-            val foodResp = foodRepository.getFoodDetailById(id)
+            val foodResp = foodRepository.getFoodDetailById(barcode)
             if (foodResp.isSuccessful) {
                 val foodListResponse = foodResp.body()
                 _uiState.update {
@@ -39,7 +40,10 @@ class FoodDetailsVM(
                     )
                 }
             } else {
-                //Escribimos en el log el error.
+                Log.d(
+                    "FoodDetailsVM",
+                    "Error getting food details: ${foodResp.errorBody()?.string()}"
+                )
             }
         }
     }
@@ -51,7 +55,8 @@ class FoodDetailsVM(
                 modelClass: Class<T>,
                 extras: CreationExtras
             ): T {
-                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                val application =
+                    checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return FoodDetailsVM(
                     (application as FoodCode).appContainer.FoodRepository
                 ) as T

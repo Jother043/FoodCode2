@@ -5,6 +5,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id ("androidx.navigation.safeargs.kotlin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -13,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.foodcode2"
-        minSdk = 34
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -44,6 +45,16 @@ android {
 }
 
 dependencies {
+
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation ("com.google.zxing:core:3.3.0")
+    val roomVersion = "2.5.0"
+    implementation ("androidx.room:room-runtime:$roomVersion")
+    implementation ("androidx.room:room-ktx:$roomVersion")
+    annotationProcessor ("androidx.room:room-compiler:$roomVersion")
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$roomVersion")
 
 
     implementation("androidx.room:room-common:2.6.1")
@@ -76,5 +87,8 @@ dependencies {
     //gif
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.17")
     //Image Loading
-    implementation ("io.coil-kt:coil:2.1.0")
+    implementation ("io.coil-kt:coil:1.4.0")
+
+    implementation ("com.google.android.material:material:1.4.0")
+
 }

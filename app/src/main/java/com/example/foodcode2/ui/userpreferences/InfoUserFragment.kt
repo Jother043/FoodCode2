@@ -9,54 +9,73 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.foodcode2.R
 import com.example.foodcode2.data.UserPreferences
+import com.example.foodcode2.databinding.FragmentInfoUserBinding
+import com.example.foodcode2.databinding.FragmentListBinding
 import com.example.foodcode2.dependencies.FoodCode
 import com.example.foodcode2.repositories.UserRepositories
+import com.example.foodcode2.ui.login.LoginVM
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class InfoUserFragment : Fragment() {
 
-    private lateinit var userNameTextView: TextView
-    private lateinit var userCheckbox: CheckBox
-    private lateinit var saveButton: Button
-    private lateinit var userRepositories: UserRepositories
+    private lateinit var binding: FragmentInfoUserBinding
 
-    @SuppressLint("SetTextI18n")
+    private val loginVM: LoginVM by viewModels<LoginVM> { LoginVM.Factory }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+        }
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_info_user, container, false)
 
-        userNameTextView = view.findViewById(R.id.tvNombre)
-        userCheckbox = view.findViewById(R.id.checkBox2)
-        saveButton = view.findViewById(R.id.buttonLogOut)
+        binding = FragmentInfoUserBinding.inflate(layoutInflater, container, false)
 
-        // En InfoUserFragment.kt
+        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.username)
+
+        setListerners()
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setCollectors()
+    }
+
+    private fun setCollectors() {
         lifecycleScope.launch {
-            val userName = userRepositories.getUserName().first()
-            if (userName.isEmpty() || userName == UserPreferences.ANONYMOUS) {
-                Log.d("InfoUserFragment", "No se encontró ningún nombre de usuario.")
-                userNameTextView.text = "Usuario desconocido"
-            } else {
-                Log.d("InfoUserFragment", "El nombre es: ${userName}")
-                userNameTextView.text = userName
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                loginVM.uiState.collect {
+                    binding.tvUser.text = it.name
+                }
             }
+        }
+    }
+
+    private fun setListerners() {
+
+        binding.buttonLogOut.setOnClickListener {
+            findNavController().popBackStack()
         }
 
-        saveButton.setOnClickListener {
-            lifecycleScope.launch {
-                userRepositories.saveSettings("name", userCheckbox.isChecked)
-                //Navegamos al fragmento de login
-                findNavController().navigate(R.id.action_infoUserFragment_to_loginFragment2)
-            }
+        binding.fabSettings.setOnClickListener {
+            findNavController().navigate(R.id.action_infoUserFragment_to_userSettingsFragment)
         }
-        return view
     }
 }

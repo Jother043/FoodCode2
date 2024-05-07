@@ -6,11 +6,15 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 
 data class UserPreferences(
     val name: String = ANONYMOUS,
-    val showViewPage: Boolean = true
+    val showViewPage: Boolean = false,
+    val saveShowViewPage: Boolean = false,
+    val error: Boolean = false
 ) {
     companion object {
-        const val ANONYMOUS = "anonymous"
-        val USER_NAME = stringPreferencesKey("user_name")
-        val SHOW_VIEWPAGE = booleanPreferencesKey("show_viewpage")
+        const val SETTINGS_FILE = "settings"
+        const val USER_NAME = "username"
+        const val ANONYMOUS = ""
+        const val SHOW_VIEW_PAGE = "showViewPage"
+        const val SHOW_VIEW_PAGE_DEFAULT = false
     }
 }

@@ -26,7 +26,6 @@
         android:layout_marginEnd="16dp"
         android:textColor="#EF1909"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/ivFavSeries"
         app:layout_constraintStart_toEndOf="@+id/ivPhoto"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/cafeTitle" />
@@ -38,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="@string/calorias"
+        android:text="@string/Origen"
         app:layout_constraintEnd_toStartOf="@+id/textView4"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
@@ -52,8 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/proteinas"
-        app:layout_constraintEnd_toStartOf="@+id/ivFavSeries"
+        android:text="@string/categorias"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toTopOf="@+id/textView3" />
 
@@ -76,12 +74,12 @@
         tools:text="10" />
 
     <ImageView
-        android:id="@+id/ivFavFood"
+        android:id="@+id/ivFavDelFood"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/ivPhoto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivPhoto"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@android:drawable/ic_delete" />
 </androidx.constraintlayout.widget.ConstraintLayout>

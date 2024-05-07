@@ -1,22 +1,31 @@
 package com.example.foodcode2.db
 
-import FOOD_TABLE
-import FoodEntity
+import com.example.foodcode2.api.Food
 import androidx.room.*
-
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FoodDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveFood(entity: FoodEntity)
+    //Obtener todos los alimentos
+    @Query("SELECT * FROM food")
+    fun getAll(): List<Food>
 
+    //Obtener un alimento por su id
+    @Query("SELECT * FROM food WHERE code IN (:foodIds)")
+    fun loadAllByIds(foodIds: IntArray): List<Food>
+
+    //Obtener un alimento por su nombre
+    @Query("SELECT * FROM food WHERE title LIKE :name LIMIT 1")
+    fun findByName(name: String): Food
+
+    //Obtener un alimento por su id
+    @Query("SELECT * FROM food WHERE code LIKE :id")
+    fun isFav(id: String): Food
+
+    //Insertar un alimento
+    @Insert
+    fun insert(food: Food)
+
+    //Actualizar un alimento
     @Delete
-    suspend fun deleteFood(entity: FoodEntity)
-
-    @Query("SELECT * FROM $FOOD_TABLE")
-    fun getAllFoods(): Flow<MutableList<FoodEntity>>
-
-    @Query("SELECT EXISTS (SELECT 1 FROM $FOOD_TABLE WHERE id = :id)")
-    fun existsFood(id: Int): Flow<Boolean>
+    fun delete(food: Food)
 }

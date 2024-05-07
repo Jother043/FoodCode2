@@ -37,10 +37,43 @@
     <string name="Origen" translatable="false">Orígen</string>
     <string name="ingredients" translatable="false">Ingredientes\n</string>
     <string name="measure" translatable="false">Medida</string>
-    <string name="slecci_n_de_alimentos">Slección de alimentos</string>
-    <string name="imgFood">Imagen de la receta</string>
-    <string name="descripcion">Descripcion</string>
-    <string name="vegano">Vegano</string>
-    <string name="canada">Canada</string>
-    <string name="volver">Volver\n</string>
+    <string name="slecci_n_de_alimentos" translatable="false">Slección de alimentos</string>
+    <string name="imgFood" translatable="false">Imagen de la receta</string>
+    <string name="descripcion" translatable="false">Descripcion</string>
+    <string name="vegano" translatable="false">Vegano</string>
+    <string name="canada" translatable="false">Canada</string>
+    <string name="volver" translatable="false">Volver\n</string>
+    <string name="emptyname">El nombre no puede estar en blanco</string>
+    <string name="informacion_del_usuario">Informacion del usuario</string>
+    <string name="salir">Salir</string>
+    <string name="settings">Configuracion de usuario</string>
+    <string name="nombreUsuario">Tu nombre de usuario es:</string>
+    <string name="save">Guardar</string>
+    <string name="noShowViewPage">No vollver a mostrar noticias.</string>
+    <string name="settingsSave">Opciones Guardadas correctamente.</string>
+    <string name="errorSave">"Error, no se han guardado los datos "</string>
+    <string name="acceder">Acceder</string>
+    <string name="remove">Eliminar</string>
+    <string name="confirm_delete">Seguro que deseas eliminar la receta de favoritos ?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="accept">Aceptar</string>
+    <string name="coment">Comentario</string>
+    <string name="add_comment">Anadir comentario</string>
+    <string name="comentarys">Comentarios por los usuarios</string>
+    <string name="infoApp">Mas Informacion</string>
+    <string name="creditos">Este proyecto fue desarrollado por Jother043. Todos los derechos reservados © 2023</string>
+    <string name="gmail">josemgh166@gmail.com</string>
+    <string name="answers">Pregunta sobre nuestras recetas</string>
+    <string name="lector_qr">Lector QR</string>
+    <string name="Login">Iniciar sesión</string>
+    <string name="contraseña_olvidada">He olvidado mi contraseña</string>
+    <string name="recordarme">Recordarme</string>
+    <string name="por_favor_inicia_sesion_con_tus_datos">Por favor inicia sesion con tus datos</string>
+    <string name="BienVenido">Hola, bienvenido!</string>
+    <string name="correo_electronico">Correo electronico</string>
+    <string name="contrase_a">Contraseña</string>
+    <string name="o_registrese_con">O registrese con</string>
+    <string name="facebook">Facebook seleccionado\n</string>
+    <string name="google">Google Seleccionado\n</string>
+    <string name="github">GitHubSeleccionado\n</string>
 </resources>

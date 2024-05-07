@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.example.foodcode2.MenuFragment"
+        android:name="com.example.foodcode2.ui.menu.MenuFragment"
         android:label="fragment_menu"
         tools:layout="@layout/fragment_menu">
         <action
@@ -17,11 +17,20 @@
             android:id="@+id/action_menuFragment_to_loginFragment2"
             app:destination="@id/loginFragment2" />
         <action
-            android:id="@+id/action_menuFragment_to_fragmentFoodFav"
-            app:destination="@id/fragmentFoodFav" />
-        <action
             android:id="@+id/action_menuFragment_to_infoUserFragment"
             app:destination="@id/infoUserFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_favFoodFragment"
+            app:destination="@id/favFoodFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_creditFragment"
+            app:destination="@id/creditFragment" />
+        <action
+            android:id="@+id/action_menuFragment_self"
+            app:destination="@id/menuFragment" />
+        <argument
+            android:name="barcode"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/listFragment"
@@ -43,20 +52,15 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_loginFragment2_to_menuFragment"
-            app:destination="@id/menuFragment" />
-        <action
             android:id="@+id/action_loginFragment2_to_noticeFragment"
             app:destination="@id/noticeFragment" />
+        <action
+            android:id="@+id/action_loginFragment2_to_menuFragment4"
+            app:destination="@id/menuFragment" />
     </fragment>
     <fragment
-        android:id="@+id/fragmentFoodFav"
-        android:name="com.example.foodcode2.ui.favorite.FragmentFoodFav"
-        android:label="fragment_food_fav"
-        tools:layout="@layout/fragment_food_fav" />
-    <fragment
         android:id="@+id/noticeFragment"
-        android:name="com.example.foodcode2.NoticeFragment"
+        android:name="com.example.foodcode2.ui.noticias.NoticeFragment"
         android:label="NoticeFragment">
         <action
             android:id="@+id/action_noticeFragment_to_loginFragment2"
@@ -84,6 +88,9 @@
         <action
             android:id="@+id/action_infoUserFragment_to_loginFragment22"
             app:destination="@id/loginFragment2" />
+        <action
+            android:id="@+id/action_infoUserFragment_to_userSettingsFragment"
+            app:destination="@id/userSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -91,9 +98,42 @@
         android:label="fragment_details">
         <argument
             android:name="food"
-            app:argType="integer" />
+            app:argType="string" />
         <action
             android:id="@+id/action_detailsFragment_to_listFragment"
             app:destination="@id/listFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userSettingsFragment"
+        android:name="com.example.foodcode2.ui.settings.UserSettingsFragment"
+        android:label="fragment_user_settings"
+        tools:layout="@layout/fragment_user_settings" />
+    <fragment
+        android:id="@+id/favFoodFragment"
+        android:name="com.example.foodcode2.ui.favFood.FavFoodFragment"
+        android:label="FavFoodFragment" >
+        <action
+            android:id="@+id/action_favFoodFragment_to_foodFavDetailsFragment"
+            app:destination="@id/foodFavDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/foodFavDetailsFragment"
+        android:name="com.example.foodcode2.ui.fav_details.FoodFavDetailsFragment"
+        android:label="FoodFavDetailsFragment" >
+        <argument
+            android:name="foodId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_foodFavDetailsFragment_to_comentaryFragment"
+            app:destination="@id/comentaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comentaryFragment"
+        android:name="com.example.foodcode2.ui.comentary.ComentaryFragment"
+        android:label="fragment_comentary"
+        tools:layout="@layout/fragment_comentary" >
+        <argument
+            android:name="foodId"
+            app:argType="string" />
     </fragment>
 </navigation>

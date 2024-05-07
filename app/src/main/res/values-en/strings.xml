@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="welcome">Welcome</string>
-    <string name="username">Usernam</string>
+    <string name="username">My username:</string>
     <string name="next">Next</string>
     <string name="descripci_n_de_la_aplicaci_n">User</string>
     <string name="contact">Contact</string>

@@ -1,6 +1,6 @@
 package com.example.foodcode2.ui.herolist
 
-import Food
+import com.example.foodcode2.api.Food
 import FoodAdapter
 import FoodListVM
 import android.content.res.Configuration
@@ -16,15 +16,22 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodcode2.databinding.FragmentListBinding
+import com.example.foodcode2.dependencies.FoodCode
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
-class ListFragment : Fragment(){
+class ListFragment : Fragment() {
 
     private var _binding: FragmentListBinding? = null
     val binding
         get() = _binding!!
 
-    private val foodListVM by viewModels<FoodListVM> { FoodListVM.Factory }
+    private val foodListVM by viewModels<FoodListVM> {
+        FoodListVM.FoodListVMFactory(
+            (requireActivity().application as FoodCode).appContainer.FoodRepository,
+            (requireActivity().application as FoodCode).appContainer.favoriteFoodRepository
+        )
+    }
 
     private lateinit var foodAdapter: FoodAdapter
 
@@ -42,11 +49,37 @@ class ListFragment : Fragment(){
     ): View {
 
         _binding = FragmentListBinding.inflate(inflater, container, false)
-        binding.textView.text = "Food List"
+        binding.textView.text = "Lista de Comidas"
         return binding.root
     }
 
-    private fun selectFood(foodId: Int) {
+    //Función que se encarga de añadir una comida a la lista de favoritos
+    private fun addFavorite(food: Food) {
+        foodListVM.saveToFavorite(food)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                foodListVM.uiState.collect { foodState ->
+                    //Si la comida ya está en la lista de favoritos, se muestra un mensaje de que ya está en la lista
+                    if (foodListVM.uiState.value.isFavorite) {
+                        Snackbar.make(
+                            binding.root,
+                            "${food.title} Ya esta en la lista de favoritos.",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            "${food.title} Añadido a la lista de favoritos.",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+    }
+
+    //Función que se encarga de seleccionar una comida de la lista y mostrar sus detalles
+    private fun selectFood(foodId: String) {
         //Como paso esta comida a la pantalla de detalles?
         val action = ListFragmentDirections.actionListFragmentToDetailsFragment2(foodId)
         findNavController().navigate(action)
@@ -55,16 +88,19 @@ class ListFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setListeners()
+
         initRecView()
 
-        setCollectors()
+        collectors()
     }
 
+    //Función que se encarga de recolectar los datos e inicializar el recyclerView
     private fun initRecView() {
         foodAdapter = FoodAdapter(
             _listFood = mutableListOf(),
             onClickItem = { foodId -> selectFood(foodId) },
-            onClickToFavorites = {  }
+            onClickToFavorites = { food -> addFavorite(food) }
         )
         binding.rvFoods.adapter = foodAdapter
         if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -77,7 +113,8 @@ class ListFragment : Fragment(){
         }
     }
 
-    private fun setCollectors() {
+    //Función que se encarga de recolectar los datos de la comida y mostrarlos en la vista
+    private fun collectors() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 foodListVM.uiState.collect { state ->
@@ -93,7 +130,10 @@ class ListFragment : Fragment(){
         }
     }
 
+    //Función que se encarga de añadir una comida a la lista de favoritos
+    private fun setListeners() {
 
+    }
 
 
 }

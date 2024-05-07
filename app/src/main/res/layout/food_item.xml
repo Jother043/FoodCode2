@@ -26,7 +26,6 @@
         android:layout_marginEnd="16dp"
         android:textColor="#EF1909"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/ivFavSeries"
         app:layout_constraintStart_toEndOf="@+id/ivPhoto"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/cafeTitle" />
@@ -82,5 +81,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ivPhoto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivPhoto"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@drawable/ic_favorite_food"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

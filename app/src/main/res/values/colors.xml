@@ -31,4 +31,14 @@
     <color name="white">#FFFFFFFF</color>
     <color name="g_loading">#FF0000</color>
     <color name="fondo">#C3EFE9B0</color>
+    <color name="botones">#FF9800</color>
+    <color name="fondo2">#C3ACA87F</color>
+    <color name="grey">#E7EAEA</color>
+    <color name="colorFavorite">#FF0000</color> <!-- Rojo para favoritos -->
+    <color name="colorNotFavorite">#808080</color> <!-- Gris para no favoritos -->
+    <color name="verde">#5E8F17</color>
+    <color name="verdeClaro">#66CF1C</color>
+    <color name="amarillo">#EDC80D</color>
+    <color name="rojo">#D32F2F</color>
+
 </resources>

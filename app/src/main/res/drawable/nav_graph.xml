@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.example.foodcode2.MenuFragment"
+        android:name="com.example.foodcode2.ui.menu.MenuFragment"
         android:label="fragment_menu"
         tools:layout="@layout/fragment_menu">
         <action
@@ -34,7 +34,7 @@
         </action>
         <argument
             android:name="food"
-            app:argType="Food" />
+            app:argType="com.example.foodcode2.api.Food" />
     </fragment>
     <fragment
         android:id="@+id/creditFragment"
@@ -60,7 +60,7 @@
         tools:layout="@layout/fragment_food_fav" />
     <fragment
         android:id="@+id/noticeFragment"
-        android:name="com.example.foodcode2.NoticeFragment"
+        android:name="com.example.foodcode2.ui.noticias.NoticeFragment"
         android:label="NoticeFragment">
         <action
             android:id="@+id/action_noticeFragment_to_loginFragment2"
@@ -96,6 +96,6 @@
         tools:layout="@layout/fragment_food_details">
         <argument
             android:name="food"
-            app:argType="Food" />
+            app:argType="com.example.foodcode2.api.Food" />
     </fragment>
 </navigation>
