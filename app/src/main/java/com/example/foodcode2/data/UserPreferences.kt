@@ -8,7 +8,9 @@ data class UserPreferences(
     val name: String = ANONYMOUS,
     val showViewPage: Boolean = false,
     val saveShowViewPage: Boolean = false,
-    val error: Boolean = false
+    val error: Boolean = false,
+    val errorMessage: String = "",
+    val isLoggedIn: Boolean = false
 ) {
     companion object {
         const val SETTINGS_FILE = "settings"
@@ -16,5 +18,6 @@ data class UserPreferences(
         const val ANONYMOUS = ""
         const val SHOW_VIEW_PAGE = "showViewPage"
         const val SHOW_VIEW_PAGE_DEFAULT = false
+        const val IS_LOGGED_IN = "isLoggedIn"
     }
 }

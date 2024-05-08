@@ -148,6 +148,7 @@ class MenuFragment : Fragment() {
                     // Oculta la imagen
                     binding.card.visibility = View.GONE
                     binding.linearLayout2.visibility = View.GONE
+                    binding.linearLayout.visibility = View.GONE
 
                     // Crea una nueva instancia del ListFragment
                     val listFragment = ListFragment()
@@ -162,6 +163,7 @@ class MenuFragment : Fragment() {
                     // Oculta la imagen
                     binding.card.visibility = View.GONE
                     binding.linearLayout2.visibility = View.GONE
+                    binding.linearLayout.visibility = View.GONE
                     // Crea una nueva instancia del FragmentFoodFav
                     val fragmentFoodFav = FavFoodFragment()
                     // Realiza la transacción de fragmentos
@@ -175,6 +177,7 @@ class MenuFragment : Fragment() {
                     // Oculta la imagen
                     binding.card.visibility = View.GONE
                     binding.linearLayout2.visibility = View.GONE
+                    binding.linearLayout.visibility = View.GONE
                     // Crea una nueva instancia del InfoUserFragment
                     val infoUserFragment = InfoUserFragment()
                     // Realiza la transacción de fragmentos

@@ -23,12 +23,15 @@ import com.example.foodcode2.databinding.FragmentListBinding
 import com.example.foodcode2.dependencies.FoodCode
 import com.example.foodcode2.repositories.UserRepositories
 import com.example.foodcode2.ui.login.LoginVM
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class InfoUserFragment : Fragment() {
 
     private lateinit var binding: FragmentInfoUserBinding
+
+    private val firebaseAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     private val loginVM: LoginVM by viewModels<LoginVM> { LoginVM.Factory }
 
@@ -71,7 +74,9 @@ class InfoUserFragment : Fragment() {
     private fun setListerners() {
 
         binding.buttonLogOut.setOnClickListener {
-            findNavController().popBackStack()
+            firebaseAuth.signOut()
+            // Navigate to the login fragment
+            findNavController().popBackStack(R.id.loginFragment2, true)
         }
 
         binding.fabSettings.setOnClickListener {
