@@ -13,10 +13,12 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayout"
-        android:layout_width="374dp"
+        android:layout_width="377dp"
         android:layout_height="659dp"
         android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/rounded_border"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -45,17 +47,19 @@
                     android:orientation="vertical">
 
                     <!-- Media -->
+
                     <ImageView
                         android:id="@+id/ivProductImage"
                         android:layout_width="match_parent"
-                        android:layout_height="378dp"
+                        android:layout_height="316dp"
                         android:contentDescription="TODO"
-                        android:scaleType="fitXY"
-                         />
+                        android:scaleType="fitXY" />
+
+                    <!-- Buttons -->
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="195dp"
                         android:orientation="vertical"
                         android:padding="16dp">
 
@@ -79,27 +83,28 @@
                             android:textAppearance="?attr/textAppearanceBody2"
                             android:textColor="?android:attr/textColorSecondary" />
 
+                        <ImageView
+                            android:id="@+id/ivNutritionScore"
+                            android:layout_width="98dp"
+                            android:layout_height="48dp"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="8dp"
+                            android:contentDescription="TODO"
+                            android:scaleType="fitXY" />
+
+
                         <TextView
                             android:id="@+id/tvDescription"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="189dp"
+                            android:layout_height="52dp"
                             android:layout_marginLeft="15dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
                             android:textAppearance="?attr/textAppearanceBody2"
                             android:textColor="?android:attr/textColorSecondary" />
 
-                    </LinearLayout>
-
-                    <!-- Buttons -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:orientation="horizontal">
-
                         <com.google.android.material.divider.MaterialDivider
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             app:dividerInsetEnd="16dp"
                             app:dividerInsetStart="16dp" />
 
@@ -112,10 +117,19 @@
                         android:layout_margin="8dp"
                         android:orientation="horizontal">
 
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:orientation="horizontal">
+
                         <com.google.android.material.button.MaterialButton
                             style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="223dp"
+                            android:layout_height="match_parent"
                             android:layout_marginLeft="15dp"
                             android:text="Añadir Favoritos"
                             app:icon="@drawable/ic_favorite_food"
@@ -136,6 +150,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginTop="10dp"
         android:background="@color/botones"
         app:fabCradleMargin="10dp"
         app:fabCradleRoundedCornerRadius="50dp">

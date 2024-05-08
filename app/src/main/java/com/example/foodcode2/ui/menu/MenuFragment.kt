@@ -89,26 +89,32 @@ class MenuFragment : Fragment() {
                             "Nutri-Score: No disponible para este tipo de producto"
                         //pintamos el fondo de gris para indicar que no hay valor
                         binding.tvRecomendacion.text = "No hay recomendación para este producto"
-                        binding.linearLayout2.setBackgroundResource(R.color.grey)
+                        binding.linearLayout2.setBackgroundResource(R.drawable.borde_gris)
+                        binding.ivNutritionScore.setBackgroundResource(R.drawable.none)
                     }else if (uiState.food.ecoscoreGrade == "a") {
                         binding.tvRecomendacion.text = "Este producto es muy saludable"
-                        binding.linearLayout2.setBackgroundResource(R.color.green)
+                        binding.linearLayout2.setBackgroundResource(R.drawable.bordes_verde_fuerte)
+                        binding.ivNutritionScore.setBackgroundResource(R.drawable.a)
                     }
                     else if (uiState.food.ecoscoreGrade == "b") {
                         binding.tvRecomendacion.text = "Este producto es saludable"
-                        binding.linearLayout2.setBackgroundResource(R.color.verdeClaro)
+                        binding.linearLayout2.setBackgroundResource(R.drawable.borde_verde)
+                        binding.ivNutritionScore.setBackgroundResource(R.drawable.b)
                     }
                     else if (uiState.food.ecoscoreGrade == "c") {
                         binding.tvRecomendacion.text = "Este producto esta en la media de saludabilidad"
-                        binding.linearLayout2.setBackgroundResource(R.color.amarillo)
+                        binding.linearLayout2.setBackgroundResource(R.drawable.borde_amarillo)
+                        binding.ivNutritionScore.setBackgroundResource(R.drawable.c)
                     }
                     else if (uiState.food.ecoscoreGrade == "d") {
                         binding.tvRecomendacion.text = "Este producto no es saludable"
-                        binding.linearLayout2.setBackgroundResource(R.color.naranja)
+                        binding.linearLayout2.setBackgroundResource(R.drawable.border_naranja)
+                        binding.ivNutritionScore.setBackgroundResource(R.drawable.d)
                     }
                     else if (uiState.food.ecoscoreGrade == "e") {
                         binding.tvRecomendacion.text = "Este producto no es nada saludable"
-                        binding.linearLayout2.setBackgroundResource(R.color.rojo)
+                        binding.linearLayout2.setBackgroundResource(R.drawable.rounded_border_red)
+                        binding.ivNutritionScore.setBackgroundResource(R.drawable.e)
 
                     }else {
                         binding.tvNutritionScore.text = "Nutri-Score: ${uiState.food.ecoscoreGrade}"
