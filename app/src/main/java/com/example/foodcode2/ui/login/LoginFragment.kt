@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,6 +16,7 @@ import com.example.foodcode2.R
 import com.example.foodcode2.databinding.FragmentLoginBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 
 class LoginFragment : Fragment() {
 
@@ -48,6 +50,31 @@ class LoginFragment : Fragment() {
 
         collectors()
         setListeners()
+
+        lifecycleScope.launchWhenStarted {
+            loginVM.uiState.collect { uiState ->
+                if (uiState.isLoggedIn) {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Inicio de sesión")
+                        .setMessage("Inicio de sesión exitoso")
+                        .setPositiveButton("Aceptar") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                    //nos movemos a la siguiente pantalla
+                    val action = LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
+                    findNavController().navigate(action)
+                } else if (uiState.errorMessage.isNotEmpty()) {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Inicio de sesión")
+                        .setMessage(uiState.errorMessage)
+                        .setPositiveButton("Aceptar") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                }
+            }
+        }
 
     }
 
@@ -85,7 +112,24 @@ class LoginFragment : Fragment() {
             Snackbar.make(requireView(), getString(R.string.github), Snackbar.LENGTH_SHORT)
                 .show()
         }
+
+        binding.tvContraseAOlvidada.setOnClickListener {
+
+            val action = LoginFragmentDirections.actionLoginFragment2ToSingUpFragment()
+            findNavController().navigate(action)
+        }
+
+
+        binding.btnSignup.setOnClickListener {
+            val email = binding.editTextName.text.toString()
+            val password = binding.editTextContraseA.text.toString()
+            loginVM.signInWithFirebase(
+                email,
+                password
+            ) // Inicia sesión cuando se hace clic en el botón
+        }
     }
+
 
     //Función que se encarga de validar el nombre ingresado por el usuario
     private fun validateName(name: String) {

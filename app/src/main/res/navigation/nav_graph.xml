@@ -57,6 +57,9 @@
         <action
             android:id="@+id/action_loginFragment2_to_menuFragment4"
             app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_loginFragment2_to_singUpFragment"
+            app:destination="@id/singUpFragment" />
     </fragment>
     <fragment
         android:id="@+id/noticeFragment"
@@ -91,6 +94,9 @@
         <action
             android:id="@+id/action_infoUserFragment_to_userSettingsFragment"
             app:destination="@id/userSettingsFragment" />
+        <action
+            android:id="@+id/action_infoUserFragment_to_loginFragment23"
+            app:destination="@id/loginFragment2" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -135,5 +141,14 @@
         <argument
             android:name="foodId"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/singUpFragment"
+        android:name="com.example.foodcode2.ui.SingUp.SingUpFragment"
+        android:label="fragment_sing_up"
+        tools:layout="@layout/fragment_sing_up" >
+        <action
+            android:id="@+id/action_singUpFragment_to_loginFragment2"
+            app:destination="@id/loginFragment2" />
     </fragment>
 </navigation>

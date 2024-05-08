@@ -27,11 +27,13 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="395dp"
+        android:layout_height="522dp"
         android:layout_alignParentBottom="true"
         app:cardCornerRadius="28dp"
         app:layout_constraintBottom_toBottomOf="@+id/relativeLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -112,22 +114,21 @@
 
                 <TextView
                     android:id="@+id/tvResgistrarse"
-                    android:layout_width="124dp"
+                    android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
 
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="59dp"
-                    android:layout_toStartOf="@+id/textView5"
-                    android:text="Registrarse" />
+                    android:text="@string/contraseña_olvidada" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/tvContraseñaOlvidada"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/contraseña_olvidada" />
+                    android:text="Registrarse" />
 
             </RelativeLayout>
 
