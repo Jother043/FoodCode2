@@ -1,30 +1,33 @@
 package com.example.foodcode2.ui.SingUp
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import android.os.Build.VERSION
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.foodcode2.R
-import com.example.foodcode2.data.User
 import com.example.foodcode2.databinding.FragmentSingUpBinding
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
+import kotlinx.coroutines.launch
 
 
 class SingUpFragment : Fragment() {
 
     private lateinit var binding: FragmentSingUpBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var database: DatabaseReference
+    private val SingUpViewModel: SingUpVM by viewModels<SingUpVM> { SingUpVM.Factory }
 
+    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,15 +35,15 @@ class SingUpFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentSingUpBinding.inflate(inflater, container, false)
 
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
-
+        //Binding del boton de registro
         binding.btnRegistrar.setOnClickListener {
+
+            //Obtiene los valores de los campos
             val nombre = binding.editTextNombre.text.toString()
             val email = binding.editTextEmail.text.toString()
             val password = binding.editTextContraseA.text.toString()
 
-            // Validate the input
+            // Validamos los campos
             if (nombre.isBlank() || email.isBlank() || password.isBlank()) {
                 showAlert("Por favor, rellene todos los campos.")
             } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -50,66 +53,77 @@ class SingUpFragment : Fragment() {
             } else if (!password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*".toRegex())) {
                 showAlert("La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.")
             } else {
-                // Register the user
-                registrarUsuario(nombre, email, password)
+                // registra al usuario si hay conexión a internet
+                if (isNetworkAvailable(requireContext())) {
+                    SingUpViewModel.signUpUser(nombre, email, password)
+                } else {
+                    Snackbar.make(
+                        binding.root,
+                        "No hay conexión a internet",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        /**
+         * Observa el estado del usuario.
+         */
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                SingUpViewModel.userStateSingUp.collect { userPreferences ->
+                    if (userPreferences.errorMessage.isNotBlank() && userPreferences.errorMessage.isNotEmpty()) {
+                        Snackbar.make(
+                            binding.root,
+                            userPreferences.errorMessage,
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                    if (userPreferences.isRegistered) {
+                        //Vacia los campos
+                        binding.editTextNombre.text!!.clear()
+                        binding.editTextEmail.text!!.clear()
+                        binding.editTextContraseA.text!!.clear()
+                        //Notifica al usuario
+                        Snackbar.make(
+                            binding.root,
+                            "Te has registrado correctamente",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                        //Navega al fragmento de inicio de sesión
+                        val action = SingUpFragmentDirections.actionSingUpFragmentToLoginFragment2()
+                        findNavController().navigate(action)
+                    }
+                }
             }
         }
 
         return binding.root
     }
 
-
-    private fun registrarUsuario(nombre: String, email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val user = auth.currentUser
-                if (user != null) {
-                    val User = User(nombre, email, password, false)
-
-                    // Obtiene la referencia a la base de datos
-                    val database = FirebaseDatabase.getInstance().getReference("Users")
-
-                    // Guarda los datos del usuario en la base de datos
-                    database.child(user.uid).setValue(User).addOnSuccessListener {
-                        binding.editTextNombre.text?.clear()
-                        binding.editTextEmail.text?.clear()
-                        binding.editTextContraseA.text?.clear()
-
-                        // Enviar correo de verificación
-                        user.sendEmailVerification().addOnCompleteListener { verTask ->
-                            if (verTask.isSuccessful) {
-                                Snackbar.make(
-                                    binding.root,
-                                    "Usuario registrado correctamente. Por favor verifica tu correo electrónico.",
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                Snackbar.make(
-                                    binding.root,
-                                    "Error al enviar el correo de verificación.",
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                        //volver a la pantalla de inicio de sesión
-                        findNavController().popBackStack()
-
-                    }.addOnFailureListener {
-                        if (it.message == "Initial task failed for action RecaptchaAction(action=signUpPassword)with exception - The email address is already in use by another account.") {
-                            showAlert("El correo electrónico ya está en uso.")
-                        } else {
-                            showAlert("Error al registrar el usuario.")
-                        }
-                    }
-                }
-            }
+    /**
+     * Comprueba si hay conexión a internet.
+     */
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return when {
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
         }
     }
 
+    /**
+     * Muestra un cuadro de diálogo con un mensaje.
+     */
     private fun showAlert(message: String) {
         AlertDialog.Builder(requireContext())
             .setMessage(message)
             .setPositiveButton("Aceptar", null)
             .show()
     }
+
 }

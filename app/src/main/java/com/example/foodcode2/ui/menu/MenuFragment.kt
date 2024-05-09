@@ -26,7 +26,10 @@ import com.example.foodcode2.ui.userpreferences.InfoUserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MenuFragment : Fragment() {
@@ -61,65 +64,65 @@ class MenuFragment : Fragment() {
         qrDetailsVM.setFood(barcode)
 
         // Observa los cambios en el estado de la interfaz de usuario
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch(Dispatchers.IO){
             qrDetailsVM.uiState.collect { uiState ->
-                // Actualiza la vista en función del estado de la interfaz de usuario
-                if (uiState.isLoading) {
-                    // Muestra un indicador de carga
-                } else if (uiState.error.isNotEmpty()) {
-                    // Muestra el error
-                    Toast.makeText(context, uiState.error, Toast.LENGTH_LONG).show()
-                } else if (uiState.food != null) {
-                    // Muestra la información del producto
-                    binding.tvProductName.text = uiState.food.title
-                    Log.d("MenuFragment", "El nombre del producto es: ${uiState.food.title}")
-                    Log.d("MenuFragment", "La imagen del producto es: ${uiState.food.imageUrl}")
-                    binding.ivProductImage.load(uiState.food.imageUrl) {
-                        // Transforma la imagen en un cuadrado con bordes redondeados
-                        transformations(CircleCropTransformation())
+                withContext(Dispatchers.Main) {
+                    // Actualiza la vista en función del estado de la interfaz de usuario
+                    if (uiState.isLoading) {
+                        // Muestra un indicador de carga
+                    } else if (uiState.error.isNotEmpty()) {
+                        // Muestra el error
+                        Toast.makeText(context, uiState.error, Toast.LENGTH_LONG).show()
+                    } else if (uiState.food != null) {
+                        // Muestra la información del producto
+                        binding.tvProductName.text = uiState.food.title
+                        Log.d("MenuFragment", "El nombre del producto es: ${uiState.food.title}")
+                        Log.d("MenuFragment", "La imagen del producto es: ${uiState.food.imageUrl}")
+                        binding.ivProductImage.load(uiState.food.imageUrl) {
+                            // Transforma la imagen en un cuadrado con bordes redondeados
+                            transformations(CircleCropTransformation())
 
-                        // Muestra una imagen de carga mientras se carga la imagen
-                        placeholder(R.drawable.loading_gif)
-                        // Muestra una imagen de error si no se puede cargar la imagen
-                        error(R.drawable.ajustes)
-                    }
-                    //Si el producto no tiene un valor de Nutri-Score, se muestra un mensaje
-                    if (uiState.food.ecoscoreGrade == "not-applicable") {
-                        binding.tvNutritionScore.text =
-                            "Nutri-Score: No disponible para este tipo de producto"
-                        //pintamos el fondo de gris para indicar que no hay valor
-                        binding.tvRecomendacion.text = "No hay recomendación para este producto"
-                        binding.linearLayout2.setBackgroundResource(R.drawable.borde_gris)
-                        binding.ivNutritionScore.setBackgroundResource(R.drawable.none)
-                    }else if (uiState.food.ecoscoreGrade == "a") {
-                        binding.tvRecomendacion.text = "Este producto es muy saludable"
-                        binding.linearLayout2.setBackgroundResource(R.drawable.bordes_verde_fuerte)
-                        binding.ivNutritionScore.setBackgroundResource(R.drawable.a)
-                    }
-                    else if (uiState.food.ecoscoreGrade == "b") {
-                        binding.tvRecomendacion.text = "Este producto es saludable"
-                        binding.linearLayout2.setBackgroundResource(R.drawable.borde_verde)
-                        binding.ivNutritionScore.setBackgroundResource(R.drawable.b)
-                    }
-                    else if (uiState.food.ecoscoreGrade == "c") {
-                        binding.tvRecomendacion.text = "Este producto esta en la media de saludabilidad"
-                        binding.linearLayout2.setBackgroundResource(R.drawable.borde_amarillo)
-                        binding.ivNutritionScore.setBackgroundResource(R.drawable.c)
-                    }
-                    else if (uiState.food.ecoscoreGrade == "d") {
-                        binding.tvRecomendacion.text = "Este producto no es saludable"
-                        binding.linearLayout2.setBackgroundResource(R.drawable.border_naranja)
-                        binding.ivNutritionScore.setBackgroundResource(R.drawable.d)
-                    }
-                    else if (uiState.food.ecoscoreGrade == "e") {
-                        binding.tvRecomendacion.text = "Este producto no es nada saludable"
-                        binding.linearLayout2.setBackgroundResource(R.drawable.rounded_border_red)
-                        binding.ivNutritionScore.setBackgroundResource(R.drawable.e)
+                            // Muestra una imagen de carga mientras se carga la imagen
+                            placeholder(R.drawable.loading_gif)
+                            // Muestra una imagen de error si no se puede cargar la imagen
+                            error(R.drawable.ajustes)
+                        }
+                        //Si el producto no tiene un valor de Nutri-Score, se muestra un mensaje
+                        if (uiState.food.ecoscoreGrade == "not-applicable") {
+                            binding.tvNutritionScore.text =
+                                "Nutri-Score: No disponible para este tipo de producto"
+                            //pintamos el fondo de gris para indicar que no hay valor
+                            binding.tvRecomendacion.text = "No hay recomendación para este producto"
+                            binding.linearLayout2.setBackgroundResource(R.drawable.borde_gris)
+                            binding.ivNutritionScore.setBackgroundResource(R.drawable.none)
+                        } else if (uiState.food.ecoscoreGrade == "a") {
+                            binding.tvRecomendacion.text = "Este producto es muy saludable"
+                            binding.linearLayout2.setBackgroundResource(R.drawable.bordes_verde_fuerte)
+                            binding.ivNutritionScore.setBackgroundResource(R.drawable.a)
+                        } else if (uiState.food.ecoscoreGrade == "b") {
+                            binding.tvRecomendacion.text = "Este producto es saludable"
+                            binding.linearLayout2.setBackgroundResource(R.drawable.borde_verde)
+                            binding.ivNutritionScore.setBackgroundResource(R.drawable.b)
+                        } else if (uiState.food.ecoscoreGrade == "c") {
+                            binding.tvRecomendacion.text =
+                                "Este producto esta en la media de saludabilidad"
+                            binding.linearLayout2.setBackgroundResource(R.drawable.borde_amarillo)
+                            binding.ivNutritionScore.setBackgroundResource(R.drawable.c)
+                        } else if (uiState.food.ecoscoreGrade == "d") {
+                            binding.tvRecomendacion.text = "Este producto no es saludable"
+                            binding.linearLayout2.setBackgroundResource(R.drawable.border_naranja)
+                            binding.ivNutritionScore.setBackgroundResource(R.drawable.d)
+                        } else if (uiState.food.ecoscoreGrade == "e") {
+                            binding.tvRecomendacion.text = "Este producto no es nada saludable"
+                            binding.linearLayout2.setBackgroundResource(R.drawable.rounded_border_red)
+                            binding.ivNutritionScore.setBackgroundResource(R.drawable.e)
 
-                    }else {
-                        binding.tvNutritionScore.text = "Nutri-Score: ${uiState.food.ecoscoreGrade}"
+                        } else {
+                            binding.tvNutritionScore.text =
+                                "Nutri-Score: ${uiState.food.ecoscoreGrade}"
+                        }
+                        binding.tvDescription.text = uiState.food.energyKcal.toString() + " kcal"
                     }
-                    binding.tvDescription.text = uiState.food.energyKcal.toString() + " kcal"
                 }
             }
         }
@@ -189,6 +192,10 @@ class MenuFragment : Fragment() {
 
                 else -> false
             }
+        }
+
+        binding.btnAddToFavorites.setOnClickListener {
+
         }
 
         return binding.root

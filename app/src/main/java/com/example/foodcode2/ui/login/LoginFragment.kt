@@ -1,5 +1,8 @@
 package com.example.foodcode2.ui.login
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +17,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.foodcode2.R
 import com.example.foodcode2.databinding.FragmentLoginBinding
+import com.example.foodcode2.dependencies.FoodCode
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
@@ -23,12 +28,14 @@ class LoginFragment : Fragment() {
 
     private val loginVM: LoginVM by viewModels<LoginVM> { LoginVM.Factory }
 
+
     var skipWelcome = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
+
     }
 
     override fun onCreateView(
@@ -51,7 +58,7 @@ class LoginFragment : Fragment() {
         setListeners()
 
         lifecycleScope.launchWhenStarted {
-            loginVM.uiState.collect { uiState ->
+            loginVM.userState.collect { uiState ->
                 if (uiState.isLoggedIn) {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Inicio de sesión")
@@ -62,7 +69,13 @@ class LoginFragment : Fragment() {
                         .show()
                     //nos movemos a la siguiente pantalla
                     val action = LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
-                    findNavController().navigate(action)
+                    val navController = findNavController()
+                    //si la acción es válida navegamos
+                    if (navController.currentDestination?.getAction(action.actionId) != null) {
+                        navController.navigate(action)
+                    } else {
+                        //Mostar mensaje de error
+                    }
                 } else if (uiState.errorMessage.isNotEmpty()) {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Inicio de sesión")
@@ -75,13 +88,33 @@ class LoginFragment : Fragment() {
             }
         }
 
+        lifecycleScope.launchWhenStarted {
+            loginVM.userState.collect { uiState ->
+                if (uiState.isLoggedIn) {
+                    // Si el usuario ya ha iniciado sesión, navega directamente a la pantalla principal
+                    navigateToMainScreen()
+                } else {
+                    // Si el usuario no ha iniciado sesión, configura los listeners y recolecta los datos de la vista
+                    collectors()
+                    setListeners()
+                }
+            }
+        }
+    }
+
+    private fun navigateToMainScreen() {
+        val action = LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
+        val navController = findNavController()
+        if (navController.currentDestination?.getAction(action.actionId) != null) {
+            navController.navigate(action)
+        }
     }
 
     //Función que se encarga de recolectar los datos de la vista
     private fun collectors() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginVM.uiState.collect {
+                loginVM.userState.collect {
                     skipWelcome = it.showViewPage
                 }
             }
@@ -90,12 +123,6 @@ class LoginFragment : Fragment() {
 
     //Función que se encarga de añadir los listeners a los botones
     private fun setListeners() {
-        binding.btnSignup.setOnClickListener {
-            val email = binding.editTextName.text.toString()
-            validateName(email)
-            val password = binding.editTextContraseA.text.toString()
-            validatePassword(password)
-        }
 
         //TODO: Implementar la funcionalidad de los botones de inicio de sesión.
 
@@ -118,36 +145,32 @@ class LoginFragment : Fragment() {
 
             val action = LoginFragmentDirections.actionLoginFragment2ToSingUpFragment()
             findNavController().navigate(action)
-        }
 
+            //Limpiar los campos de texto
+            binding.editTextName.text?.clear()
+            binding.editTextContraseA.text?.clear()
+        }
 
         binding.btnSignup.setOnClickListener {
+
             val email = binding.editTextName.text.toString()
             val password = binding.editTextContraseA.text.toString()
-            loginVM.signInWithFirebase(
-                email,
-                password
-            ) // Inicia sesión cuando se hace clic en el botón
+
+            if (loginVM.validateName(email) && loginVM.validatePassword(password)) {
+                if (loginVM.isNetworkAvailable(requireContext())) {
+                    loginVM.signInWithFirebase(email, password)
+                } else {
+                    Snackbar.make(
+                        requireView(),
+                        "Error de red. Por favor, verifica tu conexión a Internet.",
+                        Snackbar.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            }
         }
     }
-
 
     //Función que se encarga de validar el nombre ingresado por el usuario
-    private fun validateName(email: String) {
 
-        if (email.isEmpty()) {
-            Snackbar.make(requireView(), "Por favor ingrese un correo electrónico", Snackbar.LENGTH_SHORT)
-                .show()
-        } else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            Snackbar.make(requireView(), "Por favor ingrese un correo electrónico válido", Snackbar.LENGTH_SHORT)
-                .show()
-        }
-
-    }
-    private fun validatePassword(password: String) {
-        if (password.isEmpty()) {
-            Snackbar.make(requireView(), "Por favor ingrese una contraseña", Snackbar.LENGTH_SHORT)
-                .show()
-        }
-    }
 }

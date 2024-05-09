@@ -107,7 +107,7 @@ class ComentaryFragment : Fragment() {
             if (binding.etIntroComent.text.isNotBlank()) {
 
                 val comentario = UserComentary(
-                    user = loginVM.uiState.value.name,
+                    user = loginVM.userState.value.name,
                     foodId = args.foodId,
                     comentary = binding.etIntroComent.text.toString()
 

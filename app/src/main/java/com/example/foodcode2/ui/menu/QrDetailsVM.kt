@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.foodcode2.api.Food
 import com.example.foodcode2.dependencies.FoodCode
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,11 +27,12 @@ class QrDetailsVM(
     )
     val uiState: StateFlow<QrDetailsUiState> = _uiState
 
+    private val db = FirebaseFirestore.getInstance() //TODO: Implementar Firestore
     val _barcodeResult = MutableStateFlow<String?>(null)
     val barcodeResult: StateFlow<String?> = _barcodeResult
     fun setFood(barcode: String) {
         if(barcode.isEmpty()){
-            _uiState.value = QrDetailsUiState(error = "Error obteniendo comidas por ids")
+            _uiState.value = QrDetailsUiState(error = "No se ha escaneado ningun codigo de barras aun.")
             return
         }else {
 
@@ -49,8 +51,23 @@ class QrDetailsVM(
                         _uiState.value = QrDetailsUiState(food = foodResponse.first())
                     }
                 } else {
-                    _uiState.value = QrDetailsUiState(error = "Error obteniendo comidas por ids")
+                    if(response.code() == 502) {
+                        _uiState.value =
+                            QrDetailsUiState(error = "La API no responde, intente mas tarde")
+                    }else {
+                        _uiState.value =
+                            QrDetailsUiState(error = "Error obteniendo comida por codigo de barras")
+                    }
                 }
+            }
+        }
+    }
+
+    private fun setAddFvorite(food: Food) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                // Agrega la comida a la base de datos firestore como favorita
+
             }
         }
     }

@@ -12,6 +12,7 @@ import com.example.foodcode2.db.FoodDatabase
 import com.example.foodcode2.repositories.ComentaryRepository
 import com.example.foodcode2.repositories.FavoriteFoodRepository
 import com.example.foodcode2.repositories.UserRepositories
+import com.google.firebase.database.FirebaseDatabase
 
 val Context.userDataStore by preferencesDataStore(name = UserPreferences.SETTINGS_FILE)
 
@@ -26,7 +27,7 @@ class AppContainer(context : Context) {
 
     //Repositorio de configuración de usuario.
     private val _userRepositories: UserRepositories by lazy {
-        UserRepositories(context.userDataStore)
+        UserRepositories(context.userDataStore, FirebaseDatabase.getInstance())
     }
     val userRepositories get() = _userRepositories
 

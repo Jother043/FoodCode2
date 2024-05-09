@@ -1,14 +1,9 @@
 package com.example.foodcode2.ui.userpreferences
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,14 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.foodcode2.R
-import com.example.foodcode2.data.UserPreferences
 import com.example.foodcode2.databinding.FragmentInfoUserBinding
-import com.example.foodcode2.databinding.FragmentListBinding
-import com.example.foodcode2.dependencies.FoodCode
-import com.example.foodcode2.repositories.UserRepositories
 import com.example.foodcode2.ui.login.LoginVM
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class InfoUserFragment : Fragment() {
@@ -64,7 +54,7 @@ class InfoUserFragment : Fragment() {
     private fun setCollectors() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginVM.uiState.collect {
+                loginVM.userState.collect {
                     binding.tvUser.text = it.name
                 }
             }

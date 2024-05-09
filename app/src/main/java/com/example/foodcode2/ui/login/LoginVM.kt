@@ -1,8 +1,9 @@
 package com.example.foodcode2.ui.login
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.foodcode2.data.UserPreferences
 import com.example.foodcode2.dependencies.FoodCode
 import com.example.foodcode2.repositories.UserRepositories
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,29 +20,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class LoginUiState(
-    val isLoggedIn: Boolean = false,
-    val errorMessage: String = ""
-)
-
 class LoginVM(
     private val userRepositories: UserRepositories
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<UserPreferences> = MutableStateFlow(
+    // Estado de la UI
+    private val _userState: MutableStateFlow<UserPreferences> = MutableStateFlow(
         UserPreferences()
     )
-    val uiState: StateFlow<UserPreferences> = _uiState.asStateFlow()
-
-    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-
-    private val _uiStateLogin: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState())
-    val uiStateLogin: StateFlow<LoginUiState> = _uiStateLogin.asStateFlow()
+    val userState: StateFlow<UserPreferences> = _userState.asStateFlow()
 
     // Inicializa Firebase Auth
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    private val _loginUiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState())
 
     init {
         viewModelScope.launch {
@@ -48,54 +40,91 @@ class LoginVM(
         }
     }
 
-    private suspend fun updateState() {
+    /**
+     * Actualiza el estado de la UI
+     */
+    suspend fun updateState() {
         userRepositories.getUserPrefs().collect { userPrefFlow ->
-            _uiState.update {
+            _userState.update {
                 userPrefFlow.copy()
             }
         }
     }
 
-    /**
-     * Función que guarda el nombre y el estado del checkbox en el DataStore.
-     * @param name Nombre del usuario.
-     * @param checked Estado del checkbox.
-     */
-    fun saveSettings(name: String, checked: Boolean) {
-        Log.d("Guardando", "nombre: $name, checked: $checked")
-        viewModelScope.launch {
-            userRepositories.saveName(name)
-            updateState()
-        }
-    }
-
-    // Función para iniciar sesión con Firebase
     // Función para iniciar sesión con Firebase
     fun signInWithFirebase(email: String, password: String) {
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val user = firebaseAuth.currentUser
-                if (user?.isEmailVerified == true) {
-                    // Obtiene los datos del usuario desde Firebase Realtime Database
-                    database.getReference("users").child(user.uid).get().addOnSuccessListener {
-                        val userData = it.getValue(UserPreferences::class.java)
-                        if (userData != null) {
-                            _uiState.update { userData } // Actualiza el estado de la UI con los datos del usuario obtenidos
-                        } else {
-                            _uiState.update { UserPreferences(errorMessage = "No se encontraron los datos del usuario") }
-                        }
-                    }.addOnFailureListener {
-                        _uiState.update { UserPreferences(errorMessage = "Error al obtener los datos del usuario") }
+        try {
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // El usuario ha iniciado sesión con éxito
+                    Log.d("LoginVM", "signInWithFirebase:success")
+                    // Actualiza el estado para mostrar que el usuario ha iniciado sesión
+                    _userState.update {
+                        it.copy(
+                            isLoggedIn = true
+                        )
+                    }
+                    // Guarda el estado de inicio de sesión en las preferencias compartidas
+                    viewModelScope.launch {
+                        val userPreferences = UserPreferences(isLoggedIn = true)
+                        userRepositories.saveUserPrefs(userPreferences.isLoggedIn)
+                        // Guarda las preferencias del usuario en la base de datos de Firebase
+                        val uid = firebaseAuth.currentUser?.uid ?: return@launch
+                        val database = FirebaseDatabase.getInstance()
+                        database.getReference("UserPreferences").child(uid)
+                            .setValue(userPreferences)
                     }
                 } else {
-                    _uiState.update { UserPreferences(errorMessage = "Por favor verifica tu correo electrónico") }
+                    // Si el inicio de sesión falla, muestra un mensaje de error
+                    Log.w("LoginVM", "signInWithFirebase:failure", task.exception)
+                    //Actualizamos el estado para mostrar un mensaje de error
+                    _userState.update {
+                        it.copy(
+                            errorMessage = "Error al iniciar sesión"
+                        )
+                    }
                 }
-            } else {
-                _uiState.update { UserPreferences(errorMessage = "Error al iniciar sesión") }
+            }
+        } catch (e: Exception) {
+            Log.e("LoginVM", "signInWithFirebase:failure", e)
+            _userState.update {
+                it.copy(
+                    errorMessage = "Error al iniciar sesión"
+                )
             }
         }
     }
 
+    fun validateName(email: String): Boolean {
+
+        if (email.isEmpty()) {
+            return false
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return false
+        }
+        return true
+    }
+
+    fun validatePassword(password: String): Boolean {
+        if (password.isEmpty()) {
+
+            return false
+        }
+        return true
+    }
+
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return when {
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -114,6 +143,7 @@ class LoginVM(
             }
         }
     }
-
-
 }
+
+
+

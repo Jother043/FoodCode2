@@ -127,6 +127,7 @@
                         android:orientation="horizontal">
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddToFavorites"
                             style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="223dp"
                             android:layout_height="match_parent"

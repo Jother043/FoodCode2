@@ -6,11 +6,13 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.foodcode2.data.UserPreferences
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class UserRepositories(
-    private val userDataStore: DataStore<Preferences>
+    private val userDataStore: DataStore<Preferences>,
+    private val database: FirebaseDatabase
 ) {
 
     //Obtener las preferencias del usuario.
@@ -20,9 +22,12 @@ class UserRepositories(
                 ?: UserPreferences.ANONYMOUS
             val checked = userPreferences[booleanPreferencesKey(UserPreferences.SHOW_VIEW_PAGE)]
                 ?: UserPreferences.SHOW_VIEW_PAGE_DEFAULT
+            val checked2 = userPreferences[booleanPreferencesKey(UserPreferences.IS_LOGGED_IN_DEFAULT)]
+                ?: UserPreferences.IS_LOGGED_IN
             return@map UserPreferences(
                 name = name,
                 showViewPage = checked,
+                isLoggedIn = checked2
             )
         }
     }
@@ -48,4 +53,14 @@ class UserRepositories(
             userPreferences[booleanPreferencesKey(UserPreferences.SHOW_VIEW_PAGE)] = checked
         }
     }
+
+    //Guardar el estado de inicio de sesión.
+    suspend fun saveUserPrefs(checked: Boolean) {
+        database.reference.child("users").child("isLoggedIn").setValue(true)
+        //guardat en dataStore
+        userDataStore.edit { userPreferences ->
+            userPreferences[booleanPreferencesKey(UserPreferences.IS_LOGGED_IN_DEFAULT)] = true
+        }
+    }
+
 }
