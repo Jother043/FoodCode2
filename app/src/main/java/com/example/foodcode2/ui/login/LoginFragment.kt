@@ -16,7 +16,6 @@ import com.example.foodcode2.R
 import com.example.foodcode2.databinding.FragmentLoginBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.collect
 
 class LoginFragment : Fragment() {
 
@@ -92,8 +91,10 @@ class LoginFragment : Fragment() {
     //Función que se encarga de añadir los listeners a los botones
     private fun setListeners() {
         binding.btnSignup.setOnClickListener {
-            val name = binding.editTextName.text.toString()
-            validateName(name)
+            val email = binding.editTextName.text.toString()
+            validateName(email)
+            val password = binding.editTextContraseA.text.toString()
+            validatePassword(password)
         }
 
         //TODO: Implementar la funcionalidad de los botones de inicio de sesión.
@@ -132,20 +133,21 @@ class LoginFragment : Fragment() {
 
 
     //Función que se encarga de validar el nombre ingresado por el usuario
-    private fun validateName(name: String) {
-        if (name.isBlank()) {
-            Snackbar.make(requireView(), getString(R.string.emptyname), Snackbar.LENGTH_SHORT)
+    private fun validateName(email: String) {
+
+        if (email.isEmpty()) {
+            Snackbar.make(requireView(), "Por favor ingrese un correo electrónico", Snackbar.LENGTH_SHORT)
                 .show()
-        } else {
-            loginVM.saveSettings(name, skipWelcome)
-            if (skipWelcome) {
-                val action = LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
-                findNavController().navigate(action)
-            } else {
-                val action = LoginFragmentDirections.actionLoginFragment2ToNoticeFragment()
-                findNavController().navigate(action)
-            }
+        } else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            Snackbar.make(requireView(), "Por favor ingrese un correo electrónico válido", Snackbar.LENGTH_SHORT)
+                .show()
         }
 
+    }
+    private fun validatePassword(password: String) {
+        if (password.isEmpty()) {
+            Snackbar.make(requireView(), "Por favor ingrese una contraseña", Snackbar.LENGTH_SHORT)
+                .show()
+        }
     }
 }

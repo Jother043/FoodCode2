@@ -11,6 +11,7 @@ import com.example.foodcode2.data.UserPreferences
 import com.example.foodcode2.dependencies.FoodCode
 import com.example.foodcode2.repositories.UserRepositories
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,6 +32,7 @@ class LoginVM(
     )
     val uiState: StateFlow<UserPreferences> = _uiState.asStateFlow()
 
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private val _uiStateLogin: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState())
     val uiStateLogin: StateFlow<LoginUiState> = _uiStateLogin.asStateFlow()
@@ -70,22 +72,26 @@ class LoginVM(
     // Función para iniciar sesión con Firebase
     // Función para iniciar sesión con Firebase
     fun signInWithFirebase(email: String, password: String) {
-
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-
             if (task.isSuccessful) {
                 val user = firebaseAuth.currentUser
-                if(user?.isEmailVerified == true) {
-                    _loginUiState.value = LoginUiState(isLoggedIn = true)
-                    _uiState.update { UserPreferences(isLoggedIn = true) } // Actualiza el estado de la UI
+                if (user?.isEmailVerified == true) {
+                    // Obtiene los datos del usuario desde Firebase Realtime Database
+                    database.getReference("users").child(user.uid).get().addOnSuccessListener {
+                        val userData = it.getValue(UserPreferences::class.java)
+                        if (userData != null) {
+                            _uiState.update { userData } // Actualiza el estado de la UI con los datos del usuario obtenidos
+                        } else {
+                            _uiState.update { UserPreferences(errorMessage = "No se encontraron los datos del usuario") }
+                        }
+                    }.addOnFailureListener {
+                        _uiState.update { UserPreferences(errorMessage = "Error al obtener los datos del usuario") }
+                    }
                 } else {
-                    _loginUiState.value = LoginUiState(errorMessage = "Verifica tu correo electrónico")
-                    _uiState.update { UserPreferences(errorMessage = "Verifica tu correo electrónico") } // Actualiza el estado de la UI
+                    _uiState.update { UserPreferences(errorMessage = "Por favor verifica tu correo electrónico") }
                 }
             } else {
-                // Si el inicio de sesión falla, muestra un mensaje al usuario.
-                _loginUiState.value = LoginUiState(errorMessage = "Error al iniciar sesión")
-                _uiState.update { UserPreferences(errorMessage = "Error al iniciar sesión") } // Actualiza el estado de la UI
+                _uiState.update { UserPreferences(errorMessage = "Error al iniciar sesión") }
             }
         }
     }
