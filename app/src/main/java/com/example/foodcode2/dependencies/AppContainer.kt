@@ -11,6 +11,7 @@ import com.example.foodcode2.data.UserPreferences
 import com.example.foodcode2.db.FoodDatabase
 import com.example.foodcode2.repositories.ComentaryRepository
 import com.example.foodcode2.repositories.FavoriteFoodRepository
+import com.example.foodcode2.repositories.ProductRepository
 import com.example.foodcode2.repositories.UserRepositories
 import com.google.firebase.database.FirebaseDatabase
 
@@ -42,6 +43,11 @@ class AppContainer(context : Context) {
         ComentaryRepository(FoodDatabase.getDatabase(context).comentaryDao())
     }
     val comentaryRepository get() = _comentaryRepository
+
+    private val _productRepository : ProductRepository by lazy {
+        ProductRepository()
+    }
+    val productRepository get() = _productRepository
 
 
 

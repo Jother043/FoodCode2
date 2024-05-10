@@ -51,11 +51,7 @@ class FavFoodFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecView()
-
         collectors()
-
-        setListeners()
-
     }
 
     //Funcion que se encarga de recolectar los datos e inicializar el recyclerView
@@ -76,15 +72,13 @@ class FavFoodFragment : Fragment() {
         }
     }
 
-
-    //Función que se encarga de recolectar los datos de la comida y mostrarlos en la vista
     private fun collectors() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                favFoodVM.uiState.collect {
-                    if (!it.isLoading) {
+                favFoodVM.uiState.collect { uiState ->
+                    if (!uiState.isLoading) {
                         binding.loadingGif.visibility = View.INVISIBLE
-                        favoriteAdapter.setFavList(it.favFoodList)
+                        favoriteAdapter.setFavList(uiState.favFoodList)
                         favoriteAdapter.notifyDataSetChanged()
                     } else {
                         binding.loadingGif.visibility = View.VISIBLE
@@ -111,16 +105,9 @@ class FavFoodFragment : Fragment() {
             }
             .setPositiveButton(resources.getString(R.string.accept)) { dialog, which ->
                 // Respond to positive button press
-                favFoodVM.delFavFood(food)
+                //favFoodVM.delFavFood(food)
             }
             .show()
-    }
-
-    //Funcion para volver a la pantalla anterior
-    private fun setListeners() {
-        binding.btBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
     }
 
 }

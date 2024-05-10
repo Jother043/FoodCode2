@@ -14,6 +14,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.foodcode2.R
 import com.example.foodcode2.databinding.FragmentInfoUserBinding
 import com.example.foodcode2.ui.login.LoginVM
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -28,6 +30,7 @@ class InfoUserFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+
         }
     }
 
@@ -64,11 +67,25 @@ class InfoUserFragment : Fragment() {
     private fun setListerners() {
 
         binding.buttonLogOut.setOnClickListener {
-            firebaseAuth.signOut()
-            //reinicio de la app
-            val intent = requireActivity().intent
-            requireActivity().finish()
-            startActivity(intent)
+            //cerrar la sesion de google si esta iniciada
+            if (firebaseAuth.currentUser != null) {
+                FirebaseAuth.getInstance().signOut()
+            }
+            //Buscar la cuenta de google
+            val googleSignInOptions =
+                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken("441853910501-p5g3igsqtbhi8uk1cp7ui1smalqg3mah.apps.googleusercontent.com")
+                    .requestEmail()
+                    .build()
+            // Google sign out
+            val googleSignInClient = GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
+            googleSignInClient.signOut().addOnCompleteListener {
+                //reinicio de la app
+                val intent = requireActivity().intent
+                requireActivity().finish()
+                startActivity(intent)
+            }
+
         }
 
         binding.fabSettings.setOnClickListener {

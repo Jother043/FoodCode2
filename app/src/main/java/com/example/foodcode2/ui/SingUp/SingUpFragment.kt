@@ -55,7 +55,7 @@ class SingUpFragment : Fragment() {
                 showAlert("La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.")
             } else {
                 // registra al usuario si hay conexión a internet
-                if (SingUpViewModel.isNetworkAvailable(requireContext())) {
+                if (SingUpViewModel.isNetworkAvailable(requireContext()) ) {
                     SingUpViewModel.signUpUser(nombre, email, password)
                 } else {
                     Snackbar.make(

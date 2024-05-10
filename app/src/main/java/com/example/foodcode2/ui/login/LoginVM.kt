@@ -3,16 +3,21 @@ package com.example.foodcode2.ui.login
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.provider.Settings.Global.getString
 import android.util.Log
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.foodcode2.R
 import com.example.foodcode2.data.UserPreferences
 import com.example.foodcode2.dependencies.FoodCode
 import com.example.foodcode2.repositories.UserRepositories
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -96,21 +101,10 @@ class LoginVM(
         }
     }
 
-    private fun checkIfUserIsLoggedIn() {
-        val currentUser = firebaseAuth.currentUser
-        if (currentUser != null) {
-            // El usuario ya ha iniciado sesión
-            _userState.update {
-                it.copy(
-                    isLoggedIn = true
-                )
-            }
-        }
-    }
-
     // Función para validar el email
     fun validateName(email: String): Boolean {
 
+        // Si el email está vacío o no es un email válido, retorna false
         if (email.isEmpty()) {
             return false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -121,8 +115,9 @@ class LoginVM(
 
     // Función para validar la contraseña
     fun validatePassword(password: String): Boolean {
-        if (password.isEmpty()) {
 
+        // Si la contraseña está vacía, retorna false
+        if (password.isEmpty()) {
             return false
         }
         return true
@@ -130,8 +125,7 @@ class LoginVM(
 
     // Función para comprobar si hay conexión a internet
     fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
         return when {
@@ -139,6 +133,36 @@ class LoginVM(
             activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
             activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
             else -> false
+        }
+    }
+
+    fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        try {
+            firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Actualizamos el estado para mostrar que el usuario ha iniciado sesión
+                        _userState.update {
+                            it.copy(
+                                isLoggedIn = true
+                            )
+                        }
+                    } else {
+                        //Actualizamos el estado para mostrar un mensaje de error
+                        _userState.update {
+                            it.copy(
+                                errorMessage = "Error al iniciar sesión con Google"
+                            )
+                        }
+                    }
+                }
+        } catch (e: Exception) {
+            _userState.update {
+                it.copy(
+                    errorMessage = "Error al iniciar sesión con Google"
+                )
+            }
         }
     }
 

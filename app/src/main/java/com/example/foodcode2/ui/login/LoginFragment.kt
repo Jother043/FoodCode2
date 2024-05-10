@@ -2,9 +2,11 @@ package com.example.foodcode2.ui.login
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +21,14 @@ import androidx.navigation.fragment.findNavController
 import com.example.foodcode2.R
 import com.example.foodcode2.databinding.FragmentLoginBinding
 import com.example.foodcode2.dependencies.FoodCode
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 class LoginFragment : Fragment() {
 
@@ -145,21 +151,8 @@ class LoginFragment : Fragment() {
     //Función que se encarga de añadir los listeners a los botones
     private fun setListeners() {
 
-        //TODO: Implementar la funcionalidad de los botones de inicio de sesión.
-
-        binding.btnImageFacebook.setOnClickListener {
-            Snackbar.make(requireView(), getString(R.string.facebook), Snackbar.LENGTH_SHORT)
-                .show()
-        }
-
         binding.btnImageGoogle.setOnClickListener {
-            Snackbar.make(requireView(), getString(R.string.google), Snackbar.LENGTH_SHORT)
-                .show()
-        }
-
-        binding.btnImageGit.setOnClickListener {
-            Snackbar.make(requireView(), getString(R.string.github), Snackbar.LENGTH_SHORT)
-                .show()
+            googleSignIn()
         }
 
         binding.tvContraseAOlvidada.setOnClickListener {
@@ -190,5 +183,53 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun googleSignIn() {
+
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("441853910501-p5g3igsqtbhi8uk1cp7ui1smalqg3mah.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
+        startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                //Inicio de sesión con Google exitoso, autenticamos con Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                loginVM.firebaseAuthWithGoogle(account.idToken!!)
+                //Nos movemos a la siguiente pantalla de menú
+                val action = LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
+                findNavController().navigate(action)
+            } catch (e: ApiException) {
+                Snackbar.make(
+                    requireView(),
+                    "Error al iniciar sesión con Google",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+
+                Log.d("LoginFragment", "Google sign in failed", e)
+
+                //Si no hay conexión a internet, mostramos un mensaje de error
+                if (e.message == "7: ") {
+                    Snackbar.make(
+                        requireView(),
+                        "Error de red. Por favor, verifica tu conexión a Internet.",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val RC_SIGN_IN = 9001
     }
 }

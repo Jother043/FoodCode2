@@ -10,7 +10,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.foodcode2.data.UserPreferences
 import com.example.foodcode2.dependencies.FoodCode
 import com.example.foodcode2.repositories.UserRepositories
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -91,24 +93,30 @@ class SingUpVM(
      */
     private fun saveUserToDatabase(name: String, email: String) {
         val uid = firebaseAuth.currentUser?.uid ?: return
-        val userPreferences = UserPreferences(name, email, showViewPage = true, saveShowViewPage = true, isLoggedIn = false)
-        try{
-        dataBase.getReference("Users").child(uid).setValue(userPreferences)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Los detalles del usuario se han guardado con éxito
-                    _userStateSingUp.update { userPreferences.copy(isLoggedIn = true) } // Actualiza isLoggedIn a true
-                } else {
-                    // Algo salió mal
-                    _userStateSingUp.update { UserPreferences(errorMessage = "Error al guardar los detalles del usuario") }
+        val userPreferences = UserPreferences(
+            name,
+            email,
+            showViewPage = true,
+            saveShowViewPage = true,
+            isLoggedIn = false
+        )
+        try {
+            dataBase.getReference("Users").child(uid).setValue(userPreferences)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Los detalles del usuario se han guardado con éxito
+                        _userStateSingUp.update { userPreferences.copy(isLoggedIn = true) } // Actualiza isLoggedIn a true
+                    } else {
+                        // Algo salió mal
+                        _userStateSingUp.update { UserPreferences(errorMessage = "Error al guardar los detalles del usuario") }
+                    }
+                }.addOnFailureListener { exception ->
+                    if (exception is java.net.UnknownHostException) {
+                        // Error de red
+                        _userStateSingUp.update { UserPreferences(errorMessage = "Error de red. Por favor, verifica tu conexión a Internet.") }
+                    }
                 }
-            }.addOnFailureListener { exception ->
-                if (exception is java.net.UnknownHostException) {
-                    // Error de red
-                    _userStateSingUp.update { UserPreferences(errorMessage = "Error de red. Por favor, verifica tu conexión a Internet.") }
-                }
-            }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             _userStateSingUp.update { UserPreferences(errorMessage = "Error al guardar los detalles del usuario") }
         }
     }
@@ -116,7 +124,7 @@ class SingUpVM(
     /**
      * Comprueba si hay conexión a internet.
      */
-     fun isNetworkAvailable(context: Context): Boolean {
+    fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false

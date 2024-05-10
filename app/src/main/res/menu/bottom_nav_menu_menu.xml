@@ -2,10 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/listFragment"
-        android:icon="@drawable/ic_list_food"
-        android:title="Lista" />
+
 
     <item
         android:id="@+id/fragmentFoodFav"
@@ -22,9 +19,6 @@
         android:icon="@drawable/ic_about_account"
         android:title="@string/userInfo" />
 
-    <item
-        android:id="@+id/sacannerFragment"
-        android:icon="@drawable/ajustes"
-        android:title="Ajustes" />
+
 
 </menu>

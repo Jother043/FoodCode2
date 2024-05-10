@@ -71,7 +71,7 @@
             tools:text="10" />
 
         <TextView
-            android:id="@+id/tvCaps"
+            android:id="@+id/tvCal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="@+id/textView4"

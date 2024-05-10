@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo"
+    android:background="@color/bg"
     tools:context=".ui.userpreferences.InfoUserFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:background="@color/botones"
+        android:background="@color/white"
         android:clickable="true"
         android:contentDescription="@string/settings"
         android:src="@drawable/settings_48px"

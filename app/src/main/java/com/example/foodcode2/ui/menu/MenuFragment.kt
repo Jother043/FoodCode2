@@ -25,6 +25,7 @@ import com.example.foodcode2.ui.herolist.ListFragment
 import com.example.foodcode2.ui.userpreferences.InfoUserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.callbackFlow
@@ -44,6 +45,8 @@ class MenuFragment : Fragment() {
     private val qrDetailsVM by viewModels<QrDetailsVM> { QrDetailsVM.Factory }
 
     val args: MenuFragmentArgs by navArgs()
+
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,6 +129,16 @@ class MenuFragment : Fragment() {
                 }
             }
         }
+
+        binding.btnAddToFavorites.setOnClickListener{
+            val food = qrDetailsVM.uiState.value.food
+            if (food != null) {
+                qrDetailsVM.addFoodToFavorites(food)
+
+            } else {
+                Snackbar.make(view, "Error al añadir el producto a favoritos", Snackbar.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onCreateView(
@@ -147,20 +160,20 @@ class MenuFragment : Fragment() {
         binding.bottomNavigationView.setOnNavigationItemSelectedListener { item ->
 
             when (item.itemId) {
-                R.id.listFragment -> {
-                    // Oculta la imagen
-                    binding.card.visibility = View.GONE
-                    binding.linearLayout2.visibility = View.GONE
-                    binding.linearLayout.visibility = View.GONE
-
-                    // Crea una nueva instancia del ListFragment
-                    val listFragment = ListFragment()
-                    // Realiza la transacción de fragmentos
-                    childFragmentManager.beginTransaction()
-                        .replace(R.id.frame_layout, listFragment)
-                        .commit()
-                    true
-                }
+//                R.id.listFragment -> {
+//                    // Oculta la imagen
+//                    binding.card.visibility = View.GONE
+//                    binding.linearLayout2.visibility = View.GONE
+//                    binding.linearLayout.visibility = View.GONE
+//
+//                    // Crea una nueva instancia del ListFragment
+//                    val listFragment = ListFragment()
+//                    // Realiza la transacción de fragmentos
+//                    childFragmentManager.beginTransaction()
+//                        .replace(R.id.frame_layout, listFragment)
+//                        .commit()
+//                    true
+//                }
 
                 R.id.fragmentFoodFav -> {
                     // Oculta la imagen
