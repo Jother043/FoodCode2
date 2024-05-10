@@ -1,5 +1,8 @@
 package com.example.foodcode2.ui.SingUp
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -48,6 +51,14 @@ class SingUpVM(
     }
 
     fun signUpUser(name: String, email: String, password: String) {
+
+        // Restablece el estado de error antes de cada intento de registro
+        _userStateSingUp.update {
+            it.copy(
+                errorMessage = ""
+            )
+        }
+
         try {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
@@ -60,19 +71,27 @@ class SingUpVM(
                         _userStateSingUp.update { UserPreferences(errorMessage = "Error al registrar el usuario") }
                     }
                 }.addOnFailureListener { exception ->
-                if (exception is java.net.UnknownHostException) {
-                    // Error de red
-                    _userStateSingUp.update { UserPreferences(errorMessage = "Error de red. Por favor, verifica tu conexión a Internet.") }
+                    if (exception is java.net.UnknownHostException) {
+                        // Error de red
+                        _userStateSingUp.update { UserPreferences(errorMessage = "Error de red. Por favor, verifica tu conexión a Internet.") }
+                    }
+                    //Si el correo ya está registrado en la base de datos de Firebase se muestra un mensaje de error
+                    if (exception.message == "The email address is already in use by another account.") {
+                        _userStateSingUp.update { UserPreferences(errorMessage = "El correo ya está registrado") }
+                    }
                 }
-            }
+
         } catch (e: Exception) {
             _userStateSingUp.update { UserPreferences(errorMessage = "Error al registrar el usuario") }
         }
     }
 
+    /**
+     * Guarda los detalles del usuario en la base de datos de Firebase.
+     */
     private fun saveUserToDatabase(name: String, email: String) {
         val uid = firebaseAuth.currentUser?.uid ?: return
-        val userPreferences = UserPreferences(name, email, showViewPage = true, isLoggedIn = false)
+        val userPreferences = UserPreferences(name, email, showViewPage = true, saveShowViewPage = true, isLoggedIn = false)
         try{
         dataBase.getReference("Users").child(uid).setValue(userPreferences)
             .addOnCompleteListener { task ->
@@ -91,6 +110,22 @@ class SingUpVM(
             }
         }catch (e: Exception){
             _userStateSingUp.update { UserPreferences(errorMessage = "Error al guardar los detalles del usuario") }
+        }
+    }
+
+    /**
+     * Comprueba si hay conexión a internet.
+     */
+     fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return when {
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
         }
     }
 

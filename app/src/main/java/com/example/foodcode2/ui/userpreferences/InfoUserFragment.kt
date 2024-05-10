@@ -65,8 +65,10 @@ class InfoUserFragment : Fragment() {
 
         binding.buttonLogOut.setOnClickListener {
             firebaseAuth.signOut()
-            // Navigate to the login fragment
-            findNavController().popBackStack(R.id.loginFragment2, true)
+            //reinicio de la app
+            val intent = requireActivity().intent
+            requireActivity().finish()
+            startActivity(intent)
         }
 
         binding.fabSettings.setOnClickListener {

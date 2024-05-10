@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.foodcode2.databinding.FragmentSingUpBinding
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -54,7 +55,7 @@ class SingUpFragment : Fragment() {
                 showAlert("La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.")
             } else {
                 // registra al usuario si hay conexión a internet
-                if (isNetworkAvailable(requireContext())) {
+                if (SingUpViewModel.isNetworkAvailable(requireContext())) {
                     SingUpViewModel.signUpUser(nombre, email, password)
                 } else {
                     Snackbar.make(
@@ -69,52 +70,40 @@ class SingUpFragment : Fragment() {
         /**
          * Observa el estado del usuario.
          */
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SingUpViewModel.userStateSingUp.collect { userPreferences ->
-                    if (userPreferences.errorMessage.isNotBlank() && userPreferences.errorMessage.isNotEmpty()) {
-                        Snackbar.make(
-                            binding.root,
-                            userPreferences.errorMessage,
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-                    if (userPreferences.isRegistered) {
-                        //Vacia los campos
-                        binding.editTextNombre.text!!.clear()
-                        binding.editTextEmail.text!!.clear()
-                        binding.editTextContraseA.text!!.clear()
-                        //Notifica al usuario
-                        Snackbar.make(
-                            binding.root,
-                            "Te has registrado correctamente",
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                        //Navega al fragmento de inicio de sesión
-                        val action = SingUpFragmentDirections.actionSingUpFragmentToLoginFragment2()
-                        findNavController().navigate(action)
+        lifecycleScope.launch(Dispatchers.Main) {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    SingUpViewModel.userStateSingUp.collect { userPreferences ->
+                        if (userPreferences.errorMessage.isNotBlank() && userPreferences.errorMessage.isNotEmpty()) {
+                            Snackbar.make(
+                                binding.root,
+                                userPreferences.errorMessage,
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }
+                        if (userPreferences.isRegistered) {
+                            //Vacia los campos
+                            binding.editTextNombre.text!!.clear()
+                            binding.editTextEmail.text!!.clear()
+                            binding.editTextContraseA.text!!.clear()
+                            //Notifica al usuario
+                            Snackbar.make(
+                                binding.root,
+                                "Te has registrado correctamente",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                            //Navega al fragmento de inicio de sesión
+                            val action =
+                                SingUpFragmentDirections.actionSingUpFragmentToLoginFragment2()
+                            findNavController().navigate(action)
+                        }
                     }
                 }
-            }
+
         }
 
         return binding.root
     }
 
-    /**
-     * Comprueba si hay conexión a internet.
-     */
-    private fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return when {
-            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            else -> false
-        }
-    }
 
     /**
      * Muestra un cuadro de diálogo con un mensaje.

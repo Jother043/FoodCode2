@@ -53,6 +53,14 @@ class LoginVM(
 
     // Función para iniciar sesión con Firebase
     fun signInWithFirebase(email: String, password: String) {
+
+        // Restablece el estado de error antes de cada intento de inicio de sesión
+        _userState.update {
+            it.copy(
+                errorMessage = ""
+            )
+        }
+
         try {
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -64,16 +72,9 @@ class LoginVM(
                             isLoggedIn = true
                         )
                     }
-                    // Guarda el estado de inicio de sesión en las preferencias compartidas
-                    viewModelScope.launch {
-                        val userPreferences = UserPreferences(isLoggedIn = true)
-                        userRepositories.saveUserPrefs(userPreferences.isLoggedIn)
-                        // Guarda las preferencias del usuario en la base de datos de Firebase
-                        val uid = firebaseAuth.currentUser?.uid ?: return@launch
-                        val database = FirebaseDatabase.getInstance()
-                        database.getReference("UserPreferences").child(uid)
-                            .setValue(userPreferences)
-                    }
+
+                    // Guarda el estado del usuario en la base de datos firebase
+
                 } else {
                     // Si el inicio de sesión falla, muestra un mensaje de error
                     Log.w("LoginVM", "signInWithFirebase:failure", task.exception)
@@ -95,6 +96,19 @@ class LoginVM(
         }
     }
 
+    private fun checkIfUserIsLoggedIn() {
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            // El usuario ya ha iniciado sesión
+            _userState.update {
+                it.copy(
+                    isLoggedIn = true
+                )
+            }
+        }
+    }
+
+    // Función para validar el email
     fun validateName(email: String): Boolean {
 
         if (email.isEmpty()) {
@@ -105,6 +119,7 @@ class LoginVM(
         return true
     }
 
+    // Función para validar la contraseña
     fun validatePassword(password: String): Boolean {
         if (password.isEmpty()) {
 
@@ -113,6 +128,7 @@ class LoginVM(
         return true
     }
 
+    // Función para comprobar si hay conexión a internet
     fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

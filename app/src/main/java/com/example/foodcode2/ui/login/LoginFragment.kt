@@ -1,5 +1,6 @@
 package com.example.foodcode2.ui.login
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -21,13 +22,13 @@ import com.example.foodcode2.dependencies.FoodCode
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
 
     private val loginVM: LoginVM by viewModels<LoginVM> { LoginVM.Factory }
-
 
     var skipWelcome = false
 
@@ -51,35 +52,55 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         collectors()
         setListeners()
 
-        lifecycleScope.launchWhenStarted {
-            loginVM.userState.collect { uiState ->
-                if (uiState.isLoggedIn) {
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Inicio de sesión")
-                        .setMessage("Inicio de sesión exitoso")
-                        .setPositiveButton("Aceptar") { dialog, _ ->
-                            dialog.dismiss()
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    loginVM.userState.collect { uiState ->
+                        if (uiState.isLoggedIn) {
+                            withContext(Dispatchers.Main) {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Inicio de sesión")
+                                    .setMessage("Inicio de sesión exitoso")
+                                    .setPositiveButton("Aceptar") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                    .show()
+                                //nos movemos a la siguiente pantalla
+                                val action =
+                                    LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
+                                val navController = findNavController()
+                                //si la acción es válida navegamos
+                                if (navController.currentDestination?.getAction(action.actionId) != null) {
+                                    navController.navigate(action)
+                                } else {
+                                    //Mostar mensaje de error
+                                }
+                            }
+                        } else if (uiState.errorMessage.isNotEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Inicio de sesión")
+                                    .setMessage(uiState.errorMessage)
+                                    .setPositiveButton("Aceptar") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                    .show()
+                            }
                         }
-                        .show()
-                    //nos movemos a la siguiente pantalla
-                    val action = LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
-                    val navController = findNavController()
-                    //si la acción es válida navegamos
-                    if (navController.currentDestination?.getAction(action.actionId) != null) {
-                        navController.navigate(action)
-                    } else {
-                        //Mostar mensaje de error
                     }
-                } else if (uiState.errorMessage.isNotEmpty()) {
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Inicio de sesión")
-                        .setMessage(uiState.errorMessage)
+                        .setMessage("Error al iniciar sesión")
                         .setPositiveButton("Aceptar") { dialog, _ ->
                             dialog.dismiss()
                         }
@@ -88,15 +109,15 @@ class LoginFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            loginVM.userState.collect { uiState ->
-                if (uiState.isLoggedIn) {
-                    // Si el usuario ya ha iniciado sesión, navega directamente a la pantalla principal
-                    navigateToMainScreen()
-                } else {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                loginVM.userState.collect { uiState ->
+
+
                     // Si el usuario no ha iniciado sesión, configura los listeners y recolecta los datos de la vista
                     collectors()
                     setListeners()
+
                 }
             }
         }
@@ -170,7 +191,4 @@ class LoginFragment : Fragment() {
             }
         }
     }
-
-    //Función que se encarga de validar el nombre ingresado por el usuario
-
 }
