@@ -1,0 +1,13 @@
+@startuml
+
+class InfoUserVM {
+  -sharedPreferences: SharedPreferences
+  +saveUserName(name: String): void
+  +getUserName(): String
+  +saveCheckboxState(state: Boolean): void
+  +getCheckboxState(): Boolean
+  +saveSettings(key: String, value: Any): void
+  +getUserPreferences(): Map<String, *>
+}
+
+@enduml

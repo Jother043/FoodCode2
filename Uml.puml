@@ -1,0 +1,41 @@
+@startuml
+class com.example.foodcode2.adapter.FavoriteAdapter$ViewHolder {
++ void bind(FoodEntity)
+}
+
+class com.example.foodcode2.adapter.FavoriteAdapter$MoviesDiffUtils {
++ Int getOldListSize()
++ Int getNewListSize()
++ Boolean areItemsTheSame(Int,Int)
++ Boolean areContentsTheSame(Int,Int)
+}
+
+class com.example.foodcode2.adapter.FavoriteAdapter {
+- FoodItemBinding binding
+-  moviesList
+- ((FoodEntity) -> Unit)? onItemClickListener
++ ViewHolder onCreateViewHolder(ViewGroup,Int)
++ void onBindViewHolder(ViewHolder,Int)
++ void getItemCount()
++ void setOnItemClickListener((FoodEntity) -> Unit)
++ void setData(List<FoodEntity>)
+}
+
+
+class FoodAdapter {
+}
+class ListViewHolder {
+}
+class null {
++  DRAWABLE
+}
+
+
+
+com.example.foodcode2.adapter.FavoriteAdapter +.. com.example.foodcode2.adapter.FavoriteAdapter$ViewHolder
+com.example.foodcode2.adapter.ViewHolder <|-- com.example.foodcode2.adapter.FavoriteAdapter$ViewHolder
+com.example.foodcode2.adapter.FavoriteAdapter +.. com.example.foodcode2.adapter.FavoriteAdapter$MoviesDiffUtils
+com.example.foodcode2.adapter.Callback <|-- com.example.foodcode2.adapter.FavoriteAdapter$MoviesDiffUtils
+com.example.foodcode2.adapter.Adapter <|-- com.example.foodcode2.adapter.FavoriteAdapter
+ <|.. ListViewHolder
+@enduml

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/listFragment"
+        android:icon="@drawable/ic_list_food"
+        android:title="@string/listFood" />
+
+    <item
+        android:id="@+id/fragmentFoodFav"
+        android:icon="@drawable/ic_favorite_food"
+        android:title="@string/listFavFood" />
+
+    <item
+        android:id="@+id/infoUserFragment"
+        android:icon="@drawable/ic_about_account"
+        android:title="@string/userInfo" />
+
+    <item
+        android:id="@+id/sacannerFragment"
+        android:icon="@drawable/baseline_qr_code_2_24"
+        android:title="@string/lector_qr" />
+
+</menu>

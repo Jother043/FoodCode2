@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">FoodCode2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Informacion Producto</string>
+    <string name="appname">FoodCode</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="username">Nombre de Usuario</string>
+    <string name="next">Siguiente</string>
+    <string name="description">Usuario estás usando la versión 1 de FoodCode</string>
+    <string name="contact">Contactar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="about">Sobre la app</string>
+    <string name="credits">App desarrollada por José Miguel Gutiérrez Hernández para la asignatura de Programación de Aplicaciones Móviles</string>
+    <string name="valor_energetico">sdsdfsdfsdf</string>
+    <string name="food_image">Logo</string>
+    <string name="calories">Calorias</string>
+    <string name="caps">Valor energético</string>
+    <string name="FoodTitle">Manzana</string>
+    <string name="cafeTitle">Descafeinado Clasico Nestlé</string>
+    <string name="calorias">Cálorias</string>
+    <string name="proteinas">Proteínas</string>
+    <string name="bienvenido">Bienvenido a Food Code.</string>
+    <string name="list">Lista de alimentos</string>
+    <string name="favouriteList">Lista de alimentos favoritos</string>
+    <string name="exit">Salir</string>
+    <string name="notice">Estamos en la pantalla de Novedades: para informar a los usuarios de las novedades de la aplicación y de la empresa. Estamos en la version 2.0.0</string>
+    <string name="back">Volver</string>
+    <string name="novedades">Novedad en nuestra APP</string>
+    <string name="fav">Favoritos</string>
+    <string name="lista">Alimentos</string>
+    <string name="about2">Datos Usuario</string>
+    <string name="listFood">Lista alimentos</string>
+    <string name="listFavFood">Alimentos favoritos</string>
+    <string name="userInfo">Perfil</string>
+    <string name="descripci_n_de_la_aplicaci_n">asdasd</string>
+    <string name="categorias" translatable="false">Categoría</string>
+    <string name="Origen" translatable="false">Orígen</string>
+    <string name="ingredients" translatable="false">Ingredientes\n</string>
+    <string name="measure" translatable="false">Medida</string>
+    <string name="slecci_n_de_alimentos" translatable="false">Slección de alimentos</string>
+    <string name="imgFood" translatable="false">Imagen de la receta</string>
+    <string name="descripcion" translatable="false">Descripcion</string>
+    <string name="vegano" translatable="false">Vegano</string>
+    <string name="canada" translatable="false">Canada</string>
+    <string name="volver" translatable="false">Volver\n</string>
+    <string name="emptyname">El nombre no puede estar en blanco</string>
+    <string name="informacion_del_usuario">Informacion del usuario</string>
+    <string name="salir">Salir</string>
+    <string name="settings">Configuracion de usuario</string>
+    <string name="nombreUsuario">Tu nombre de usuario es:</string>
+    <string name="save">Guardar</string>
+    <string name="noShowViewPage">No vollver a mostrar noticias.</string>
+    <string name="settingsSave">Opciones Guardadas correctamente.</string>
+    <string name="errorSave">"Error, no se han guardado los datos "</string>
+    <string name="acceder">Acceder</string>
+    <string name="remove">Eliminar</string>
+    <string name="confirm_delete">Seguro que deseas eliminar la receta de favoritos ?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="accept">Aceptar</string>
+    <string name="coment">Comentario</string>
+    <string name="add_comment">Anadir comentario</string>
+    <string name="comentarys">Comentarios por los usuarios</string>
+    <string name="infoApp">Mas Informacion</string>
+    <string name="creditos">Este proyecto fue desarrollado por Jother043. Todos los derechos reservados © 2023</string>
+    <string name="gmail">josemgh166@gmail.com</string>
+    <string name="answers">Pregunta sobre nuestras recetas</string>
+    <string name="lector_qr">Lector QR</string>
+    <string name="Login">Iniciar sesión</string>
+    <string name="contraseña_olvidada">He olvidado mi contraseña</string>
+    <string name="recordarme">Recordarme</string>
+    <string name="por_favor_inicia_sesion_con_tus_datos">Por favor inicia sesion con tus datos</string>
+    <string name="BienVenido">Hola, bienvenido!</string>
+    <string name="correo_electronico">Correo electronico</string>
+    <string name="contrase_a">Contraseña</string>
+    <string name="o_registrese_con">O registrese con</string>
+    <string name="facebook">Facebook seleccionado\n</string>
+    <string name="google">Google Seleccionado\n</string>
+    <string name="github">GitHubSeleccionado\n</string>
+    <string name="correo_electronico_request">Correo Electronico</string>
+    <string name="default_web_client_id">441853910501-0t5sbnourdqqcrmt7gchqjo39md812jv.apps.googleusercontent.com</string>
+</resources>

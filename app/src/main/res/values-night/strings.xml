@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome">Bienvenido</string>
+    <string name="username">Nombre de Usuario</string>
+    <string name="next">Siguiente</string>
+    <string name="contact">Contactar</string>
+</resources>

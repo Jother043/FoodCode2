@@ -1,0 +1,1135 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class FavoriteAdapter {
+-binding: FoodItemBinding
+    -moviesList: List<FoodEntity>
+    -onItemClickListener: ((FoodEntity) -> Unit)?
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
+    +onBindViewHolder(holder: ViewHolder, position: Int): void
+    +getItemCount(): Int
+    +setOnItemClickListener(listener: (FoodEntity) -> Unit): void
+    +setData(data: List<FoodEntity>): void
+}
+
+class FoodAdapter {
+-listFood: MutableList<Food>
+    -onClickItem: (Int) -> Unit
+    -onClickToFavorites: (Int) -> Unit
+    -callback: NavigationCallback
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder
+    +getItemCount(): Int
+    +onBindViewHolder(holder: ListViewHolder, position: Int): void
+    +setFoodList(foodList: List<Food>): void
+}
+
+class ApiService {
+    +getFoodList(latter: String): Response<FoodsListResponse>
+        +getFoodDetails(idFood: Int): Response<FoodsListResponse>
+        +getFoodRandom(): Response<FoodsListResponse>
+}
+
+class FoodApiConfig {
+    -BASE_URL: String
+    +provideRetrofit(): Retrofit
+}
+
+class Food {
+-id: Int
+    -title: String?
+    -strDrinkAlternate: String?
+    -strCategory: String?
+    -strArea: String?
+    -instructions: String
+    -strMealThumb: String?
+    -strTags: String?
+    -strYoutube: String?
+    -ingredient1: String?
+    -ingredient2: String?
+    -ingredient3: String?
+    -ingredient4: String?
+    -ingredient5: String?
+    -ingredient6: String?
+    -ingredient7: String?
+    -ingredient8: String?
+    -ingredient9: String?
+    -ingredient10: String?
+    -ingredient11: String?
+    -ingredient12: String?
+    -ingredient13: String?
+    -ingredient14: String?
+    -ingredient15: String?
+    -ingredient16: String?
+    -ingredient17: String?
+    -ingredient18: String?
+    -ingredient19: String?
+    -ingredient20: String?
+    -measure1: String?
+    -measure2: String?
+    -measure3: String?
+    -measure4: String?
+    -measure5: String?
+    -measure6: String?
+    -measure7: String?
+    -measure8: String?
+    -measure9: String?
+    -measure10: String?
+    -measure11: String?
+    -measure12: String?
+    -measure13: String?
+    -measure14: String?
+    -measure15: String?
+    -measure16: String?
+    -measure17: String?
+    -measure18: String?
+    -measure19: String?
+    -measure20: String?
+    -strSource: String?
+    -strImageSource: String?
+    -strCreativeCommonsConfirmed: String?
+    -dateModified: String?
+    -isFavorite: Boolean
+    +constructor(parcel: Parcel)
+    +writeToParcel(parcel: Parcel, flags: Int): void
+    +describeContents(): Int
+}
+
+class FoodsListResponse {
+}
+
+class UserPreferences {
+-name: String
+    -showViewPage: Boolean
+}
+
+class FoodDao {
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+    +getAllFoods(): Flow<MutableList<FoodEntity>>
+    +existsFood(id: Int): Flow<Boolean>
+}
+
+class FoodDatabase {
+    +foodDao(): FoodDao
+}
+
+class FoodEntity {
+}
+
+class AppContainer {
+-FoodApiService: ApiService
+    +FoodRepository: FoodRepository
+}
+
+class FoodCode {
+-_appContainer: AppContainer
+    +appContainer: AppContainer
+    +onCreate(): void
+}
+
+class FoodRepository {
+    +getFoods(): Flow<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+class UserRepositories {
+-userDataStore: DataStore<Preferences>
+    +getUserPrefs(): Flow<UserPreferences>
+    +saveSettings(name: String, showViewPage: Boolean): void
+    +getUserName(): Flow<String>
+    +getShowViewPage(): Boolean
+    +saveUserName(name: String): void
+}
+
+class FoodDetailsFragment {
+-_binding: FragmentFoodDetailsBinding?
+    +binding: FragmentFoodDetailsBinding
+    +args: FoodDetailsFragmentArgs
+    +foodDetailsVM: FoodDetailsVM
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -setCollectors(): void
+}
+
+class FoodDetailsUiState {
+}
+
+class FavoriteViewModel {
+}
+
+class FragmentFoodFav {
+}
+
+class LoginFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserVM {
+    +saveUserName(name: String): void
+    +getUserName(): String
+    +saveCheckboxState(state: Boolean): void
+    +getCheckboxState(): Boolean
+    +saveSettings(key: String, value: Any): void
+    +getUserPreferences(): Map<String, *>
+}
+
+class ListFragment {
+    -_binding: FragmentListBinding?
+    +binding: FragmentListBinding
+    +foodListVM: FoodListVM
+    -foodAdapter: FoodAdapter
+    -foodListState: MutableList<Food>
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -initRecView(): void
+    -setCollectors(): void
+    -addToFavorites(it: Int): void
+    -selectFood(foodIndex: Int): void
+    +navigateToDetails(food: Food): void
+}
+
+class FoodListVM {
+    -foodRepository: FoodRepository
+    -_uiState: MutableStateFlow<FoodListUiState>
+    +uiState: StateFlow<FoodListUiState>
+    +fetchFoodsByIds(ids: List<Int>): void
+}
+
+class FoodListUiState {
+    +foodList: List<Food>
+    +isLoading: Boolean
+    +error: String?
+}
+
+FavoriteAdapter -- Food
+FoodAdapter -- Food
+ApiService -- FoodApiConfig
+FoodApiConfig -- Food
+Food -- FoodsListResponse
+UserPreferences -- FoodDao
+FoodDao -- FoodDatabase
+FoodDatabase -- FoodEntity
+AppContainer -- FoodCode
+FoodCode -- FoodRepository
+FoodRepository -- UserRepositories
+UserRepositories -- FoodDetailsFragment
+FoodDetailsFragment -- FoodDetailsUiState
+FoodDetailsUiState -- FavoriteViewModel
+FavoriteViewModel -- FragmentFoodFav
+FragmentFoodFav -- LoginFragment
+LoginFragment -- InfoUserFragment
+InfoUserFragment -- InfoUserVM
+ListFragment -- FoodListVM
+FoodListVM -- FoodListUiState
+
+@enduml@startuml
+'https://plantuml.com/class-diagram
+
+class FavoriteAdapter {
+-binding: FoodItemBinding
+    -moviesList: List<FoodEntity>
+    -onItemClickListener: ((FoodEntity) -> Unit)?
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
+    +onBindViewHolder(holder: ViewHolder, position: Int): void
+    +getItemCount(): Int
+    +setOnItemClickListener(listener: (FoodEntity) -> Unit): void
+    +setData(data: List<FoodEntity>): void
+}
+
+class FoodAdapter {
+-listFood: MutableList<Food>
+    -onClickItem: (Int) -> Unit
+    -onClickToFavorites: (Int) -> Unit
+    -callback: NavigationCallback
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder
+    +getItemCount(): Int
+    +onBindViewHolder(holder: ListViewHolder, position: Int): void
+    +setFoodList(foodList: List<Food>): void
+}
+
+class ApiService {
+    +getFoodList(latter: String): Response<FoodsListResponse>
+        +getFoodDetails(idFood: Int): Response<FoodsListResponse>
+        +getFoodRandom(): Response<FoodsListResponse>
+}
+
+class FoodApiConfig {
+    -BASE_URL: String
+    +provideRetrofit(): Retrofit
+}
+
+class Food {
+-id: Int
+    -title: String?
+    -strDrinkAlternate: String?
+    -strCategory: String?
+    -strArea: String?
+    -instructions: String
+    -strMealThumb: String?
+    -strTags: String?
+    -strYoutube: String?
+    -ingredient1: String?
+    -ingredient2: String?
+    -ingredient3: String?
+    -ingredient4: String?
+    -ingredient5: String?
+    -ingredient6: String?
+    -ingredient7: String?
+    -ingredient8: String?
+    -ingredient9: String?
+    -ingredient10: String?
+    -ingredient11: String?
+    -ingredient12: String?
+    -ingredient13: String?
+    -ingredient14: String?
+    -ingredient15: String?
+    -ingredient16: String?
+    -ingredient17: String?
+    -ingredient18: String?
+    -ingredient19: String?
+    -ingredient20: String?
+    -measure1: String?
+    -measure2: String?
+    -measure3: String?
+    -measure4: String?
+    -measure5: String?
+    -measure6: String?
+    -measure7: String?
+    -measure8: String?
+    -measure9: String?
+    -measure10: String?
+    -measure11: String?
+    -measure12: String?
+    -measure13: String?
+    -measure14: String?
+    -measure15: String?
+    -measure16: String?
+    -measure17: String?
+    -measure18: String?
+    -measure19: String?
+    -measure20: String?
+    -strSource: String?
+    -strImageSource: String?
+    -strCreativeCommonsConfirmed: String?
+    -dateModified: String?
+    -isFavorite: Boolean
+    +constructor(parcel: Parcel)
+    +writeToParcel(parcel: Parcel, flags: Int): void
+    +describeContents(): Int
+}
+
+class FoodsListResponse {
+}
+
+class UserPreferences {
+-name: String
+    -showViewPage: Boolean
+}
+
+class FoodDao {
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+    +getAllFoods(): Flow<MutableList<FoodEntity>>
+    +existsFood(id: Int): Flow<Boolean>
+}
+
+class FoodDatabase {
+    +foodDao(): FoodDao
+}
+
+class FoodEntity {
+}
+
+class AppContainer {
+-FoodApiService: ApiService
+    +FoodRepository: FoodRepository
+}
+
+class FoodCode {
+-_appContainer: AppContainer
+    +appContainer: AppContainer
+    +onCreate(): void
+}
+
+class FoodRepository {
+    +getFoods(): Flow<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+class UserRepositories {
+-userDataStore: DataStore<Preferences>
+    +getUserPrefs(): Flow<UserPreferences>
+    +saveSettings(name: String, showViewPage: Boolean): void
+    +getUserName(): Flow<String>
+    +getShowViewPage(): Boolean
+    +saveUserName(name: String): void
+}
+
+class FoodDetailsFragment {
+-_binding: FragmentFoodDetailsBinding?
+    +binding: FragmentFoodDetailsBinding
+    +args: FoodDetailsFragmentArgs
+    +foodDetailsVM: FoodDetailsVM
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -setCollectors(): void
+}
+
+class FoodDetailsUiState {
+}
+
+class FavoriteViewModel {
+}
+
+class FragmentFoodFav {
+}
+
+class LoginFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserVM {
+    +saveUserName(name: String): void
+    +getUserName(): String
+    +saveCheckboxState(state: Boolean): void
+    +getCheckboxState(): Boolean
+    +saveSettings(key: String, value: Any): void
+    +getUserPreferences(): Map<String, *>
+}
+
+class ListFragment {
+    -_binding: FragmentListBinding?
+    +binding: FragmentListBinding
+    +foodListVM: FoodListVM
+    -foodAdapter: FoodAdapter
+    -foodListState: MutableList<Food>
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -initRecView(): void
+    -setCollectors(): void
+    -addToFavorites(it: Int): void
+    -selectFood(foodIndex: Int): void
+    +navigateToDetails(food: Food): void
+}
+
+class FoodListVM {
+    -foodRepository: FoodRepository
+    -_uiState: MutableStateFlow<FoodListUiState>
+    +uiState: StateFlow<FoodListUiState>
+    +fetchFoodsByIds(ids: List<Int>): void
+}
+
+class FoodListUiState {
+    +foodList: List<Food>
+    +isLoading: Boolean
+    +error: String?
+}
+
+FavoriteAdapter -- Food
+FoodAdapter -- Food
+ApiService -- FoodApiConfig
+FoodApiConfig -- Food
+Food -- FoodsListResponse
+UserPreferences -- FoodDao
+FoodDao -- FoodDatabase
+FoodDatabase -- FoodEntity
+AppContainer -- FoodCode
+FoodCode -- FoodRepository
+FoodRepository -- UserRepositories
+UserRepositories -- FoodDetailsFragment
+FoodDetailsFragment -- FoodDetailsUiState
+FoodDetailsUiState -- FavoriteViewModel
+FavoriteViewModel -- FragmentFoodFav
+FragmentFoodFav -- LoginFragment
+LoginFragment -- InfoUserFragment
+InfoUserFragment -- InfoUserVM
+ListFragment -- FoodListVM
+FoodListVM -- FoodListUiState
+
+@enduml@startuml
+'https://plantuml.com/class-diagram
+
+class FavoriteAdapter {
+-binding: FoodItemBinding
+    -moviesList: List<FoodEntity>
+    -onItemClickListener: ((FoodEntity) -> Unit)?
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
+    +onBindViewHolder(holder: ViewHolder, position: Int): void
+    +getItemCount(): Int
+    +setOnItemClickListener(listener: (FoodEntity) -> Unit): void
+    +setData(data: List<FoodEntity>): void
+}
+
+class FoodAdapter {
+-listFood: MutableList<Food>
+    -onClickItem: (Int) -> Unit
+    -onClickToFavorites: (Int) -> Unit
+    -callback: NavigationCallback
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder
+    +getItemCount(): Int
+    +onBindViewHolder(holder: ListViewHolder, position: Int): void
+    +setFoodList(foodList: List<Food>): void
+}
+
+class ApiService {
+    +getFoodList(latter: String): Response<FoodsListResponse>
+        +getFoodDetails(idFood: Int): Response<FoodsListResponse>
+        +getFoodRandom(): Response<FoodsListResponse>
+}
+
+class FoodApiConfig {
+    -BASE_URL: String
+    +provideRetrofit(): Retrofit
+}
+
+class Food {
+-id: Int
+    -title: String?
+    -strDrinkAlternate: String?
+    -strCategory: String?
+    -strArea: String?
+    -instructions: String
+    -strMealThumb: String?
+    -strTags: String?
+    -strYoutube: String?
+    -ingredient1: String?
+    -ingredient2: String?
+    -ingredient3: String?
+    -ingredient4: String?
+    -ingredient5: String?
+    -ingredient6: String?
+    -ingredient7: String?
+    -ingredient8: String?
+    -ingredient9: String?
+    -ingredient10: String?
+    -ingredient11: String?
+    -ingredient12: String?
+    -ingredient13: String?
+    -ingredient14: String?
+    -ingredient15: String?
+    -ingredient16: String?
+    -ingredient17: String?
+    -ingredient18: String?
+    -ingredient19: String?
+    -ingredient20: String?
+    -measure1: String?
+    -measure2: String?
+    -measure3: String?
+    -measure4: String?
+    -measure5: String?
+    -measure6: String?
+    -measure7: String?
+    -measure8: String?
+    -measure9: String?
+    -measure10: String?
+    -measure11: String?
+    -measure12: String?
+    -measure13: String?
+    -measure14: String?
+    -measure15: String?
+    -measure16: String?
+    -measure17: String?
+    -measure18: String?
+    -measure19: String?
+    -measure20: String?
+    -strSource: String?
+    -strImageSource: String?
+    -strCreativeCommonsConfirmed: String?
+    -dateModified: String?
+    -isFavorite: Boolean
+    +constructor(parcel: Parcel)
+    +writeToParcel(parcel: Parcel, flags: Int): void
+    +describeContents(): Int
+}
+
+class FoodsListResponse {
+}
+
+class UserPreferences {
+-name: String
+    -showViewPage: Boolean
+}
+
+class FoodDao {
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+    +getAllFoods(): Flow<MutableList<FoodEntity>>
+    +existsFood(id: Int): Flow<Boolean>
+}
+
+class FoodDatabase {
+    +foodDao(): FoodDao
+}
+
+class FoodEntity {
+}
+
+class AppContainer {
+-FoodApiService: ApiService
+    +FoodRepository: FoodRepository
+}
+
+class FoodCode {
+-_appContainer: AppContainer
+    +appContainer: AppContainer
+    +onCreate(): void
+}
+
+class FoodRepository {
+    +getFoods(): Flow<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+class UserRepositories {
+-userDataStore: DataStore<Preferences>
+    +getUserPrefs(): Flow<UserPreferences>
+    +saveSettings(name: String, showViewPage: Boolean): void
+    +getUserName(): Flow<String>
+    +getShowViewPage(): Boolean
+    +saveUserName(name: String): void
+}
+
+class FoodDetailsFragment {
+-_binding: FragmentFoodDetailsBinding?
+    +binding: FragmentFoodDetailsBinding
+    +args: FoodDetailsFragmentArgs
+    +foodDetailsVM: FoodDetailsVM
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -setCollectors(): void
+}
+
+class FoodDetailsUiState {
+}
+
+class FavoriteViewModel {
+}
+
+class FragmentFoodFav {
+}
+
+class LoginFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserVM {
+    +saveUserName(name: String): void
+    +getUserName(): String
+    +saveCheckboxState(state: Boolean): void
+    +getCheckboxState(): Boolean
+    +saveSettings(key: String, value: Any): void
+    +getUserPreferences(): Map<String, *>
+}
+
+class ListFragment {
+    -_binding: FragmentListBinding?
+    +binding: FragmentListBinding
+    +foodListVM: FoodListVM
+    -foodAdapter: FoodAdapter
+    -foodListState: MutableList<Food>
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -initRecView(): void
+    -setCollectors(): void
+    -addToFavorites(it: Int): void
+    -selectFood(foodIndex: Int): void
+    +navigateToDetails(food: Food): void
+}
+
+class FoodListVM {
+    -foodRepository: FoodRepository
+    -_uiState: MutableStateFlow<FoodListUiState>
+    +uiState: StateFlow<FoodListUiState>
+    +fetchFoodsByIds(ids: List<Int>): void
+}
+
+class FoodListUiState {
+    +foodList: List<Food>
+    +isLoading: Boolean
+    +error: String?
+}
+
+FavoriteAdapter -- Food
+FoodAdapter -- Food
+ApiService -- FoodApiConfig
+FoodApiConfig -- Food
+Food -- FoodsListResponse
+UserPreferences -- FoodDao
+FoodDao -- FoodDatabase
+FoodDatabase -- FoodEntity
+AppContainer -- FoodCode
+FoodCode -- FoodRepository
+FoodRepository -- UserRepositories
+UserRepositories -- FoodDetailsFragment
+FoodDetailsFragment -- FoodDetailsUiState
+FoodDetailsUiState -- FavoriteViewModel
+FavoriteViewModel -- FragmentFoodFav
+FragmentFoodFav -- LoginFragment
+LoginFragment -- InfoUserFragment
+InfoUserFragment -- InfoUserVM
+ListFragment -- FoodListVM
+FoodListVM -- FoodListUiState
+
+@enduml
+@startuml
+'https://plantuml.com/class-diagram
+
+class FavoriteAdapter {
+-binding: FoodItemBinding
+    -moviesList: List<FoodEntity>
+    -onItemClickListener: ((FoodEntity) -> Unit)?
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
+    +onBindViewHolder(holder: ViewHolder, position: Int): void
+    +getItemCount(): Int
+    +setOnItemClickListener(listener: (FoodEntity) -> Unit): void
+    +setData(data: List<FoodEntity>): void
+}
+
+class FoodAdapter {
+-listFood: MutableList<Food>
+    -onClickItem: (Int) -> Unit
+    -onClickToFavorites: (Int) -> Unit
+    -callback: NavigationCallback
+    +onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder
+    +getItemCount(): Int
+    +onBindViewHolder(holder: ListViewHolder, position: Int): void
+    +setFoodList(foodList: List<Food>): void
+}
+
+class ApiService {
+    +getFoodList(latter: String): Response<FoodsListResponse>
+        +getFoodDetails(idFood: Int): Response<FoodsListResponse>
+        +getFoodRandom(): Response<FoodsListResponse>
+}
+
+class FoodApiConfig {
+    -BASE_URL: String
+    +provideRetrofit(): Retrofit
+}
+
+class Food {
+-id: Int
+    -title: String?
+    -strDrinkAlternate: String?
+    -strCategory: String?
+    -strArea: String?
+    -instructions: String
+    -strMealThumb: String?
+    -strTags: String?
+    -strYoutube: String?
+    -ingredient1: String?
+    -ingredient2: String?
+    -ingredient3: String?
+    -ingredient4: String?
+    -ingredient5: String?
+    -ingredient6: String?
+    -ingredient7: String?
+    -ingredient8: String?
+    -ingredient9: String?
+    -ingredient10: String?
+    -ingredient11: String?
+    -ingredient12: String?
+    -ingredient13: String?
+    -ingredient14: String?
+    -ingredient15: String?
+    -ingredient16: String?
+    -ingredient17: String?
+    -ingredient18: String?
+    -ingredient19: String?
+    -ingredient20: String?
+    -measure1: String?
+    -measure2: String?
+    -measure3: String?
+    -measure4: String?
+    -measure5: String?
+    -measure6: String?
+    -measure7: String?
+    -measure8: String?
+    -measure9: String?
+    -measure10: String?
+    -measure11: String?
+    -measure12: String?
+    -measure13: String?
+    -measure14: String?
+    -measure15: String?
+    -measure16: String?
+    -measure17: String?
+    -measure18: String?
+    -measure19: String?
+    -measure20: String?
+    -strSource: String?
+    -strImageSource: String?
+    -strCreativeCommonsConfirmed: String?
+    -dateModified: String?
+    -isFavorite: Boolean
+    +constructor(parcel: Parcel)
+    +writeToParcel(parcel: Parcel, flags: Int): void
+    +describeContents(): Int
+}
+
+class FoodsListResponse {
+}
+
+class UserPreferences {
+-name: String
+    -showViewPage: Boolean
+}
+
+class FoodDao {
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+    +getAllFoods(): Flow<MutableList<FoodEntity>>
+    +existsFood(id: Int): Flow<Boolean>
+}
+
+class FoodDatabase {
+    +foodDao(): FoodDao
+}
+
+class FoodEntity {
+}
+
+class AppContainer {
+-FoodApiService: ApiService
+    +FoodRepository: FoodRepository
+}
+
+class FoodCode {
+-_appContainer: AppContainer
+    +appContainer: AppContainer
+    +onCreate(): void
+}
+
+class FoodRepository {
+    +getFoods(): Flow<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+class UserRepositories {
+-userDataStore: DataStore<Preferences>
+    +getUserPrefs(): Flow<UserPreferences>
+    +saveSettings(name: String, showViewPage: Boolean): void
+    +getUserName(): Flow<String>
+    +getShowViewPage(): Boolean
+    +saveUserName(name: String): void
+}
+
+class FoodDetailsFragment {
+-_binding: FragmentFoodDetailsBinding?
+    +binding: FragmentFoodDetailsBinding
+    +args: FoodDetailsFragmentArgs
+    +foodDetailsVM: FoodDetailsVM
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -setCollectors(): void
+}
+
+class FoodDetailsUiState {
+}
+
+class FavoriteViewModel {
+}
+
+class FragmentFoodFav {
+}
+
+class LoginFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserVM {
+    +saveUserName(name: String): void
+    +getUserName(): String
+    +saveCheckboxState(state: Boolean): void
+    +getCheckboxState(): Boolean
+    +saveSettings(key: String, value: Any): void
+    +getUserPreferences(): Map<String, *>
+}
+
+class ListFragment {
+    -_binding: FragmentListBinding?
+    +binding: FragmentListBinding
+    +foodListVM: FoodListVM
+    -foodAdapter: FoodAdapter
+    -foodListState: MutableList<Food>
+    +onCreate(savedInstanceState: Bundle?): void
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    +onViewCreated(view: View, savedInstanceState: Bundle?): void
+    -initRecView(): void
+    -setCollectors(): void
+    -addToFavorites(it: Int): void
+    -selectFood(foodIndex: Int): void
+    +navigateToDetails(food: Food): void
+}
+
+class FoodListVM {
+    -foodRepository: FoodRepository
+    -_uiState: MutableStateFlow<FoodListUiState>
+    +uiState: StateFlow<FoodListUiState>
+    +fetchFoodsByIds(ids: List<Int>): void
+}
+
+class FoodListUiState {
+    +foodList: List<Food>
+    +isLoading: Boolean
+    +error: String?
+}
+
+FavoriteAdapter -- Food
+FoodAdapter -- Food
+ApiService -- FoodApiConfig
+FoodApiConfig -- Food
+Food -- FoodsListResponse
+UserPreferences -- FoodDao
+FoodDao -- FoodDatabase
+FoodDatabase -- FoodEntity
+AppContainer -- FoodCode
+FoodCode -- FoodRepository
+FoodRepository -- UserRepositories
+UserRepositories -- FoodDetailsFragment
+FoodDetailsFragment -- FoodDetailsUiState
+FoodDetailsUiState -- FavoriteViewModel
+FavoriteViewModel -- FragmentFoodFav
+FragmentFoodFav -- LoginFragment
+LoginFragment -- InfoUserFragment
+InfoUserFragment -- InfoUserVM
+ListFragment -- FoodListVM
+FoodListVM -- FoodListUiState
+
+@enduml
+
+@startuml
+'https://plantuml.com/class-diagram
+
+class FavoriteAdapter {
+}
+
+class FoodAdapter {
+}
+
+class ApiService {
+}
+
+class FoodApiConfig {
+    -BASE_URL: String
+    +provideRetrofit(): Retrofit
+}
+
+class Food {
+}
+
+class FoodsListResponse {
+}
+
+class UserPreferences {
+
+}
+
+class FoodDao {
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+    +getAllFoods(): Flow<MutableList<FoodEntity>>
+    +existsFood(id: Int): Flow<Boolean>
+}
+
+class FoodDatabase {
+    +foodDao(): FoodDao
+}
+
+class FoodEntity {
+}
+
+class AppContainer {
+}
+
+class FoodCode {
+}
+
+class FoodRepository {
+    +getFoods(): Flow<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+class UserRepositories {
+}
+
+class FoodDetailsFragment {
+}
+
+class FoodDetailsUiState {
+}
+
+class FavoriteViewModel {
+}
+
+class FragmentFoodFav {
+}
+
+class LoginFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserVM {
+    +saveUserName(name: String): void
+    +getUserName(): String
+    +saveCheckboxState(state: Boolean): void
+    +getCheckboxState(): Boolean
+    +saveSettings(key: String, value: Any): void
+    +getUserPreferences(): Map<String, *>
+}
+
+FavoriteAdapter -- Food
+FoodAdapter -- Food
+ApiService -- FoodApiConfig
+FoodApiConfig -- Food
+Food -- FoodsListResponse
+UserPreferences -- FoodDao
+FoodDao -- FoodDatabase
+FoodDatabase -- FoodEntity
+AppContainer -- FoodCode
+FoodCode -- FoodRepository
+FoodRepository -- UserRepositories
+UserRepositories -- FoodDetailsFragment
+FoodDetailsFragment -- FoodDetailsUiState
+FoodDetailsUiState -- FavoriteViewModel
+FavoriteViewModel -- FragmentFoodFav
+FragmentFoodFav -- LoginFragment
+LoginFragment -- InfoUserFragment
+InfoUserFragment -- InfoUserVM
+
+@enduml@startuml
+'https://plantuml.com/class-diagram
+
+class FavoriteAdapter {
+}
+
+class FoodAdapter {
+}
+
+class ApiService {
+}
+
+class FoodApiConfig {
+    -BASE_URL: String
+    +provideRetrofit(): Retrofit
+}
+
+class Food {
+}
+
+class FoodsListResponse {
+}
+
+class UserPreferences {
+}
+
+class FoodDao {
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+    +getAllFoods(): Flow<MutableList<FoodEntity>>
+    +existsFood(id: Int): Flow<Boolean>
+}
+
+class FoodDatabase {
+    +foodDao(): FoodDao
+}
+
+class FoodEntity {
+}
+
+class AppContainer {
+}
+
+class FoodCode {
+}
+
+class FoodRepository {
+    +getFoods(): Flow<MutableList<FoodEntity>>
+    +saveFood(entity: FoodEntity): void
+    +deleteFood(entity: FoodEntity): void
+}
+
+class UserRepositories {
+}
+
+class FoodDetailsFragment {
+}
+
+class FoodDetailsUiState {
+}
+
+class FavoriteViewModel {
+}
+
+class FragmentFoodFav {
+}
+
+class LoginFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserFragment {
+    +onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+}
+
+class InfoUserVM {
+    +saveUserName(name: String): void
+    +getUserName(): String
+    +saveCheckboxState(state: Boolean): void
+    +getCheckboxState(): Boolean
+    +saveSettings(key: String, value: Any): void
+    +getUserPreferences(): Map<String, *>
+}
+
+FavoriteAdapter -- Food
+FoodAdapter -- Food
+ApiService -- FoodApiConfig
+FoodApiConfig -- Food
+Food -- FoodsListResponse
+UserPreferences -- FoodDao
+FoodDao -- FoodDatabase
+FoodDatabase -- FoodEntity
+AppContainer -- FoodCode
+FoodCode -- FoodRepository
+FoodRepository -- UserRepositories
+UserRepositories -- FoodDetailsFragment
+FoodDetailsFragment -- FoodDetailsUiState
+FoodDetailsUiState -- FavoriteViewModel
+FavoriteViewModel -- FragmentFoodFav
+FragmentFoodFav -- LoginFragment
+LoginFragment -- InfoUserFragment
+InfoUserFragment -- InfoUserVM
+
+@enduml

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment2">
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.foodcode2.ui.menu.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menuFragment_to_listFragment"
+            app:destination="@id/listFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_loginFragment2"
+            app:destination="@id/loginFragment2" />
+        <action
+            android:id="@+id/action_menuFragment_to_infoUserFragment"
+            app:destination="@id/infoUserFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_favFoodFragment"
+            app:destination="@id/favFoodFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_creditFragment"
+            app:destination="@id/creditFragment" />
+        <action
+            android:id="@+id/action_menuFragment_self"
+            app:destination="@id/menuFragment" />
+        <argument
+            android:name="barcode"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.example.foodcode2.ui.herolist.ListFragment"
+        android:label="fragment_list"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_listFragment_to_detailsFragment2"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/creditFragment"
+        android:name="com.example.foodcode2.CreditFragment"
+        android:label="fragment_credit"
+        tools:layout="@layout/fragment_credit" />
+    <fragment
+        android:id="@+id/loginFragment2"
+        android:name="com.example.foodcode2.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment2_to_noticeFragment"
+            app:destination="@id/noticeFragment" />
+        <action
+            android:id="@+id/action_loginFragment2_to_menuFragment4"
+            app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_loginFragment2_to_singUpFragment"
+            app:destination="@id/singUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment2_to_recoveryPasswordFragment"
+            app:destination="@id/recoveryPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/noticeFragment"
+        android:name="com.example.foodcode2.ui.noticias.NoticeFragment"
+        android:label="NoticeFragment">
+        <action
+            android:id="@+id/action_noticeFragment_to_loginFragment2"
+            app:destination="@id/loginFragment2" />
+        <action
+            android:id="@+id/action_noticeFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.foodcode2.AboutFragment"
+        android:label="fragment_about"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/infoUserFragment"
+        android:name="com.example.foodcode2.ui.userpreferences.InfoUserFragment"
+        android:label="fragment_info_user"
+        tools:layout="@layout/fragment_info_user">
+        <action
+            android:id="@+id/action_infoUserFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_infoUserFragment_to_userSettingsFragment"
+            app:destination="@id/userSettingsFragment" />
+        <action
+            android:id="@+id/action_infoUserFragment_to_loginFragment23"
+            app:destination="@id/loginFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.example.foodcode2.ui.details.DetailsFragment"
+        android:label="fragment_details">
+        <argument
+            android:name="food"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_detailsFragment_to_listFragment"
+            app:destination="@id/listFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userSettingsFragment"
+        android:name="com.example.foodcode2.ui.settings.UserSettingsFragment"
+        android:label="fragment_user_settings"
+        tools:layout="@layout/fragment_user_settings" />
+    <fragment
+        android:id="@+id/favFoodFragment"
+        android:name="com.example.foodcode2.ui.favFood.FavFoodFragment"
+        android:label="FavFoodFragment" >
+        <action
+            android:id="@+id/action_favFoodFragment_to_foodFavDetailsFragment"
+            app:destination="@id/foodFavDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/foodFavDetailsFragment"
+        android:name="com.example.foodcode2.ui.fav_details.FoodFavDetailsFragment"
+        android:label="FoodFavDetailsFragment" >
+        <argument
+            android:name="foodId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_foodFavDetailsFragment_to_comentaryFragment"
+            app:destination="@id/comentaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comentaryFragment"
+        android:name="com.example.foodcode2.ui.comentary.ComentaryFragment"
+        android:label="fragment_comentary"
+        tools:layout="@layout/fragment_comentary" >
+        <argument
+            android:name="foodId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/singUpFragment"
+        android:name="com.example.foodcode2.ui.SingUp.SingUpFragment"
+        android:label="fragment_sing_up"
+        tools:layout="@layout/fragment_sing_up" >
+        <action
+            android:id="@+id/action_singUpFragment_to_loginFragment2"
+            app:destination="@id/loginFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/recoveryPasswordFragment"
+        android:name="com.example.foodcode2.ui.recoveryPassword.RecoveryPasswordFragment"
+        android:label="fragment_recovery_password"
+        tools:layout="@layout/fragment_recovery_password" />
+</navigation>

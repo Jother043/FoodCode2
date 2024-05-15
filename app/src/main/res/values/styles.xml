@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="title_food_text">com.example.foodcode2.api.Food</style>
+
+    <style name="important_text"></style>
+
+    <style name="RoundedAlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.RoundedAlertDialog</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.RoundedAlertDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+</resources>

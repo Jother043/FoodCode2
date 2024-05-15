@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="140dp">
+
+        <ImageView
+            android:id="@+id/ivFavFood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivPhoto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivPhoto"
+            app:srcCompat="@drawable/ic_favorite_food" />
+
+        <TextView
+            android:id="@+id/tvCal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/tvCalories"
+            app:layout_constraintHorizontal_bias="0.542"
+            app:layout_constraintStart_toStartOf="@+id/tvCalories"
+            app:layout_constraintTop_toBottomOf="@+id/tvCalories"
+            tools:text="10" />
+
+        <TextView
+            android:id="@+id/tvEco"
+            android:layout_width="76dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="@+id/tvScore"
+            app:layout_constraintHorizontal_bias="0.555"
+            app:layout_constraintStart_toStartOf="@+id/tvScore"
+            app:layout_constraintTop_toBottomOf="@+id/tvScore" />
+
+        <ImageView
+            android:id="@+id/ivPhoto"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/food_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/cafe" />
+
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/title_food_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="#EF1909"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/ivPhoto"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Breaking Bad" />
+
+        <TextView
+    android:id="@+id/tvCalories"
+    style="@style/important_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginEnd="16dp"
+    android:text="@string/calories"
+    app:layout_constraintEnd_toStartOf="@+id/tvScore"
+    app:layout_constraintHorizontal_bias="0.358"
+    app:layout_constraintHorizontal_chainStyle="spread"
+    app:layout_constraintStart_toEndOf="@+id/ivPhoto"
+    app:layout_constraintTop_toBottomOf="@+id/tvName" />
+
+<View
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:background="#000"
+    app:layout_constraintStart_toStartOf="@+id/tvCalories"
+    app:layout_constraintEnd_toEndOf="@+id/tvCalories"
+    app:layout_constraintTop_toBottomOf="@+id/tvCalories" />
+
+<TextView
+    android:id="@+id/tvScore"
+    style="@style/important_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="76dp"
+    android:text="@string/caps"
+    app:layout_constraintBottom_toBottomOf="@+id/tvCalories"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toEndOf="@+id/textView3"
+    app:layout_constraintTop_toTopOf="@+id/textView3"
+    tools:ignore="UnknownId" />
+
+<View
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:background="#000"
+    app:layout_constraintStart_toStartOf="@+id/tvScore"
+    app:layout_constraintEnd_toEndOf="@+id/tvScore"
+    app:layout_constraintTop_toBottomOf="@+id/tvScore" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

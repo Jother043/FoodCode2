@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant Usuario as User
+participant "Aplicación" as App
+participant "Fragmento de Menú" as Menu
+participant "Fragmento de Lista de Alimentos" as FoodList
+participant "ViewPager" as ViewPager
+participant "Lista de Favoritos" as Favorites
+
+User -> App: Iniciar la aplicación
+App -> Menu: Acceder al fragmento de menú
+Menu -> FoodList: Acceder al fragmento de lista de alimentos
+FoodList -> ViewPager: Seleccionar un item como favorito
+ViewPager -> Menu: Volver al fragmento de menú
+Menu -> Favorites: Entrar a la lista de favoritos
+Favorites -> User: Verificar que se ha añadido a favoritos
+@enduml

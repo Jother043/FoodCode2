@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome">Welcome</string>
+    <string name="username">My username:</string>
+    <string name="next">Next</string>
+    <string name="descripci_n_de_la_aplicaci_n">User</string>
+    <string name="contact">Contact</string>
+    <string name="app_name">FoodCode2</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="appname">FoodCode</string>
+    <string name="description">User you use a first version of my app</string>
+    <string name="about">About app</string>
+    <string name="credits">App develop by Jose Miguel</string>
+    <string name="valor_energetico">asdasdasd</string>
+    <string name="food_image">Logo</string>
+    <string name="caps">Energetic value</string>
+    <string name="FoodTitle">Apple</string>
+    <string name="cafeTitle">decaffeinated coffe classic</string>
+    <string name="calorias">Calories</string>
+    <string name="proteinas">Proteines</string>
+    <string name="bienvenido">Welcome to my app</string>
+    <string name="list">List of food</string>
+    <string name="favouriteList">List of favorite food</string>
+    <string name="exit">Exit</string>
+    <string name="notice">This is a new`s page</string>
+    <string name="back">Return</string>
+    <string name="novedades">new´s from app</string>
+    <string name="fav">Favorites</string>
+    <string name="lista">Foods</string>
+    <string name="about2">About user</string>
+    <string name="listFood">List Food</string>
+    <string name="listFavFood">Favorite Food</string>
+    <string name="userInfo">Profile</string>
+    <string name="calories">Calories</string>
+</resources>
