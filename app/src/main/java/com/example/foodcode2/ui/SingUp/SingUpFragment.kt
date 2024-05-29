@@ -48,7 +48,7 @@ class SingUpFragment : Fragment() {
                 showAlert("Por favor, introduzca un correo electrónico válido.")
             } else if (password.length < 8) {
                 showAlert("La contraseña debe tener al menos 8 caracteres.")
-            } else if (!password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*".toRegex())) {
+            } else if (!password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=.]).*".toRegex())) {
                 showAlert("La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.")
             } else {
                 if (SingUpViewModel.isNetworkAvailable(requireContext())) {
@@ -58,7 +58,8 @@ class SingUpFragment : Fragment() {
                         }
                     }
                 } else {
-                    Snackbar.make(binding.root, "No hay conexión a internet", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, "No hay conexión a internet", Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -73,13 +74,14 @@ class SingUpFragment : Fragment() {
                         binding.editTextNombre.text!!.clear()
                         binding.editTextEmail.text!!.clear()
                         binding.editTextContraseA.text!!.clear()
-                        Snackbar.make(binding.root, "Te has registrado correctamente. Verifica tu correo electrónico.", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(
+                            binding.root,
+                            "Te has registrado correctamente. Verifica tu correo electrónico.",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
                         SingUpViewModel.sendEmailVerification()
                         val action = SingUpFragmentDirections.actionSingUpFragmentToLoginFragment2()
                         findNavController().navigate(action)
-                    }
-                    if (userPreferences.isSucefullMessage.isNotBlank() && userPreferences.isSucefullMessage.isNotEmpty()){
-                        Snackbar.make(binding.root, "Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada.", Snackbar.LENGTH_SHORT).show()
                     }
                 }
             }

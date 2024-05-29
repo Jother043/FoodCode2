@@ -3,6 +3,7 @@ package com.example.foodcode2.ui.SingUp
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -138,15 +140,11 @@ class SingUpVM(
     }
 
     fun sendEmailVerification() {
-        val user = firebaseAuth.currentUser
+        val user = FirebaseAuth.getInstance().currentUser
         user?.sendEmailVerification()
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _userStateSingUp.update {
-                        it.copy(
-                            isSucefullMessage = "Se ha enviado un correo para verificar tu cuenta"
-                        )
-                    }
+                    Log.d("SingUpVM", "Email enviado")
                 } else {
                     _userStateSingUp.update {
                         it.copy(

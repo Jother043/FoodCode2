@@ -26,6 +26,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -68,9 +69,6 @@ class LoginVM(
 
     // Función para iniciar sesión con Firebase
     fun signInWithFirebase(email: String, password: String) {
-
-        val user = firebaseAuth.currentUser
-
         // Restablece el estado de error antes de cada intento de inicio de sesión
         _userState.update {
             it.copy(
@@ -78,12 +76,12 @@ class LoginVM(
             )
         }
 
-        if (user != null && user.isEmailVerified) {
-            try {
-                firebaseAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-
-                        if (task.isSuccessful) {
+        try {
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    val user = firebaseAuth.currentUser
+                    if (task.isSuccessful && user != null) {
+                        if (user.isEmailVerified) {
                             // El usuario ha iniciado sesión con éxito
                             Log.d("LoginVM", "signInWithFirebase:success")
                             // Actualiza el estado para mostrar que el usuario ha iniciado sesión
@@ -92,45 +90,57 @@ class LoginVM(
                                     isLoggedIn = true
                                 )
                             }
-
-                            // Guarda el estado del usuario en la base de datos firebase
-
                         } else {
-                            // Si el inicio de sesión falla, muestra un mensaje de error
-                            Log.w("LoginVM", "signInWithFirebase:failure", task.exception)
-                            //Actualizamos el estado para mostrar un mensaje de error
                             _userState.update {
                                 it.copy(
-                                    errorMessage = "Error al iniciar sesión"
+                                    errorMessage = "Por favor, verifica tu correo electrónico"
                                 )
                             }
                         }
-
+                    } else {
+                        // Si el inicio de sesión falla, muestra un mensaje de error
+                        Log.w("LoginVM", "signInWithFirebase:failure", task.exception)
+                        _userState.update {
+                            it.copy(
+                                errorMessage = "Error al iniciar sesión"
+                            )
+                        }
                     }
-            } catch (e: Exception) {
-                Log.e("LoginVM", "signInWithFirebase:failure", e)
-                _userState.update {
-                    it.copy(
-                        errorMessage = "Error al iniciar sesión"
-                    )
                 }
-            }
-        }else{
+        } catch (e: Exception) {
+            Log.e("LoginVM", "signInWithFirebase:failure", e)
             _userState.update {
                 it.copy(
-                    errorMessage = "Por favor, verifica tu correo electrónico"
+                    errorMessage = "Error al iniciar sesión"
                 )
             }
         }
     }
 
+
     // Función para validar el email
     fun validateName(email: String): Boolean {
 
+        _userState.update {
+            it.copy(
+                errorMessage = ""
+            )
+        }
+
         // Si el email está vacío o no es un email válido, retorna false
-        if (email.isEmpty()) {
+        if (email.isEmpty() && email.isBlank()) {
+            _userState.update {
+                it.copy(
+                    errorMessage = "El email no puede estar vacío"
+                )
+            }
             return false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _userState.update {
+                it.copy(
+                    errorMessage = "El email no es válido"
+                )
+            }
             return false
         }
         return true
@@ -141,10 +151,16 @@ class LoginVM(
 
         // Si la contraseña está vacía, retorna false
         if (password.isEmpty()) {
+            _userState.update {
+                it.copy(
+                    errorMessage = "La contraseña no puede estar vacía"
+                )
+            }
             return false
         }
         return true
     }
+
 
     // Función para comprobar si hay conexión a internet
     fun isNetworkAvailable(context: Context): Boolean {
@@ -160,7 +176,7 @@ class LoginVM(
         }
     }
 
-    suspend fun recuperarContrasena(email: String) {
+    fun recuperarContrasena(email: String) {
         //Código para recuperar la contraseña
         firebaseAuth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
@@ -180,7 +196,14 @@ class LoginVM(
             }
     }
 
-    suspend fun anonymous() {
+    fun obtenerUsuario() {
+        val user = firebaseAuth.currentUser
+        if (user != null) {
+            userRepositories.obtenerUsuario()
+        }
+    }
+
+    fun anonymous() {
 
         _userState.update {
             it.copy(
@@ -198,9 +221,7 @@ class LoginVM(
                         anonymous = true
                     )
                 }
-
                 // Guarda el estado del usuario en la base de datos firebase
-
             } else {
                 // Si el inicio de sesión falla, muestra un mensaje de error
                 Log.w("LoginVM", "signInWithFirebase:failure", task.exception)
@@ -214,9 +235,7 @@ class LoginVM(
         }
     }
 
-
     companion object {
-
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(

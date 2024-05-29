@@ -13,4 +13,27 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.MyApp.ChatBubble" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_down</item>
+    </style>
+
+    <style name="RoundedAlertDialogLarge" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:windowMinWidthMajor">100dp</item> <!-- Ancho del diálogo -->
+        <item name="android:windowMinWidthMinor">90%</item> <!-- Altura del diálogo -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MyDialog</item> <!-- Bordes redondeados -->
+    </style>
+
+    <style name="ShapeAppearanceOverlay.MyDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>

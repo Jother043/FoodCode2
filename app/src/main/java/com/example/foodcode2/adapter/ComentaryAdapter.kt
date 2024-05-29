@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.foodcode2.R
 import com.example.foodcode2.data.UserComentary
 import com.example.foodcode2.databinding.ComentaryItemBinding
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class ComentaryAdapter(
     private var _comentaryList: MutableList<UserComentary>,

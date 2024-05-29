@@ -9,10 +9,6 @@ class FoodRepository(
 
     ) {
 
-    suspend fun getFullFood(barcode: String): Response<FoodsListResponse> {
-        return foodApiService.getProduct(barcode)
-    }
-
     /**
      * Obtiene unas comidas registradas en una lista de comidas.
      */
@@ -53,25 +49,5 @@ class FoodRepository(
         }
         return Response.success(foodList)
     }
-
-    /**
-     * Obtiene una comida por su id.
-     */
-    //TODO: PUEDE QUE TENGAMOS QUE ELEMINAR ESTE MÉTODO.
-    suspend fun getFoodDetailById(barcode: String): Response<Food> {
-        val foodResp = foodApiService.getProduct(barcode)
-        if (foodResp.isSuccessful) {
-            val food = foodResp.body()?.toFood()
-            if (food != null) {
-                return Response.success(food)
-            }
-        } else {
-            val errorBody = foodResp.errorBody()?.string()
-            Log.d("FoodRepository", "Error getting food details: $errorBody")
-            return Response.error(404, foodResp.errorBody()!!)
-        }
-        return Response.error(404, foodResp.errorBody()!!)
-    }
-
 
 }

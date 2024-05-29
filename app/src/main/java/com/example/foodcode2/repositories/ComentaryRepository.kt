@@ -1,20 +1,40 @@
 package com.example.foodcode2.repositories
 
+import com.example.foodcode2.api.Food
 import com.example.foodcode2.data.UserComentary
-import com.example.foodcode2.db.ComentaryDao
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
-class ComentaryRepository (
-    private val comentsDao: ComentaryDao,
-    private val ioDispatcher : CoroutineDispatcher = Dispatchers.IO
-) {
-        suspend fun insertComent(coment:UserComentary) = withContext(ioDispatcher){
-            return@withContext comentsDao.insert(coment)
+class ComentaryRepository() {
+    private val firestore = FirebaseFirestore.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    suspend fun insertComent(coment: UserComentary) {
+        val userId = firebaseAuth.currentUser?.uid
+
+        if (userId != null) {
+            firestore.collection("coments").document(coment.foodId).collection("coments")
+                .add(coment).await()
+        }
+    }
+
+    suspend fun getFoodComents(foodId: String): List<UserComentary> {
+        val userId = firebaseAuth.currentUser?.uid
+        val coments = mutableListOf<UserComentary>()
+
+        if (userId != null) {
+            val snapshot =
+                firestore.collection("coments").document(foodId).collection("coments").get().await()
+            for (document in snapshot.documents) {
+                val com = document.toObject(UserComentary::class.java)
+                if (com != null) {
+                    coments.add(com)
+                }
+            }
         }
 
-        suspend fun getFoodComents(id:String) : List<UserComentary> = withContext(ioDispatcher) {
-            return@withContext comentsDao.getFoodComents(id)
-        }
+        return coments
+    }
+
 }

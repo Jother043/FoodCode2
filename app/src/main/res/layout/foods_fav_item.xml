@@ -4,22 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="140dp">
-
-        <ImageView
-            android:id="@+id/ivFavFood"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/ivPhoto"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ivPhoto"
-            app:srcCompat="@drawable/ic_favorite_food" />
+        android:layout_width="403dp"
+        android:layout_height="148dp">
 
         <TextView
             android:id="@+id/tvCal"
@@ -43,16 +34,23 @@
             app:layout_constraintStart_toStartOf="@+id/tvScore"
             app:layout_constraintTop_toBottomOf="@+id/tvScore" />
 
-        <ImageView
+
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivPhoto"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginStart="16dp"
-            android:contentDescription="@string/food_image"
+            android:layout_width="115dp"
+            android:layout_height="126dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="10dp"
+            android:src="@drawable/ic_food_placeholder"
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/cafe" />
+            tools:ignore="MissingClass,MissingConstraints" />
 
         <TextView
             android:id="@+id/tvName"
@@ -69,48 +67,33 @@
             tools:text="Breaking Bad" />
 
         <TextView
-    android:id="@+id/tvCalories"
-    style="@style/important_text"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="20dp"
-    android:layout_marginEnd="16dp"
-    android:text="@string/calories"
-    app:layout_constraintEnd_toStartOf="@+id/tvScore"
-    app:layout_constraintHorizontal_bias="0.358"
-    app:layout_constraintHorizontal_chainStyle="spread"
-    app:layout_constraintStart_toEndOf="@+id/ivPhoto"
-    app:layout_constraintTop_toBottomOf="@+id/tvName" />
+            android:id="@+id/tvCalories"
+            style="@style/important_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="36dp"
+            android:text="@string/calories"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tvScore"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toEndOf="@+id/ivPhoto"
+            app:layout_constraintTop_toBottomOf="@+id/tvName" />
 
-<View
-    android:layout_width="0dp"
-    android:layout_height="1dp"
-    android:background="#000"
-    app:layout_constraintStart_toStartOf="@+id/tvCalories"
-    app:layout_constraintEnd_toEndOf="@+id/tvCalories"
-    app:layout_constraintTop_toBottomOf="@+id/tvCalories" />
-
-<TextView
-    android:id="@+id/tvScore"
-    style="@style/important_text"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="76dp"
-    android:text="@string/caps"
-    app:layout_constraintBottom_toBottomOf="@+id/tvCalories"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/textView3"
-    app:layout_constraintTop_toTopOf="@+id/textView3"
-    tools:ignore="UnknownId" />
-
-<View
-    android:layout_width="0dp"
-    android:layout_height="1dp"
-    android:background="#000"
-    app:layout_constraintStart_toStartOf="@+id/tvScore"
-    app:layout_constraintEnd_toEndOf="@+id/tvScore"
-    app:layout_constraintTop_toBottomOf="@+id/tvScore" />
+        <TextView
+            android:id="@+id/tvScore"
+            style="@style/important_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="72dp"
+            android:text="@string/caps"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tvCalories"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView3"
+            app:layout_constraintTop_toTopOf="@+id/textView3"
+            tools:ignore="UnknownId" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

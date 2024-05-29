@@ -2,9 +2,7 @@
      <!-- Base application theme. -->
     <style name="Base.Theme.FoodCode" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/loading_gif</item>
-        <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="s">1000</item>
-        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/naranja</item>
+        <item name="android:statusBarColor">@color/naranja</item>
         <!-- Colores para los botones -->
         <item name="colorPrimary">@color/my_primary</item>
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
@@ -12,7 +10,8 @@
         <item name="colorPrimaryVariant">@color/my_primary_variant</item>
     </style>
 
-    <style name="Theme.FoodCode" parent="Base.Theme.FoodCode" />
+    <style name="Theme.FoodCode" parent="Base.Theme.FoodCode"
+        />
 
     <color name="my_primary">#FF9800</color>
 
@@ -21,6 +20,7 @@
 
     <style name="Theme.BottomNavigation" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
+        
         <item name="colorPrimary">@color/naranja</item>
         <item name="colorPrimaryVariant">@color/naranja</item>
         <item name="colorOnPrimary">@color/white</item>

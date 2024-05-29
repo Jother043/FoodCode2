@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_menuFragment_self"
             app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_foodFavDetailsFragment"
+            app:destination="@id/foodFavDetailsFragment" />
         <argument
             android:name="barcode"
             app:argType="string" />
@@ -116,7 +119,7 @@
         android:name="com.example.foodcode2.ui.favFood.FavFoodFragment"
         android:label="FavFoodFragment" >
         <action
-            android:id="@+id/action_favFoodFragment_to_foodFavDetailsFragment"
+            android:id="@+id/action_favFoodFragment_to_foodFavDetailsFragment2"
             app:destination="@id/foodFavDetailsFragment" />
     </fragment>
     <fragment

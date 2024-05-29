@@ -170,39 +170,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="10dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:alpha="0.7"
-                    android:text="Or Login with" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="12dp"
-                        android:background="@drawable/facebook" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="12dp"
-                        android:background="@drawable/github" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="12dp"
-                        android:background="@drawable/twitter" />
-
-
-                </LinearLayout>
+                    android:orientation="horizontal"/>
 
 
             </LinearLayout>

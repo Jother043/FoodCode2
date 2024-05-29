@@ -2,6 +2,7 @@ package com.example.foodcode2.ui.menu
 
 import FoodRepository
 import android.util.Log
+import androidx.core.app.NotificationCompat.MessagingStyle.Message
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -17,22 +18,23 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 data class QrDetailsUiState(
-    val isLoading: Boolean = false, val food: Food? = null, val error: String = ""
+    val isLoading: Boolean = false,
+    val food: Food? = null,
+    val error: String = "",
+    val addMessage: String = ""
 )
 
 class QrDetailsVM(
     private val foodRepository: FoodRepository
 ) : ViewModel() {
+
     private val _uiState: MutableStateFlow<QrDetailsUiState> = MutableStateFlow(
         QrDetailsUiState()
     )
     val uiState: StateFlow<QrDetailsUiState> = _uiState
-
     private val db = FirebaseFirestore.getInstance() //TODO: Implementar Firestore
     private val firebaseAuth = FirebaseAuth.getInstance()
 
-    val _barcodeResult = MutableStateFlow<String?>(null)
-    val barcodeResult: StateFlow<String?> = _barcodeResult
     fun setFood(barcode: String) {
         if (barcode.isEmpty()) {
             _uiState.value =
@@ -43,25 +45,31 @@ class QrDetailsVM(
             Log.d("FoodListVM", "El codigo escaneado es el siguiente : $barcode")
             _uiState.value = QrDetailsUiState(isLoading = true)
             viewModelScope.launch {
-                // Create a list with a single barcode
+                // Crea una lista con el código de barras escaneado
                 val barcodes = listOf(barcode)
-                val response = foodRepository.getProductByBarcode(barcodes)
-                if (response.isSuccessful) {
-                    response.body()?.let { foodResponse ->
-                        // Convierte la respuesta del API a un objeto Food de foodsListResponse
-                        foodResponse.forEach { food ->
-                            food.isFavorite = false
+                try {
+                    val response = foodRepository.getProductByBarcode(barcodes)
+                    // Si la respuesta es exitosa, se obtiene el primer elemento de la lista
+                    if (response.isSuccessful) {
+                        response.body()?.let { foodResponse ->
+                            // Convierte la respuesta del API a un objeto Food de foodsListResponse
+                            foodResponse.forEach { food ->
+                                food.isFavorite = false
+                            }
+                            _uiState.value = QrDetailsUiState(food = foodResponse.first())
                         }
-                        _uiState.value = QrDetailsUiState(food = foodResponse.first())
-                    }
-                } else {
-                    if (response.code() == 502) {
-                        _uiState.value =
-                            QrDetailsUiState(error = "La API no responde, intente mas tarde")
                     } else {
-                        _uiState.value =
-                            QrDetailsUiState(error = "Error obteniendo comida por codigo de barras")
+                        if (response.code() == 502) {
+                            _uiState.value =
+                                QrDetailsUiState(error = "La API no responde, intente mas tarde")
+                        } else {
+                            _uiState.value =
+                                QrDetailsUiState(error = "Error obteniendo comida por codigo de barras")
+                        }
                     }
+                } catch (e: Exception) {
+                    _uiState.value =
+                        QrDetailsUiState(error = "Error obteniendo comida por codigo de barras")
                 }
             }
         }
@@ -70,41 +78,74 @@ class QrDetailsVM(
     internal fun addFoodToFavorites(food: Food) {
         // Crea un nuevo objeto con los datos del producto
         val foodData = hashMapOf(
+            "code" to food.code,
             "title" to food.title,
             "imageUrl" to food.imageUrl,
             "ecoscoreGrade" to food.ecoscoreGrade,
-            "energyKcal" to food.energyKcal
+            "energyKcal" to food.energyKcal,
+            "nutriments" to food.nutriments,
+            "allergens" to food.allergens,
+            "brands" to food.brands,
+            "categories" to food.categories,
+            "traces" to food.traces,
+            "packaging" to food.packaging,
+            "carbohydrates" to food.carbohydrates,
+            "carbohydratesUnit" to food.carbohydratesUnit,
+            "energy" to food.energy,
+            "fat" to food.fat,
+            "fatUnit" to food.fatUnit,
+            "proteins" to food.proteins,
+            "proteinsUnit" to food.proteinsUnit,
+            "salt" to food.salt,
+            "saltUnit" to food.saltUnit,
+            "saturatedFat" to food.saturatedFat,
+            "saturatedFatUnit" to food.saturatedFatUnit,
+            "sodium" to food.sodium,
+            "sodiumUnit" to food.sodiumUnit,
+            "sugars" to food.sugars,
+            "sugarsUnit" to food.sugarsUnit,
+            "manufacturingPlaces" to food.manufacturingPlaces,
+            "ingredientss" to food.ingredientss,
+            "image_ingredients_small_url" to food.image_ingredients_small_url,
+            "image_nutrition_url" to food.image_nutrition_url,
+            "additives_original_tags" to food.additives_original_tags
         )
 
         // Obtiene el ID del usuario actual
         val userId = firebaseAuth.currentUser?.uid
 
-        if (userId != null && userId.isNotEmpty()) {
-            // Comprueba si el producto ya existe en la colección de favoritos
-            db.collection("users").document(userId).collection("favorites")
-                .whereEqualTo("title", food.title)
-                .get()
-                .addOnSuccessListener { documents ->
-                    if (documents.isEmpty) {
-                        // Si el producto no existe en la colección de favoritos, lo añade
-                        db.collection("users").document(userId).collection("favorites")
-                            .add(foodData)
-                            .addOnSuccessListener { documentReference ->
-                                _uiState.value = QrDetailsUiState(error = "Producto añadido a favoritos")
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w("MenuFragment", "Error adding document", e)
-                            }
-                    } else {
-                        _uiState.value = QrDetailsUiState(error = "El producto ya está en favoritos")
+        // Si el usuario está logueado, añade el producto a la colección de favoritos
+        if (!userId.isNullOrEmpty()) {
+            //Hacemos un try catch para manejar excepciones
+            try {
+
+                db.collection("users").document(userId).collection("favorites")
+                    .whereEqualTo("title", food.title)
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        if (documents.isEmpty) {
+                            // Si el producto no existe en la colección de favoritos, lo añade
+                            db.collection("users").document(userId).collection("favorites")
+                                .add(foodData)
+                                .addOnSuccessListener {
+                                    _uiState.value =
+                                        QrDetailsUiState(addMessage = "Producto añadido a favoritos")
+                                }
+                        } else {
+                            _uiState.value =
+                                QrDetailsUiState(error = "El producto ya está en favoritos")
+                        }
                     }
-                }
-                .addOnFailureListener { e ->
-                    Log.w("MenuFragment", "Error checking document", e)
-                }
-        } else {
+                    .addOnFailureListener { e ->
+                        Log.w("MenuFragment", "Error checking document", e)
+                    }
+            } catch (e: Exception) {
+                _uiState.value =
+                    QrDetailsUiState(error = "Error añadiendo producto a favoritos")
+            }
+        } else
             Log.w("MenuFragment", "Error: no user is signed in")
-        }
+
     }
 
 

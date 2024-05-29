@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayout"
         android:layout_width="377dp"
@@ -21,6 +22,68 @@
         android:background="@drawable/rounded_border"
         android:gravity="center"
         android:orientation="vertical">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/noInternetAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="Animation - 1715964636750.json"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:id="@+id/nointernetError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:text="No hay internet en estos momentos"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="377dp"
+            android:layout_height="659dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/rounded_border"
+            android:gravity="center">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/noScannedAnimation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/scanPrompt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="Animation - 1716124398661.json"
+                app:lottie_loop="true" />
+
+            <TextView
+                android:id="@+id/scanPrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
+                android:text="@string/pulsa_el_boton_para_escanear_productos"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Resto de tu código -->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout2"
@@ -33,7 +96,8 @@
                 android:layout_width="347dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|center_horizontal|top"
-                android:padding="16dp" />
+                android:padding="16dp"
+                android:textAlignment="center" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card"
@@ -42,18 +106,25 @@
                 android:layout_margin="8dp">
 
                 <LinearLayout
+                    android:id="@+id/lLayoutCard"
                     android:layout_width="match_parent"
                     android:layout_height="615dp"
                     android:orientation="vertical">
 
                     <!-- Media -->
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/ivProductImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="316dp"
-                        android:contentDescription="TODO"
-                        android:scaleType="fitXY" />
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="0dp"
+                        android:elevation="10dp"
+                        android:src="@drawable/ic_food_placeholder"
+                        app:civ_border_color="@android:color/white"
+                        app:civ_border_width="2dp"
+                        tools:ignore="MissingClass" />
 
                     <!-- Buttons -->
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FoodCode2</string>
+    <string name="app_name">FoodCode</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Informacion Producto</string>
     <string name="appname">FoodCode</string>
@@ -58,7 +58,7 @@
     <string name="cancel">Cancelar</string>
     <string name="accept">Aceptar</string>
     <string name="coment">Comentario</string>
-    <string name="add_comment">Anadir comentario</string>
+    <string name="add_comment">  Anadir comentario</string>
     <string name="comentarys">Comentarios por los usuarios</string>
     <string name="infoApp">Mas Informacion</string>
     <string name="creditos">Este proyecto fue desarrollado por Jother043. Todos los derechos reservados © 2023</string>
@@ -77,5 +77,10 @@
     <string name="google">Google Seleccionado\n</string>
     <string name="github">GitHubSeleccionado\n</string>
     <string name="correo_electronico_request">Correo Electronico</string>
-    <string name="default_web_client_id">441853910501-0t5sbnourdqqcrmt7gchqjo39md812jv.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">441853910501-p5g3igsqtbhi8uk1cp7ui1smalqg3mah.apps.googleusercontent.com</string>
+    <string name="escanee_un_producto_dandole_al_boton">Escanee un producto dandole al boton.</string>
+    <string name="pulsa_el_boton_para_escanear_productos">Pulsa el boton para escanear productos</string>
+    <string name="foodcode">FoodCode</string>
+    <string name="a_adir_comentario">Añadir comentario</string>
+    <string name="cerrar_sesi_n">Cerrar Sesión</string>
 </resources>

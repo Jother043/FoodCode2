@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "441853910501-0t5sbnourdqqcrmt7gchqjo39md812jv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.foodcode2",
-            "certificate_hash": "18498824759dba75b50a8b13f389618c19f371c0"
-          }
-        },
-        {
           "client_id": "441853910501-p5g3igsqtbhi8uk1cp7ui1smalqg3mah.apps.googleusercontent.com",
           "client_type": 3
         }

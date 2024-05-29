@@ -1,31 +1,42 @@
 package com.example.foodcode2.ui.userpreferences
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.example.foodcode2.R
 import com.example.foodcode2.databinding.FragmentInfoUserBinding
+import com.example.foodcode2.repositories.ProductRepository
+import com.example.foodcode2.repositories.UserRepositories
 import com.example.foodcode2.ui.login.LoginVM
+import com.example.foodcode2.ui.menu.MenuFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-class InfoUserFragment : Fragment() {
+class InfoUserFragment(private val userRepositories: UserRepositories) : Fragment() {
+
 
     private lateinit var binding: FragmentInfoUserBinding
 
     private val firebaseAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
-    private val loginVM: LoginVM by viewModels<LoginVM> { LoginVM.Factory }
+    private val infoUserVM: InfoUserVM by viewModels<InfoUserVM> { InfoUserVM.Factory }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +68,22 @@ class InfoUserFragment : Fragment() {
     private fun setCollectors() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginVM.userState.collect {
-                    binding.tvUser.text = it.name
+                userRepositories.obtenerUsuario()
+                infoUserVM.userState.collect {
+                    val user = firebaseAuth.currentUser
+                    val photoUrl = user?.photoUrl
+                    Log.d("url", "url: $photoUrl")
+                    binding.tvUser.text = "Tu username es: ${it.name}"
+                    binding.tvEmail.text = "Correo:  ${it.email}"
+                    if (photoUrl != null) {
+                        binding.ivPhoto.load(photoUrl) {
+                            transformations(CircleCropTransformation())
+                        }
+                    } else {
+                        binding.ivPhoto.load(R.drawable.ic_profile) {
+                            transformations(CircleCropTransformation())
+                        }
+                    }
                 }
             }
         }
@@ -74,11 +99,12 @@ class InfoUserFragment : Fragment() {
             //Buscar la cuenta de google
             val googleSignInOptions =
                 GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken("441853910501-p5g3igsqtbhi8uk1cp7ui1smalqg3mah.apps.googleusercontent.com")
+                    .requestIdToken("441853910501-nm493gdu3vbtsg6f1ee7n5chv5s4t07b.apps.googleusercontent.com")
                     .requestEmail()
                     .build()
             // Google sign out
-            val googleSignInClient = GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
+            val googleSignInClient =
+                GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
             googleSignInClient.signOut().addOnCompleteListener {
                 //reinicio de la app
                 val intent = requireActivity().intent
@@ -88,8 +114,13 @@ class InfoUserFragment : Fragment() {
 
         }
 
-        binding.fabSettings.setOnClickListener {
-            findNavController().navigate(R.id.action_infoUserFragment_to_userSettingsFragment)
+        binding.volver.setOnClickListener {
+            (parentFragment as? MenuFragment)?.onBackButtonPressed()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        infoUserVM.obtenerUsuario()
     }
 }

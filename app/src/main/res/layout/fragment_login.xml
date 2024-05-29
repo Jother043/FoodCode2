@@ -61,19 +61,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:alpha="0.7"
-                android:text="@string/correo_electronico"
-                android:textStyle="bold" />
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutEmail"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:endIconMode="clear_text">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="Introduce tu correo">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextName"
@@ -88,26 +83,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="20dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:alpha="0.7"
-                android:text="@string/contrase_a"
-                android:textStyle="bold" />
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:endIconMode="password_toggle">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="Introduce tu contraseña"
+                app:helperTextEnabled="true"
+                app:endIconMode="password_toggle"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextContraseña"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword" />
-
             </com.google.android.material.textfield.TextInputLayout>
+
+
 
             <RelativeLayout
                 android:layout_width="match_parent"

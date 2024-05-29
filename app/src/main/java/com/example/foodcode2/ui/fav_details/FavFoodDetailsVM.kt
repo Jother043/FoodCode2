@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.foodcode2.api.Food
 import com.example.foodcode2.dependencies.FoodCode
+import com.example.foodcode2.repositories.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class FavFoodDetailsUiState(
@@ -20,7 +20,7 @@ data class FavFoodDetailsUiState(
 )
 
 class FavFoodDetailsVM(
-    private val foodRepository: FoodRepository
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<FavFoodDetailsUiState> = MutableStateFlow(
@@ -31,23 +31,13 @@ class FavFoodDetailsVM(
     //Obtiene los detalles de un alimento.
     fun setFood(barcodeProduct: String) {
         viewModelScope.launch {
-            val foodResp = foodRepository.getFoodDetailById(barcodeProduct)
-            if (foodResp.isSuccessful) {
-                val food = foodResp.body()
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        food = food
-                    )
-                }
-            } else {
-                Log.d(
-                    "FavFoodDetailsVM",
-                    "Error al obtener los detalles de la receta: ${foodResp.errorBody()?.string()}"
-                )
-            }
+            _uiState.value = FavFoodDetailsUiState(isLoading = true)
+            val food = productRepository.getFullFood(barcodeProduct)
+            _uiState.value = FavFoodDetailsUiState(isLoading = false, food = food)
+            Log.d("FoodDetails", "Food: $food")
         }
     }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -61,7 +51,7 @@ class FavFoodDetailsVM(
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
 
                 return FavFoodDetailsVM(
-                    (application as FoodCode).appContainer.FoodRepository
+                    (application as FoodCode).appContainer.productRepository
                 ) as T
             }
         }

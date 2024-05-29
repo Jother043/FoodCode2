@@ -6,12 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.foodcode2.dependencies.FoodCode
-import com.example.foodcode2.repositories.FavoriteFoodRepository
 import com.example.foodcode2.repositories.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class FavFoodUiState(
@@ -29,7 +27,9 @@ class FavFoodVM(
         fetchFavFoods()
     }
 
-    //Obtiene los alimentos favoritos.
+    /**
+     * Obtiene la lista de alimentos favoritos.
+     */
     fun fetchFavFoods() {
         viewModelScope.launch {
             _uiState.value = FavFoodUiState(isLoading = true)
@@ -38,19 +38,17 @@ class FavFoodVM(
         }
     }
 
-//    //Elimina un alimento de la lista de favoritos.
-//    fun delFavFood(food: Food) {
-//        viewModelScope.launch {
-//            _uiState.update {
-//                val delFavFoodList = it.favFoodList.toMutableList()
-//                delFavFoodList.remove(food)
-//                it.copy(
-//                    favFoodList = delFavFoodList
-//                )
-//            }
-//            favFoodRepository.deleteFood(food)
-//        }
-//    }
+    /**
+     * Elimina un alimento de la lista de favoritos.
+     * @param food Alimento a eliminar.
+     */
+    fun deleteFavorite(food: Food) {
+        viewModelScope.launch {
+            productRepository.deleteFavorite(food)
+            fetchFavFoods()
+        }
+    }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {

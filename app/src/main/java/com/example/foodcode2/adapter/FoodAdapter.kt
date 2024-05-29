@@ -29,8 +29,14 @@ class FoodAdapter(
             binding.tvName.text = food.title
             binding.tvCalories.text = food.energyKcal.toString()
             binding.tvProteins.text = food.energyKcal.toString()
-            binding.ivPhoto.load(food.imageUrl) {
-                transformations(CircleCropTransformation())
+            if (food.imageUrl == "") {
+                binding.ivPhoto.load(R.drawable.imagen_no_disponible) {
+                    transformations(CircleCropTransformation())
+                }
+            } else {
+                binding.ivPhoto.load(food.imageUrl) {
+                    transformations(CircleCropTransformation())
+                }
             }
 
             if (food.isFavorite) {
@@ -71,10 +77,10 @@ class FoodAdapter(
         //Si el alimento se encuentra en la lista de alimentos
         if (index != -1) {
             //si el alimento no esta en favoritos se cambia el estado de favorito del alimento
-            if(!_listFood[index].isFavorite) {
+            if (!_listFood[index].isFavorite) {
                 _listFood[index].isFavorite = !food.isFavorite
                 notifyItemChanged(index)
-            }else{
+            } else {
                 //TODO: Eliminar de favoritos si ya esta en favoritos.
             }
 
@@ -88,6 +94,7 @@ class FoodAdapter(
 
             )
     }
+
     /**
      * Funcion que se encarga de retornar el numero de elementos en la lista de alimentos
      */

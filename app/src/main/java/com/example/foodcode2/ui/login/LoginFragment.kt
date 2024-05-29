@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.activity.result.ActivityResultCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,9 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.foodcode2.R
-import com.example.foodcode2.data.UserPreferences
 import com.example.foodcode2.databinding.FragmentLoginBinding
-import com.example.foodcode2.ui.SingUp.SingUpFragmentDirections
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,12 +26,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.update
-import kotlin.contracts.contract
 
 class LoginFragment : Fragment() {
 
@@ -67,7 +61,6 @@ class LoginFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
 
-
         return binding.root
     }
 
@@ -85,13 +78,20 @@ class LoginFragment : Fragment() {
                         when {
                             uiState.isLoggedIn -> {
                                 withContext(Dispatchers.Main) {
-                                    MaterialAlertDialogBuilder(requireContext())
+                                    val dialog = MaterialAlertDialogBuilder(
+                                        requireContext(),
+                                        R.style.RoundedAlertDialog
+                                    )
                                         .setTitle("Inicio de sesión")
-                                        .setMessage("Inicio de sesión exitoso")
+                                        .setMessage("Inicio de sesión con correo exitoso")
                                         .setPositiveButton("Aceptar") { dialog, _ ->
                                             dialog.dismiss()
                                         }
-                                        .show()
+                                        .create()
+
+                                    dialog.window?.attributes?.windowAnimations =
+                                        R.style.DialogAnimation
+                                    dialog.show()
                                     //nos movemos a la siguiente pantalla
                                     val action =
                                         LoginFragmentDirections.actionLoginFragment2ToMenuFragment4(
@@ -109,7 +109,10 @@ class LoginFragment : Fragment() {
 
                             uiState.errorMessage.isNotEmpty() -> {
                                 withContext(Dispatchers.Main) {
-                                    MaterialAlertDialogBuilder(requireContext())
+                                    MaterialAlertDialogBuilder(
+                                        requireContext(),
+                                        R.style.RoundedAlertDialog
+                                    )
                                         .setTitle("Error")
                                         .setMessage(uiState.errorMessage)
                                         .setPositiveButton("Aceptar") { dialog, _ ->
@@ -136,7 +139,7 @@ class LoginFragment : Fragment() {
 
                             uiState.anonymous -> {
                                 withContext(Dispatchers.Main) {
-                                    MaterialAlertDialogBuilder(
+                                    val dialog = MaterialAlertDialogBuilder(
                                         requireContext(),
                                         R.style.RoundedAlertDialog
                                     )
@@ -145,7 +148,11 @@ class LoginFragment : Fragment() {
                                         .setPositiveButton("Aceptar") { dialog, _ ->
                                             dialog.dismiss()
                                         }
-                                        .show()
+                                        .create()
+
+                                    dialog.window?.attributes?.windowAnimations =
+                                        R.style.DialogAnimation
+                                    dialog.show()
                                     //nos movemos a la siguiente pantalla
                                     val action =
                                         LoginFragmentDirections.actionLoginFragment2ToMenuFragment4(
@@ -248,13 +255,13 @@ class LoginFragment : Fragment() {
     private fun recoverPassword() {
         val inflater = layoutInflater
         val dialogView: View = inflater.inflate(R.layout.dialog_input, null)
-        val input: EditText = dialogView.findViewById(R.id.dialog_input)
+        val input: TextInputLayout = dialogView.findViewById(R.id.dialog_input)
 
-        MaterialAlertDialogBuilder(requireContext(), R.style.RoundedAlertDialog)
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.RoundedAlertDialog)
             .setTitle("Introzca su correo electrónico para recuperar su contraseña")
             .setView(dialogView)
             .setPositiveButton("Aceptar") { dialog, _ ->
-                val userInput = input.text.toString()
+                val userInput = input.editText?.text.toString()
                 if (userInput.isNotEmpty()) {
                     //Navegar a la siguiente pantalla
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -269,8 +276,14 @@ class LoginFragment : Fragment() {
             }
             .setNegativeButton("Cancelar") { dialog, _ ->
                 dialog.dismiss()
-            }
-            .show()
+            }.create()
+
+        val window = dialog.window
+        val layoutParams = window?.attributes
+        layoutParams?.width = ViewGroup.LayoutParams.MATCH_PARENT // O cualquier valor específico en píxeles
+        window?.attributes = layoutParams
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.show()
     }
 
     private fun showAlertError(message: String) {
@@ -303,6 +316,7 @@ class LoginFragment : Fragment() {
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 Log.w(TAG, "Google sign in failed", e)
+                showAlertError("Error al iniciar sesión: ${e.message}")
             }
         }
     }
@@ -317,15 +331,28 @@ class LoginFragment : Fragment() {
                     val user = auth.currentUser
                     if (user != null) {
                         val action =
-                            LoginFragmentDirections.actionLoginFragment2ToMenuFragment4(user.displayName.toString())
+                            LoginFragmentDirections.actionLoginFragment2ToMenuFragment4("")
                         findNavController().navigate(action)
+                        val dialog = MaterialAlertDialogBuilder(
+                            requireContext(),
+                            R.style.RoundedAlertDialog
+                        )
+                            .setTitle("Inicio de sesión")
+                            .setMessage("Inicio de sesión con Google exitoso")
+                            .setPositiveButton("Aceptar") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .create()
+
+                        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+                        dialog.show()
                     } else {
                         showAlertError("Error al iniciar sesión")
                     }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    showAlertError("Error al iniciar sesión")
+                    showAlertError("Error al iniciar sesión: ${task.exception?.message}")
                 }
             }
     }

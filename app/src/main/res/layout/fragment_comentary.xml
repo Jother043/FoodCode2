@@ -3,85 +3,103 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.comentary.ComentaryFragment"
-    android:background="@color/fondo">
+    android:background="@color/bg"
+    tools:context=".ui.comentary.ComentaryFragment">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:elevation="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            app:navigationIcon="@drawable/ic_round_arrow_back_24">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:text="Comentarios"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvComents"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/etIntroComent"
+        android:background="@color/bg"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:background="@color/fondo2"/>
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
 
-    <Button
-        android:id="@+id/btnBackComents"
-        android:layout_width="88dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/volver"
-        android:textColor="#424242"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="400dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="92dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnGuardarComent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="cursive"
-        android:text="@string/comentarys"
-        android:textAlignment="center"
-        android:textSize="34sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/rvComents"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <EditText
-        android:id="@+id/etIntroComent"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:ems="10"
-        android:hint="@string/add_comment"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:textColorHint="#616161"
-        app:layout_constraintBottom_toTopOf="@+id/btnBackComents"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:autofillHints=""
-        tools:ignore="VisualLintTextFieldSize" />
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/etIntroComent"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="326dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:autofillHints=""
+            android:background="@drawable/bg_circle_white"
+            android:ems="10"
+            android:hint="@string/a_adir_comentario"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColorHint="#616161"
+            app:layout_constraintEnd_toStartOf="@+id/btnGuardarComent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnGuardarComent"
-        android:layout_width="109dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/save"
-        android:textColor="#424242"
-        app:layout_constraintBottom_toBottomOf="@+id/btnBackComents"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnBackComents"
-        app:layout_constraintTop_toTopOf="@+id/btnBackComents" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardarComent"
+            android:layout_width="45dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_circle_white"
+            android:backgroundTint="@android:color/holo_orange_light"
+            android:drawablePadding="-10dp"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            app:icon="@drawable/send"
+            app:iconSize="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/etIntroComent"
+            app:layout_constraintTop_toTopOf="@+id/etIntroComent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/loading_gif"
